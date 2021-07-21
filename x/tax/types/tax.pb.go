@@ -82,11 +82,11 @@ type Tax struct {
 	Rate github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,2,opt,name=rate,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"rate" yaml:"rate"`
 	// collection_address defines the bech32-encoded address of the tax pool to distribute
 	CollectionAddress string `protobuf:"bytes,3,opt,name=collection_address,json=collectionAddress,proto3" json:"collection_address,omitempty" yaml:"collection_address"`
-	// collection_account_name defines the bech32-encoded address of the tax pool to distribute
+	// collection_account_name is module account name of collection_address, fill in this field optionally if you need to define a new module account or want to verify that address matches collection_address that module name
 	CollectionAccountName string `protobuf:"bytes,4,opt,name=collection_account_name,json=collectionAccountName,proto3" json:"collection_account_name,omitempty" yaml:"collection_account_name"`
 	// tax_source_address defines the bech32-encoded address that source of the tax
 	TaxSourceAddress string `protobuf:"bytes,5,opt,name=tax_source_address,json=taxSourceAddress,proto3" json:"tax_source_address,omitempty" yaml:"tax_source_address"`
-	// tax_source_account_name defines the bech32-encoded address that source of the tax
+	// tax_source_account_name is module account name of tax_source_address, fill in this field optionally if you need to define a new module account or want to verify that address matches tax_source_address that module name
 	TaxSourceAccountName string `protobuf:"bytes,6,opt,name=tax_source_account_name,json=taxSourceAccountName,proto3" json:"tax_source_account_name,omitempty" yaml:"tax_source_account_name"`
 	// start_time specifies the start time of the tax
 	StartTime time.Time `protobuf:"bytes,7,opt,name=start_time,json=startTime,proto3,stdtime" json:"start_time" yaml:"start_time"`

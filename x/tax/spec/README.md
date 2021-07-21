@@ -1,6 +1,6 @@
-<!-- order: 0 title: Liquidity Overview parent: title: "tax" -->
+<!-- order: 0 title: Tax Overview parent: title: "tax" -->
 
- # `tax`
+# `tax`
 
 ## Abstract
 
