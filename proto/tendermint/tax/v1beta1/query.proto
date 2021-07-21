@@ -34,11 +34,11 @@ message QueryParamsResponse {
 // QueryTaxesRequest is the request type for the Query/Taxes RPC method.
 message QueryTaxesRequest {
   string name               = 1;
-  string pool_address       = 2;
+  string collection_address = 2;
   string tax_source_address = 3;
 }
 
 // QueryTaxesResponse is the response type for the Query/Taxes RPC method.
 message QueryTaxesResponse {
-  repeated Tax taxes = 1;
+  repeated Tax taxes = 1 [(gogoproto.nullable) = false];
 }
