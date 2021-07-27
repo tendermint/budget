@@ -49,8 +49,8 @@ build_tags_comma_sep := $(subst $(whitespace),$(comma),$(build_tags))
 
 # process linker flags
 
-ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=simd \
-		  -X github.com/cosmos/cosmos-sdk/version.AppName=simd \
+ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=taxd \
+		  -X github.com/cosmos/cosmos-sdk/version.AppName=taxd \
 		  -X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 		  -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
 		  -X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
@@ -75,9 +75,9 @@ include contrib/devtools/Makefile
 
 build: go.sum
 ifeq ($(OS),Windows_NT)
-	go build $(BUILD_FLAGS) -o build/simd.exe ./cmd/taxd
+	go build $(BUILD_FLAGS) -o build/taxd.exe ./cmd/taxd
 else
-	go build $(BUILD_FLAGS) -o build/simd ./cmd/taxd
+	go build $(BUILD_FLAGS) -o build/taxd ./cmd/taxd
 endif
 
 build-linux: go.sum
@@ -90,7 +90,7 @@ build-reproducible: go.sum
 	$(DOCKER) rm latest-build || true
 	$(DOCKER) run --volume=$(CURDIR):/sources:ro \
         --env TARGET_PLATFORMS='linux/amd64 darwin/amd64 linux/arm64' \
-        --env APP=simd \
+        --env APP=taxd \
         --env VERSION=$(VERSION) \
         --env COMMIT=$(COMMIT) \
         --env LEDGER_ENABLED=$(LEDGER_ENABLED) \

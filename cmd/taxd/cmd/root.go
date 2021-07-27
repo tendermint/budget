@@ -35,7 +35,7 @@ import (
 	taxparams "github.com/tendermint/tax/app/params"
 )
 
-// NewRootCmd creates a new root command for simd. It is called once in the
+// NewRootCmd creates a new root command for taxd. It is called once in the
 // main function.
 func NewRootCmd() (*cobra.Command, taxparams.EncodingConfig) {
 	encodingConfig := taxapp.MakeEncodingConfig()
