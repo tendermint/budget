@@ -1,9 +1,16 @@
 package types
 
 import (
+	"fmt"
+
 	"gopkg.in/yaml.v2"
 
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+)
+
+const (
+	// MaxTaxNameLength is the maximum length of the name of each tax.
+	MaxTaxNameLength int = 30
 )
 
 // Parameter store keys
@@ -54,6 +61,18 @@ func (p Params) Validate() error {
 }
 
 func validateTaxes(i interface{}) error {
-	// TODO: unimplemented
+	taxes, ok := i.([]Tax)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+
+	// TODO: The total rate of Taxes with the same TaxSourceAddress value should not exceed 1.
+
+	for _, tax := range taxes {
+		err := tax.Validate()
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }

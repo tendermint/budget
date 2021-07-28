@@ -24,7 +24,7 @@ func GetQueryCmd() *cobra.Command {
 	}
 
 	taxQueryCmd.AddCommand(
-	GetCmdQueryParams(),
+		GetCmdQueryParams(),
 	// TODO: add query commands
 	// GetCmdQueryTaxes(),
 	)
