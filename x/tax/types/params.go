@@ -3,6 +3,8 @@ package types
 import (
 	"fmt"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"gopkg.in/yaml.v2"
 
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
@@ -10,7 +12,7 @@ import (
 
 const (
 	// MaxTaxNameLength is the maximum length of the name of each tax.
-	MaxTaxNameLength int = 30
+	MaxTaxNameLength int = 50
 )
 
 // Parameter store keys
@@ -65,13 +67,26 @@ func validateTaxes(i interface{}) error {
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
-
-	// TODO: The total rate of Taxes with the same TaxSourceAddress value should not exceed 1.
-
+	addrTotalRate := make(map[string]sdk.Dec)
+	names := make(map[string]bool)
 	for _, tax := range taxes {
 		err := tax.Validate()
 		if err != nil {
 			return err
+		}
+		if rate, ok := addrTotalRate[tax.TaxSourceAddress]; ok {
+			addrTotalRate[tax.TaxSourceAddress] = rate.Add(tax.Rate)
+		} else {
+			addrTotalRate[tax.TaxSourceAddress] = tax.Rate
+		}
+		if _, ok := names[tax.Name]; ok {
+			return sdkerrors.Wrap(ErrDuplicatedTaxName, tax.Name)
+		}
+		names[tax.Name] = true
+	}
+	for addr, totalRate := range addrTotalRate {
+		if totalRate.GT(sdk.NewDec(1)) {
+			return sdkerrors.Wrap(ErrOverflowedTaxRate, addr)
 		}
 	}
 	return nil

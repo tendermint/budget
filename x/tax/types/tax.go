@@ -1,10 +1,20 @@
 package types
 
 import (
+	"fmt"
+	"regexp"
+	"time"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+)
+
+var (
+	reTaxNameString = `[a-zA-Z][a-zA-Z0-9-]{0,49}`
+	reTaxName       = regexp.MustCompile(fmt.Sprintf(`^%s$`, reTaxNameString))
 )
 
 func (tax Tax) String() string {
@@ -22,13 +32,14 @@ func (tax Tax) MarshalYAML() (interface{}, error) {
 }
 
 func (tax Tax) Validate() error {
-	//Name is connected to - without spaces and must be within 30 characters
-	if len(tax.Name) > MaxTaxNameLength || tax.Name == "" {
-		return ErrInvalidTaxName
+	//Name only allowed letters(`A-Z, a-z`), digits(`0-9`), and `-` without spaces and the maximum length is 50.
+	err := ValidateName(tax.Name)
+	if err != nil {
+		return err
 	}
 
 	// Check that the CollectionAddress is a valid address, if there is a CollectionAccountName value, it must be generated in accordance with Rule ADR-028(moudule-account) and matched to CollectionAddress.
-	_, err := ValidityAddrWithName(tax.CollectionAddress, tax.CollectionAccountName)
+	_, err = ValidityAddrWithName(tax.CollectionAddress, tax.CollectionAccountName)
 	if err != nil {
 		// TODO: return error with Wrapping
 		return err
@@ -41,14 +52,22 @@ func (tax Tax) Validate() error {
 		return err
 	}
 
+	// EndTime should not be earlier than StartTime.
 	if tax.EndTime.Before(tax.StartTime) {
 		return ErrInvalidStartEndTime
 	}
 
-	// EndTime should not be earlier than StartTime.
 	if tax.Rate == sdk.ZeroDec() {
 		return ErrZeroTaxRate
 	}
+	return nil
+}
+
+func (tax Tax) Expired(now time.Time) bool {
+	if tax.EndTime.After(now) {
+		return true
+	}
+
 	return nil
 }
 
@@ -58,10 +77,19 @@ func ValidityAddrWithName(bech32, name string) (sdk.AccAddress, error) {
 		return nil, err
 	}
 	if name != "" {
+		// TODO: this rule can be fixed, TBD
 		accFromName := sdk.AccAddress(address.Module(ModuleName, []byte(name)))
 		if acc.String() != accFromName.String() {
 			return nil, ErrInvalidNameOfAddr
 		}
 	}
 	return acc, nil
+}
+
+// ValidateName is the default validation function for Tax.Name.
+func ValidateName(name string) error {
+	if !reTaxName.MatchString(name) {
+		return sdkerrors.Wrap(ErrInvalidTaxName, name)
+	}
+	return nil
 }

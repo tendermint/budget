@@ -61,7 +61,7 @@
       "params": {
         "taxes": [
           {
-            "name": "liquidity_farming_20213Q-20221Q",
+            "name": "liquidity-farming-20213Q-20221Q",
             "rate": "0.300000000000000000",
             "collection_address": "cosmos1...",
             "collection_account_name": "targetModule/targetModuleAccountName",
