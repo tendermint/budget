@@ -1,9 +1,18 @@
 package types
 
 import (
+	"fmt"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	"gopkg.in/yaml.v2"
 
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
+)
+
+const (
+	// MaxTaxNameLength is the maximum length of the name of each tax.
+	MaxTaxNameLength int = 50
 )
 
 // Parameter store keys
@@ -28,7 +37,7 @@ func DefaultParams() Params {
 // ParamSetPairs implements paramstypes.ParamSet.
 func (p *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 	return paramstypes.ParamSetPairs{
-		paramstypes.NewParamSetPair(KeyTaxes, &p.Taxes, validateTaxes),
+		paramstypes.NewParamSetPair(KeyTaxes, &p.Taxes, ValidateTaxes),
 	}
 }
 
@@ -44,7 +53,7 @@ func (p Params) Validate() error {
 		value     interface{}
 		validator func(interface{}) error
 	}{
-		{p.Taxes, validateTaxes},
+		{p.Taxes, ValidateTaxes},
 	} {
 		if err := v.validator(v.value); err != nil {
 			return err
@@ -53,7 +62,32 @@ func (p Params) Validate() error {
 	return nil
 }
 
-func validateTaxes(i interface{}) error {
-	// TODO: unimplemented
+func ValidateTaxes(i interface{}) error {
+	taxes, ok := i.([]Tax)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
+	}
+	addrTotalRate := make(map[string]sdk.Dec)
+	names := make(map[string]bool)
+	for _, tax := range taxes {
+		err := tax.Validate()
+		if err != nil {
+			return err
+		}
+		if rate, ok := addrTotalRate[tax.TaxSourceAddress]; ok {
+			addrTotalRate[tax.TaxSourceAddress] = rate.Add(tax.Rate)
+		} else {
+			addrTotalRate[tax.TaxSourceAddress] = tax.Rate
+		}
+		if _, ok := names[tax.Name]; ok {
+			return sdkerrors.Wrap(ErrDuplicatedTaxName, tax.Name)
+		}
+		names[tax.Name] = true
+	}
+	for addr, totalRate := range addrTotalRate {
+		if totalRate.GT(sdk.NewDec(1)) {
+			return sdkerrors.Wrap(ErrOverflowedTaxRate, addr)
+		}
+	}
 	return nil
 }

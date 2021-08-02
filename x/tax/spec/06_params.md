@@ -6,7 +6,7 @@ The tax module contains the following parameters:
 
 | Key   | Type  | Example                                                                                                                                                                                                                                                                                                                                                                      |
 | ----- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Taxes | []Tax | {"taxes":[{"name":"liquidity_farming_20213Q-20221Q","rate":"0.300000000000000000","collection_address":"cosmos1...","collection_account_name":"targetModule/targetModuleAccountName","tax_source_address":"cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta","tax_source_account_name":"fee_collector","start_time":"2021-10-01T00:00:00Z","end_time":"2022-04-01T00:00:00Z"}]} |
+| Taxes | []Tax | {"taxes":[{"name":"liquidity-farming-20213Q-20221Q","rate":"0.300000000000000000","collection_address":"cosmos1...","collection_account_name":"targetModule/targetModuleAccountName","tax_source_address":"cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta","tax_source_account_name":"fee_collector","start_time":"2021-10-01T00:00:00Z","end_time":"2022-04-01T00:00:00Z"}]} |
 
 ## Taxes
 
@@ -29,12 +29,14 @@ proposal.json
       "key": "Taxes",
       "value": [
         {
-          "name": "testTax",
-          "rate": "0.100000000000000000",
-          "collection_address": "cosmos1w3jhymtfdeshg6t0deqkgerjrhy0ma",
-          "tax_source_address": "cosmos1w3jhymtfdeshg6t0deqkgerjrhy0ma",
-          "start_time": "2021-07-27T19:35:52.392809Z",
-          "end_time": "2021-07-27T19:35:52.39281Z"
+          "name": "liquidity-farming-20213Q-20221Q",
+          "rate": "0.300000000000000000",
+          "collection_address": "cosmos1...",
+          "collection_account_name": "targetModule/targetModuleAccountName",
+          "tax_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+          "tax_source_account_name": "fee_collector",
+          "start_time": "2021-10-01T00:00:00Z",
+          "end_time": "2022-04-01T00:00:00Z"
         }
       ]
     }
@@ -46,7 +48,7 @@ proposal.json
 
 ### Validity Checks
 
-- Name is connected to `-` without spaces and must be within 30 characters
+- Name only allowed letters(`A-Z, a-z`), digits(`0-9`), and `-` without spaces and the maximum length is 50 and not duplicated.
 - The total rate of Taxes with the same `TaxSourceAddress` value should not exceed 1.
 - EndTime should not be earlier than StartTime.
 - Check that the `CollectionAddress` is a valid address, if there is a `CollectionAccountName` value, it must be generated in accordance with Rule [ADR-028(moudule-account)](https://github.com/cosmos/cosmos-sdk/blob/master/docs/architecture/adr-028-public-key-addresses.md#module-account-addresses) and matched to `CollectionAddress`. 
