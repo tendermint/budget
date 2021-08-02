@@ -37,7 +37,7 @@ func DefaultParams() Params {
 // ParamSetPairs implements paramstypes.ParamSet.
 func (p *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 	return paramstypes.ParamSetPairs{
-		paramstypes.NewParamSetPair(KeyTaxes, &p.Taxes, validateTaxes),
+		paramstypes.NewParamSetPair(KeyTaxes, &p.Taxes, ValidateTaxes),
 	}
 }
 
@@ -53,7 +53,7 @@ func (p Params) Validate() error {
 		value     interface{}
 		validator func(interface{}) error
 	}{
-		{p.Taxes, validateTaxes},
+		{p.Taxes, ValidateTaxes},
 	} {
 		if err := v.validator(v.value); err != nil {
 			return err
@@ -62,7 +62,7 @@ func (p Params) Validate() error {
 	return nil
 }
 
-func validateTaxes(i interface{}) error {
+func ValidateTaxes(i interface{}) error {
 	taxes, ok := i.([]Tax)
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)

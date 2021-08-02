@@ -68,7 +68,7 @@ func (tax Tax) Expired(now time.Time) bool {
 		return true
 	}
 
-	return nil
+	return false
 }
 
 func ValidityAddrWithName(bech32, name string) (sdk.AccAddress, error) {
