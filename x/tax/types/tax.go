@@ -64,11 +64,7 @@ func (tax Tax) Validate() error {
 }
 
 func (tax Tax) Expired(now time.Time) bool {
-	if tax.EndTime.After(now) {
-		return true
-	}
-
-	return false
+	return tax.EndTime.After(now)
 }
 
 func ValidityAddrWithName(bech32, name string) (sdk.AccAddress, error) {
