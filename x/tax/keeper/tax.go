@@ -53,7 +53,6 @@ func (k Keeper) TaxCollection(ctx sdk.Context) error {
 		}
 	}
 	if err := k.bankKeeper.InputOutputCoins(ctx, inputs, outputs); err != nil {
-		panic("collection send fail")
 		return err
 	}
 	// TODO: add metric or record total collection coins each tax
