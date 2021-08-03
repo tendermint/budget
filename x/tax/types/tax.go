@@ -63,8 +63,8 @@ func (tax Tax) Validate() error {
 	return nil
 }
 
-func (tax Tax) Expired(now time.Time) bool {
-	return tax.EndTime.After(now)
+func (tax Tax) Expired(blockTime time.Time) bool {
+	return tax.EndTime.After(blockTime)
 }
 
 func ValidityAddrWithName(bech32, name string) (sdk.AccAddress, error) {
@@ -88,4 +88,30 @@ func ValidateName(name string) error {
 		return sdkerrors.Wrap(ErrInvalidTaxName, name)
 	}
 	return nil
+}
+
+type TaxesByTaxSource struct {
+	Taxes     []Tax
+	TotalRate sdk.Dec
+}
+
+type TaxesByTaxSourceMap map[string]TaxesByTaxSource
+
+// Create a map by TaxSourceAddress to handle the taxes for the same TaxSourceAddress together based on the
+// same balance when calculating rates for the same TaxSourceAddress.
+func GetTaxesByTaxSourceMap(taxes []Tax) TaxesByTaxSourceMap {
+	taxesMap := make(TaxesByTaxSourceMap)
+	for _, tax := range taxes {
+		if taxesByTaxSource, ok := taxesMap[tax.TaxSourceAddress]; ok {
+			taxesByTaxSource.TotalRate = taxesByTaxSource.TotalRate.Add(tax.Rate)
+			taxesByTaxSource.Taxes = append(taxesByTaxSource.Taxes, tax)
+			taxesMap[tax.TaxSourceAddress] = taxesByTaxSource
+		} else {
+			taxesMap[tax.TaxSourceAddress] = TaxesByTaxSource{
+				Taxes:     []Tax{tax},
+				TotalRate: tax.Rate,
+			}
+		}
+	}
+	return taxesMap
 }
