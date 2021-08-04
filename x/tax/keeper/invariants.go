@@ -2,14 +2,12 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-
-	"github.com/tendermint/tax/x/tax/types"
 )
 
 // RegisterInvariants registers all tax invariants.
 func RegisterInvariants(ir sdk.InvariantRegistry, k Keeper) {
-	ir.RegisterRoute(types.ModuleName, "tax_pool_accounts_invariant",
-		TaxPoolAccountsInvariant(k))
+	//ir.RegisterRoute(types.ModuleName, "tax_pool_accounts_invariant",
+	//	TaxPoolAccountsInvariant(k))
 }
 
 // AllInvariants runs all invariants of the tax module.

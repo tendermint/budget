@@ -31,7 +31,7 @@ func (k Keeper) TaxCollection(ctx sdk.Context) error {
 			continue
 		}
 		taxSourceBalances := sdk.NewDecCoinsFromCoins(k.bankKeeper.GetAllBalances(ctx, taxSourceAcc)...)
-		expectedCollectionCoins, expectedChangeCoins := taxSourceBalances.QuoDecTruncate(taxesByTaxSource.TotalRate).TruncateDecimal()
+		expectedCollectionCoins, expectedChangeCoins := taxSourceBalances.MulDecTruncate(taxesByTaxSource.TotalRate).TruncateDecimal()
 		var totalCollectionCoins sdk.Coins
 		var totalChangeCoins sdk.DecCoins
 		for _, tax := range taxesByTaxSource.Taxes {
@@ -39,7 +39,7 @@ func (k Keeper) TaxCollection(ctx sdk.Context) error {
 			if err != nil {
 				continue
 			}
-			collectionCoins, changeCoins := taxSourceBalances.QuoDecTruncate(tax.Rate).TruncateDecimal()
+			collectionCoins, changeCoins := taxSourceBalances.MulDecTruncate(tax.Rate).TruncateDecimal()
 			totalCollectionCoins = totalCollectionCoins.Add(collectionCoins...)
 			totalChangeCoins = totalChangeCoins.Add(changeCoins...)
 			sendCoins(taxSourceAcc, collectionAcc, collectionCoins)
@@ -47,6 +47,7 @@ func (k Keeper) TaxCollection(ctx sdk.Context) error {
 		// temporary validation logic
 		if totalCollectionCoins.IsAnyGT(expectedCollectionCoins) {
 			panic("totalCollectionCoins.IsAnyGT(expectedCollectionCoins)")
+
 		}
 		if expectedChangeCoins.Sub(totalChangeCoins).IsAnyNegative() {
 			panic("expectedChangeCoins.Sub(totalChangeCoins).IsAnyNegative()")
@@ -64,7 +65,7 @@ func (k Keeper) CollectibleTaxes(ctx sdk.Context) (taxes []types.Tax) {
 	params := k.GetParams(ctx)
 	for _, tax := range params.Taxes {
 		err := tax.Validate()
-		if err != nil && !tax.Expired(ctx.BlockTime()) {
+		if err == nil && !tax.Expired(ctx.BlockTime()) {
 			taxes = append(taxes, tax)
 		}
 	}
