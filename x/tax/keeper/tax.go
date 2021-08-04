@@ -31,7 +31,19 @@ func (k Keeper) TaxCollection(ctx sdk.Context) error {
 			continue
 		}
 		taxSourceBalances := sdk.NewDecCoinsFromCoins(k.bankKeeper.GetAllBalances(ctx, taxSourceAcc)...)
-		expectedCollectionCoins, expectedChangeCoins := taxSourceBalances.MulDecTruncate(taxesByTaxSource.TotalRate).TruncateDecimal()
+		if taxSourceBalances.IsZero() {
+			continue
+		}
+		expectedCollectionCoins, _ := taxSourceBalances.MulDecTruncate(taxesByTaxSource.TotalRate).TruncateDecimal()
+		var validatedExpectedCollectionCoins sdk.Coins
+		for _, coin := range expectedCollectionCoins {
+			if coin.IsValid() && coin.IsZero() {
+				validatedExpectedCollectionCoins = append(validatedExpectedCollectionCoins, coin)
+			}
+		}
+		var expectedDiffCoins sdk.Coins
+		expectedDiffCoins = expectedCollectionCoins.Sub(validatedExpectedCollectionCoins)
+
 		var totalCollectionCoins sdk.Coins
 		var totalChangeCoins sdk.DecCoins
 		for _, tax := range taxesByTaxSource.Taxes {
@@ -42,14 +54,14 @@ func (k Keeper) TaxCollection(ctx sdk.Context) error {
 			collectionCoins, changeCoins := taxSourceBalances.MulDecTruncate(tax.Rate).TruncateDecimal()
 			totalCollectionCoins = totalCollectionCoins.Add(collectionCoins...)
 			totalChangeCoins = totalChangeCoins.Add(changeCoins...)
+			// TODO: sendcoins after validation
 			sendCoins(taxSourceAcc, collectionAcc, collectionCoins)
 		}
 		// temporary validation logic
-		if totalCollectionCoins.IsAnyGT(expectedCollectionCoins) {
+		if totalCollectionCoins.IsAnyGT(validatedExpectedCollectionCoins) {
 			panic("totalCollectionCoins.IsAnyGT(expectedCollectionCoins)")
-
 		}
-		if expectedChangeCoins.Sub(totalChangeCoins).IsAnyNegative() {
+		if _, neg := sdk.NewDecCoinsFromCoins(expectedDiffCoins...).SafeSub(totalChangeCoins); neg {
 			panic("expectedChangeCoins.Sub(totalChangeCoins).IsAnyNegative()")
 		}
 	}

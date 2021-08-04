@@ -7,7 +7,7 @@ import (
 )
 
 func (suite *KeeperTestSuite) TestTaxCollection() {
-	taxes := []types.Tax{
+	taxes1 := []types.Tax{
 		{
 			Name:                  "test",
 			Rate:                  sdk.MustNewDecFromStr("0.5"),
@@ -50,6 +50,29 @@ func (suite *KeeperTestSuite) TestTaxCollection() {
 		},
 	}
 
+	taxes3 := []types.Tax{
+		{
+			Name:                  "test",
+			Rate:                  sdk.MustNewDecFromStr("0.5"),
+			CollectionAddress:     suite.collectionAddrs[0].String(),
+			CollectionAccountName: "",
+			TaxSourceAddress:      suite.taxSourceAddrs[3].String(),
+			TaxSourceAccountName:  "",
+			StartTime:             mustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:               mustParseRFC3339("9999-12-31T00:00:00Z"),
+		},
+		{
+			Name:                  "test2",
+			Rate:                  sdk.MustNewDecFromStr("0.5"),
+			CollectionAddress:     suite.collectionAddrs[1].String(),
+			CollectionAccountName: "",
+			TaxSourceAddress:      suite.taxSourceAddrs[3].String(),
+			TaxSourceAccountName:  "",
+			StartTime:             mustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:               mustParseRFC3339("9999-12-31T00:00:00Z"),
+		},
+	}
+
 	for _, tc := range []struct {
 		name           string
 		taxes          []types.Tax
@@ -58,8 +81,8 @@ func (suite *KeeperTestSuite) TestTaxCollection() {
 		expectErr      bool
 	}{
 		{
-			"test1",
-			taxes,
+			"basic taxes case",
+			taxes1,
 			[]sdk.AccAddress{
 				suite.collectionAddrs[0],
 				suite.collectionAddrs[1],
@@ -81,8 +104,8 @@ func (suite *KeeperTestSuite) TestTaxCollection() {
 			false,
 		},
 		{
-			"test2",
-			[]types.Tax{taxes[3]},
+			"only expired tax case",
+			[]types.Tax{taxes1[3]},
 			[]sdk.AccAddress{
 				suite.collectionAddrs[3],
 				suite.taxSourceAddrs[2],
@@ -93,12 +116,29 @@ func (suite *KeeperTestSuite) TestTaxCollection() {
 			},
 			false,
 		},
+		{
+			"tax source has small balances case",
+			taxes3,
+			[]sdk.AccAddress{
+				suite.collectionAddrs[0],
+				suite.collectionAddrs[1],
+				suite.taxSourceAddrs[3],
+			},
+			[]sdk.Coins{
+				mustParseCoinsNormalized("1denom2,1denom3,500000000stake"),
+				mustParseCoinsNormalized("1denom2,1denom3,500000000stake"),
+				mustParseCoinsNormalized("1denom1,1denom3"),
+			},
+			false,
+		},
 	} {
 		suite.Run(tc.name, func() {
 			suite.SetupTest()
 			suite.keeper.SetParams(suite.ctx, types.Params{Taxes: tc.taxes})
-			err := suite.keeper.TaxCollection(suite.ctx)
+			//err := simapp.FundAccount(suite.app.BankKeeper, suite.ctx, suite.taxSourceAddrs[3], mustParseCoinsNormalized("1denom1,1denom2,1denom3,1stake"))
+			//suite.Require().NoError(err)
 
+			err := suite.keeper.TaxCollection(suite.ctx)
 			if tc.expectErr {
 				suite.Error(err)
 			} else {

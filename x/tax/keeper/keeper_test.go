@@ -35,6 +35,7 @@ var (
 		sdk.NewInt64Coin(denom1, 1_000_000_000),
 		sdk.NewInt64Coin(denom2, 1_000_000_000),
 		sdk.NewInt64Coin(denom3, 1_000_000_000))
+	smallBalances = mustParseCoinsNormalized("1denom1,2denom2,3denom3,1000000000stake")
 )
 
 type KeeperTestSuite struct {
@@ -69,12 +70,16 @@ func (suite *KeeperTestSuite) SetupTest() {
 	tAddr1 := sdk.AccAddress(address.Module(types.ModuleName, []byte("taxSourceAddr1")))
 	tAddr2 := sdk.AccAddress(address.Module(types.ModuleName, []byte("taxSourceAddr2")))
 	tAddr3 := sdk.AccAddress(address.Module(types.ModuleName, []byte("taxSourceAddr3")))
-	suite.taxSourceAddrs = []sdk.AccAddress{tAddr1, tAddr2, tAddr3}
+	tAddr4 := sdk.AccAddress(address.Module(types.ModuleName, []byte("taxSourceAddr4")))
+	tAddr5 := sdk.AccAddress(address.Module(types.ModuleName, []byte("taxSourceAddr5")))
+	suite.taxSourceAddrs = []sdk.AccAddress{tAddr1, tAddr2, tAddr3, tAddr4, tAddr5}
 	suite.collectionAddrs = []sdk.AccAddress{cAddr1, cAddr2, cAddr3, cAddr4, cAddr5}
-	for _, addr := range append(suite.addrs, suite.taxSourceAddrs...) {
+	for _, addr := range append(suite.addrs, suite.taxSourceAddrs[:3]...) {
 		err := simapp.FundAccount(suite.app.BankKeeper, suite.ctx, addr, initialBalances)
 		suite.Require().NoError(err)
 	}
+	err := simapp.FundAccount(suite.app.BankKeeper, suite.ctx, suite.taxSourceAddrs[3], smallBalances)
+	suite.Require().NoError(err)
 }
 
 func mustParseRFC3339(s string) time.Time {
