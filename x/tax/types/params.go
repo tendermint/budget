@@ -67,25 +67,21 @@ func ValidateTaxes(i interface{}) error {
 	if !ok {
 		return fmt.Errorf("invalid parameter type: %T", i)
 	}
-	addrTotalRate := make(map[string]sdk.Dec)
 	names := make(map[string]bool)
 	for _, tax := range taxes {
 		err := tax.Validate()
 		if err != nil {
 			return err
 		}
-		if rate, ok := addrTotalRate[tax.TaxSourceAddress]; ok {
-			addrTotalRate[tax.TaxSourceAddress] = rate.Add(tax.Rate)
-		} else {
-			addrTotalRate[tax.TaxSourceAddress] = tax.Rate
-		}
 		if _, ok := names[tax.Name]; ok {
 			return sdkerrors.Wrap(ErrDuplicatedTaxName, tax.Name)
 		}
 		names[tax.Name] = true
 	}
-	for addr, totalRate := range addrTotalRate {
-		if totalRate.GT(sdk.NewDec(1)) {
+
+	taxesMap := GetTaxesByTaxSourceMap(taxes)
+	for addr, taxes := range taxesMap {
+		if taxes.TotalRate.GT(sdk.NewDec(1)) {
 			return sdkerrors.Wrap(ErrOverflowedTaxRate, addr)
 		}
 	}
