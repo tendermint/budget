@@ -41,8 +41,7 @@ func (k Keeper) TaxCollection(ctx sdk.Context) error {
 				validatedExpectedCollectionCoins = append(validatedExpectedCollectionCoins, coin)
 			}
 		}
-		var expectedDiffCoins sdk.Coins
-		expectedDiffCoins = expectedCollectionCoins.Sub(validatedExpectedCollectionCoins)
+		expectedDiffCoins := expectedCollectionCoins.Sub(validatedExpectedCollectionCoins)
 
 		var totalCollectionCoins sdk.Coins
 		var totalChangeCoins sdk.DecCoins
