@@ -17,6 +17,15 @@ paths:
               params:
                 type: object
                 properties:
+                  epoch_blocks:
+                    type: integer
+                    format: int64
+                    title: >-
+                      The universal epoch length in number of blocks, Every
+                      process for tax collecting is executed with this
+                      epoch_blocks
+
+                      frequency
                   taxes:
                     type: array
                     items:
@@ -30,26 +39,16 @@ paths:
                           title: >-
                             rate specifies the distributing amount by ratio of
                             total tax source
-                        collection_address:
-                          type: string
-                          title: >-
-                            collection_address defines the bech32-encoded
-                            address of the tax pool to distribute
-                        collection_account_name:
-                          type: string
-                          title: >-
-                            collection_account_name defines the bech32-encoded
-                            address of the tax pool to distribute
                         tax_source_address:
                           type: string
                           title: >-
                             tax_source_address defines the bech32-encoded
                             address that source of the tax
-                        tax_source_account_name:
+                        collection_address:
                           type: string
                           title: >-
-                            tax_source_account_name defines the bech32-encoded
-                            address that source of the tax
+                            collection_address defines the bech32-encoded
+                            address of the tax pool to distribute
                         start_time:
                           type: string
                           format: date-time
@@ -59,6 +58,13 @@ paths:
                           format: date-time
                           title: end_time specifies the end time of the tax
                       title: Tax defines
+                    description: >-
+                      Taxes parameter can be added, deleted, and modified
+                      through gov.ParameterChangeProposal, and for each purpose,
+                      the
+
+                      changes in the existing tax list should be applied and
+                      set.
                 description: Params defines the set of params for the tax module.
             description: >-
               QueryParamsResponse is the response type for the Query/Params RPC
@@ -277,26 +283,16 @@ paths:
                       title: >-
                         rate specifies the distributing amount by ratio of total
                         tax source
-                    collection_address:
-                      type: string
-                      title: >-
-                        collection_address defines the bech32-encoded address of
-                        the tax pool to distribute
-                    collection_account_name:
-                      type: string
-                      title: >-
-                        collection_account_name defines the bech32-encoded
-                        address of the tax pool to distribute
                     tax_source_address:
                       type: string
                       title: >-
                         tax_source_address defines the bech32-encoded address
                         that source of the tax
-                    tax_source_account_name:
+                    collection_address:
                       type: string
                       title: >-
-                        tax_source_account_name defines the bech32-encoded
-                        address that source of the tax
+                        collection_address defines the bech32-encoded address of
+                        the tax pool to distribute
                     start_time:
                       type: string
                       format: date-time
@@ -517,6 +513,14 @@ definitions:
   cosmos.tax.v1beta1.Params:
     type: object
     properties:
+      epoch_blocks:
+        type: integer
+        format: int64
+        title: >-
+          The universal epoch length in number of blocks, Every process for tax
+          collecting is executed with this epoch_blocks
+
+          frequency
       taxes:
         type: array
         items:
@@ -530,26 +534,16 @@ definitions:
               title: >-
                 rate specifies the distributing amount by ratio of total tax
                 source
-            collection_address:
-              type: string
-              title: >-
-                collection_address defines the bech32-encoded address of the tax
-                pool to distribute
-            collection_account_name:
-              type: string
-              title: >-
-                collection_account_name defines the bech32-encoded address of
-                the tax pool to distribute
             tax_source_address:
               type: string
               title: >-
                 tax_source_address defines the bech32-encoded address that
                 source of the tax
-            tax_source_account_name:
+            collection_address:
               type: string
               title: >-
-                tax_source_account_name defines the bech32-encoded address that
-                source of the tax
+                collection_address defines the bech32-encoded address of the tax
+                pool to distribute
             start_time:
               type: string
               format: date-time
@@ -559,6 +553,11 @@ definitions:
               format: date-time
               title: end_time specifies the end time of the tax
           title: Tax defines
+        description: >-
+          Taxes parameter can be added, deleted, and modified through
+          gov.ParameterChangeProposal, and for each purpose, the
+
+          changes in the existing tax list should be applied and set.
     description: Params defines the set of params for the tax module.
   cosmos.tax.v1beta1.QueryParamsResponse:
     type: object
@@ -566,6 +565,14 @@ definitions:
       params:
         type: object
         properties:
+          epoch_blocks:
+            type: integer
+            format: int64
+            title: >-
+              The universal epoch length in number of blocks, Every process for
+              tax collecting is executed with this epoch_blocks
+
+              frequency
           taxes:
             type: array
             items:
@@ -579,26 +586,16 @@ definitions:
                   title: >-
                     rate specifies the distributing amount by ratio of total tax
                     source
-                collection_address:
-                  type: string
-                  title: >-
-                    collection_address defines the bech32-encoded address of the
-                    tax pool to distribute
-                collection_account_name:
-                  type: string
-                  title: >-
-                    collection_account_name defines the bech32-encoded address
-                    of the tax pool to distribute
                 tax_source_address:
                   type: string
                   title: >-
                     tax_source_address defines the bech32-encoded address that
                     source of the tax
-                tax_source_account_name:
+                collection_address:
                   type: string
                   title: >-
-                    tax_source_account_name defines the bech32-encoded address
-                    that source of the tax
+                    collection_address defines the bech32-encoded address of the
+                    tax pool to distribute
                 start_time:
                   type: string
                   format: date-time
@@ -608,6 +605,11 @@ definitions:
                   format: date-time
                   title: end_time specifies the end time of the tax
               title: Tax defines
+            description: >-
+              Taxes parameter can be added, deleted, and modified through
+              gov.ParameterChangeProposal, and for each purpose, the
+
+              changes in the existing tax list should be applied and set.
         description: Params defines the set of params for the tax module.
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
   cosmos.tax.v1beta1.QueryTaxesResponse:
@@ -626,26 +628,16 @@ definitions:
               title: >-
                 rate specifies the distributing amount by ratio of total tax
                 source
-            collection_address:
-              type: string
-              title: >-
-                collection_address defines the bech32-encoded address of the tax
-                pool to distribute
-            collection_account_name:
-              type: string
-              title: >-
-                collection_account_name defines the bech32-encoded address of
-                the tax pool to distribute
             tax_source_address:
               type: string
               title: >-
                 tax_source_address defines the bech32-encoded address that
                 source of the tax
-            tax_source_account_name:
+            collection_address:
               type: string
               title: >-
-                tax_source_account_name defines the bech32-encoded address that
-                source of the tax
+                collection_address defines the bech32-encoded address of the tax
+                pool to distribute
             start_time:
               type: string
               format: date-time
@@ -665,26 +657,16 @@ definitions:
       rate:
         type: string
         title: rate specifies the distributing amount by ratio of total tax source
-      collection_address:
-        type: string
-        title: >-
-          collection_address defines the bech32-encoded address of the tax pool
-          to distribute
-      collection_account_name:
-        type: string
-        title: >-
-          collection_account_name defines the bech32-encoded address of the tax
-          pool to distribute
       tax_source_address:
         type: string
         title: >-
           tax_source_address defines the bech32-encoded address that source of
           the tax
-      tax_source_account_name:
+      collection_address:
         type: string
         title: >-
-          tax_source_account_name defines the bech32-encoded address that source
-          of the tax
+          collection_address defines the bech32-encoded address of the tax pool
+          to distribute
       start_time:
         type: string
         format: date-time
