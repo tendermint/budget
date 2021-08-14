@@ -8,12 +8,11 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/address"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 )
 
 var (
-	reTaxNameString = `[a-zA-Z][a-zA-Z0-9-]{0,49}`
+	reTaxNameString = fmt.Sprintf(`[a-zA-Z][a-zA-Z0-9-]{0,%d}`, MaxTaxNameLength-1)
 	reTaxName       = regexp.MustCompile(fmt.Sprintf(`^%s$`, reTaxNameString))
 )
 
@@ -38,15 +37,15 @@ func (tax Tax) Validate() error {
 		return err
 	}
 
-	// Check that the CollectionAddress is a valid address, if there is a CollectionAccountName value, it must be generated in accordance with Rule ADR-028(moudule-account) and matched to CollectionAddress.
-	_, err = ValidityAddrWithName(tax.CollectionAddress, tax.CollectionAccountName)
+	// Check that the CollectionAddress is a valid address.
+	_, err = ValidityAddr(tax.CollectionAddress)
 	if err != nil {
 		// TODO: return error with Wrapping
 		return err
 	}
 
-	// Check that the TaxSourceAddress is a valid address, if there is a TaxSourceAccountName value, it must be generated in accordance with Rule ADR-028(moudule-account) and matched to TaxSourceAddress.
-	_, err = ValidityAddrWithName(tax.TaxSourceAddress, tax.TaxSourceAccountName)
+	// Check that the TaxSourceAddress is a valid address.
+	_, err = ValidityAddr(tax.TaxSourceAddress)
 	if err != nil {
 		// TODO: return error with Wrapping
 		return err
@@ -67,17 +66,10 @@ func (tax Tax) Expired(blockTime time.Time) bool {
 	return !tax.EndTime.After(blockTime)
 }
 
-func ValidityAddrWithName(bech32, name string) (sdk.AccAddress, error) {
+func ValidityAddr(bech32 string) (sdk.AccAddress, error) {
 	acc, err := sdk.AccAddressFromBech32(bech32)
 	if err != nil {
 		return nil, err
-	}
-	if name != "" {
-		// TODO: this rule can be fixed, TBD
-		accFromName := sdk.AccAddress(address.Module(ModuleName, []byte(name)))
-		if acc.String() != accFromName.String() {
-			return nil, ErrInvalidNameOfAddr
-		}
 	}
 	return acc, nil
 }

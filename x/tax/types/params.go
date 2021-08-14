@@ -12,12 +12,14 @@ import (
 
 const (
 	// MaxTaxNameLength is the maximum length of the name of each tax.
-	MaxTaxNameLength int = 50
+	MaxTaxNameLength   int    = 50
+	DefaultEpochBlocks uint32 = 1
 )
 
 // Parameter store keys
 var (
-	KeyTaxes = []byte("Taxes")
+	KeyTaxes       = []byte("Taxes")
+	KeyEpochBlocks = []byte("EpochBlocks")
 )
 
 var _ paramstypes.ParamSet = (*Params)(nil)
@@ -30,7 +32,8 @@ func ParamKeyTable() paramstypes.KeyTable {
 // DefaultParams returns the default tax module parameters.
 func DefaultParams() Params {
 	return Params{
-		Taxes: []Tax{},
+		Taxes:       []Tax{},
+		EpochBlocks: DefaultEpochBlocks,
 	}
 }
 
@@ -38,6 +41,7 @@ func DefaultParams() Params {
 func (p *Params) ParamSetPairs() paramstypes.ParamSetPairs {
 	return paramstypes.ParamSetPairs{
 		paramstypes.NewParamSetPair(KeyTaxes, &p.Taxes, ValidateTaxes),
+		paramstypes.NewParamSetPair(KeyEpochBlocks, &p.EpochBlocks, ValidateEpochBlocks),
 	}
 }
 
@@ -84,6 +88,14 @@ func ValidateTaxes(i interface{}) error {
 		if taxes.TotalRate.GT(sdk.NewDec(1)) {
 			return sdkerrors.Wrap(ErrOverflowedTaxRate, addr)
 		}
+	}
+	return nil
+}
+
+func ValidateEpochBlocks(i interface{}) error {
+	_, ok := i.(uint32)
+	if !ok {
+		return fmt.Errorf("invalid parameter type: %T", i)
 	}
 	return nil
 }

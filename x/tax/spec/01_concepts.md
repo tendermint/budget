@@ -59,14 +59,13 @@
   {
     "tax": {
       "params": {
+        "epoch_blocks": 1,
         "taxes": [
           {
             "name": "liquidity-farming-20213Q-20221Q",
             "rate": "0.300000000000000000",
-            "collection_address": "cosmos1...",
-            "collection_account_name": "targetModule/targetModuleAccountName",
             "tax_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta", // Address corresponding to fee_collector module account in cosmoshub case
-            "tax_source_account_name": "fee_collector",
+            "collection_address": "cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl", // 32-bytes address case, sdk.AccAddress(address.Module("farming", []byte("FarmingTax"))).String()
             "start_time": "2021-10-01T00:00:00Z",
             "end_time": "2022-04-01T00:00:00Z"
           }

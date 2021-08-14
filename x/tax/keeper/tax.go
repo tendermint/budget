@@ -74,10 +74,12 @@ func (k Keeper) TaxCollection(ctx sdk.Context) error {
 // Get all the Taxes registered in params.Taxes and return only the valid and not expired taxes
 func (k Keeper) CollectibleTaxes(ctx sdk.Context) (taxes []types.Tax) {
 	params := k.GetParams(ctx)
-	for _, tax := range params.Taxes {
-		err := tax.Validate()
-		if err == nil && !tax.Expired(ctx.BlockTime()) {
-			taxes = append(taxes, tax)
+	if params.EpochBlocks > 0 && ctx.BlockHeight()%int64(params.EpochBlocks) == 0 {
+		for _, tax := range params.Taxes {
+			err := tax.Validate()
+			if err == nil && !tax.Expired(ctx.BlockTime()) {
+				taxes = append(taxes, tax)
+			}
 		}
 	}
 	return
