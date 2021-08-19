@@ -215,7 +215,7 @@ func NewTaxApp(
 		authtypes.StoreKey, banktypes.StoreKey, stakingtypes.StoreKey,
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
-		evidencetypes.StoreKey, capabilitytypes.StoreKey, taxtypes.StoreKey,
+		evidencetypes.StoreKey, capabilitytypes.StoreKey, authzkeeper.StoreKey, taxtypes.StoreKey,
 		// todo: tax ordering
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
