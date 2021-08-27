@@ -13,13 +13,13 @@ func RegisterInvariants(ir sdk.InvariantRegistry, k Keeper) {
 // AllInvariants runs all invariants of the budget module.
 func AllInvariants(k Keeper) sdk.Invariant {
 	return func(ctx sdk.Context) (string, bool) {
-		res, stop := TaxPoolAccountsInvariant(k)(ctx)
+		res, stop := BudgetPoolAccountsInvariant(k)(ctx)
 		return res, stop
 	}
 }
 
-// TaxPoolAccountsInvariant checks that invariants of budget source, collecting account with each module account name
-func TaxPoolAccountsInvariant(k Keeper) sdk.Invariant {
+// BudgetPoolAccountsInvariant checks that invariants of budget source, collecting account with each module account name
+func BudgetPoolAccountsInvariant(k Keeper) sdk.Invariant {
 	// TODO: not implemented
 	return nil
 	//return func(ctx sdk.Context) (string, bool) {
