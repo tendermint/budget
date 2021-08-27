@@ -1,4 +1,4 @@
-module github.com/tendermint/tax
+module github.com/tendermint/budget
 
 go 1.16
 
