@@ -16,3 +16,17 @@ type Budget struct {
 	EndTime             time.Time // end_time specifies the end time of the budget
 }
 ```
+
+### Total collected coins
+
+The total collected coins for each budget are stored as follows:
+```
+0x11 | BudgetName -> TotalCollectedCoins
+```
+
+Where `TotalCollectedCoins` is just a wrapper around `sdk.Coins`:
+```go
+type TotalCollectedCoins struct {
+	TotalCollectedCoins sdk.Coins
+}
+```
