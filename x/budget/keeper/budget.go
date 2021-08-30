@@ -55,6 +55,7 @@ func (k Keeper) BudgetCollection(ctx sdk.Context) error {
 			totalChangeCoins = totalChangeCoins.Add(changeCoins...)
 			// TODO: sendcoins after validation
 			sendCoins(budgetSourceAcc, collectionAcc, collectionCoins)
+			k.AddTotalCollectedCoins(ctx, budget.Name, collectionCoins)
 		}
 		// temporary validation logic
 		if totalCollectionCoins.IsAnyGT(validatedExpectedCollectionCoins) {
@@ -67,7 +68,7 @@ func (k Keeper) BudgetCollection(ctx sdk.Context) error {
 	if err := k.bankKeeper.InputOutputCoins(ctx, inputs, outputs); err != nil {
 		return err
 	}
-	// TODO: add metric or record total collection coins each budget
+	// TODO: add metric
 	return nil
 }
 

@@ -70,3 +70,30 @@ func (k Keeper) SetParams(ctx sdk.Context, params types.Params) {
 
 // GetCodec return codec.Codec object used by the keeper
 func (k Keeper) GetCodec() codec.BinaryCodec { return k.cdc }
+
+// GetTotalCollectedCoins returns total collected coins for a budget.
+func (k Keeper) GetTotalCollectedCoins(ctx sdk.Context, budgetName string) sdk.Coins {
+	store := ctx.KVStore(k.storeKey)
+	bz := store.Get(types.GetTotalCollectedCoinsKey(budgetName))
+	if bz == nil {
+		return nil
+	}
+	var collectedCoins types.TotalCollectedCoins
+	k.cdc.MustUnmarshal(bz, &collectedCoins)
+	return collectedCoins.TotalCollectedCoins
+}
+
+// SetTotalCollectedCoins sets total collected coins for a budget.
+func (k Keeper) SetTotalCollectedCoins(ctx sdk.Context, budgetName string, amount sdk.Coins) {
+	store := ctx.KVStore(k.storeKey)
+	collectedCoins := types.TotalCollectedCoins{TotalCollectedCoins: amount}
+	bz := k.cdc.MustMarshal(&collectedCoins)
+	store.Set(types.GetTotalCollectedCoinsKey(budgetName), bz)
+}
+
+// AddTotalCollectedCoins increases total collected coins for a budget.
+func (k Keeper) AddTotalCollectedCoins(ctx sdk.Context, budgetName string, amount sdk.Coins) {
+	collectedCoins := k.GetTotalCollectedCoins(ctx, budgetName)
+	collectedCoins = collectedCoins.Add(amount...)
+	k.SetTotalCollectedCoins(ctx, budgetName, collectedCoins)
+}

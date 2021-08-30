@@ -34,5 +34,15 @@ func (k Querier) Budgets(c context.Context, req *types.QueryBudgetsRequest) (*ty
 	var params types.Params
 	k.paramSpace.GetParamSet(ctx, &params)
 
-	return &types.QueryBudgetsResponse{Budgets: params.Budgets}, nil
+	var budgets []types.BudgetResponse
+	for _, b := range params.Budgets {
+		// TODO: filter budgets
+		collectedCoins := k.GetTotalCollectedCoins(ctx, b.Name)
+		budgets = append(budgets, types.BudgetResponse{
+			Budget:              b,
+			TotalCollectedCoins: collectedCoins,
+		})
+	}
+
+	return &types.QueryBudgetsResponse{Budgets: budgets}, nil
 }

@@ -13,3 +13,11 @@ const (
 	// QuerierRoute is the querier route for the budget module
 	QuerierRoute = ModuleName
 )
+
+var (
+	TotalCollectedCoinsKeyPrefix = []byte{0x11}
+)
+
+func GetTotalCollectedCoinsKey(budgetName string) []byte {
+	return append(TotalCollectedCoinsKeyPrefix, []byte(budgetName)...)
+}
