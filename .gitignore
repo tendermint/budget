@@ -25,7 +25,7 @@ buf-stamp
 
 # Data - ideally these don't exist
 app/data/*
-x/tax/client/lcd/keys/*
+x/budget/client/lcd/keys/*
 mytestnet
 
 # Testing
