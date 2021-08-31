@@ -255,7 +255,6 @@ func (suite *KeeperTestSuite) TestTotalCollectedCoins() {
 
 	params := suite.keeper.GetParams(suite.ctx)
 	params.Budgets = []types.Budget{budget}
-	params.EpochBlocks = types.DefaultEpochBlocks
 	suite.keeper.SetParams(suite.ctx, params)
 
 	balance := suite.app.BankKeeper.GetAllBalances(suite.ctx, suite.budgetSourceAddrs[0])

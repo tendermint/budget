@@ -30,6 +30,18 @@ func (k Querier) Budgets(c context.Context, req *types.QueryBudgetsRequest) (*ty
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
+	if req.BudgetSourceAddress != "" {
+		if _, err := sdk.AccAddressFromBech32(req.BudgetSourceAddress); err != nil {
+			return nil, err
+		}
+	}
+
+	if req.CollectionAddress != "" {
+		if _, err := sdk.AccAddressFromBech32(req.CollectionAddress); err != nil {
+			return nil, err
+		}
+	}
+
 	ctx := sdk.UnwrapSDKContext(c)
 	var params types.Params
 	k.paramSpace.GetParamSet(ctx, &params)
@@ -41,7 +53,7 @@ func (k Querier) Budgets(c context.Context, req *types.QueryBudgetsRequest) (*ty
 			req.CollectionAddress != "" && b.CollectionAddress != req.CollectionAddress {
 			continue
 		}
-		
+
 		collectedCoins := k.GetTotalCollectedCoins(ctx, b.Name)
 		budgets = append(budgets, types.BudgetResponse{
 			Budget:              b,
