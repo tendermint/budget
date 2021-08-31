@@ -44,6 +44,7 @@ type KeeperTestSuite struct {
 	app               *simapp.BudgetApp
 	ctx               sdk.Context
 	keeper            keeper.Keeper
+	querier           keeper.Querier
 	addrs             []sdk.AccAddress
 	budgetSourceAddrs []sdk.AccAddress
 	collectionAddrs   []sdk.AccAddress
@@ -61,6 +62,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.app = app
 	suite.ctx = ctx
 	suite.keeper = suite.app.BudgetKeeper
+	suite.querier = keeper.Querier{Keeper: suite.keeper}
 	suite.addrs = simapp.AddTestAddrs(suite.app, suite.ctx, 10, sdk.ZeroInt())
 	cAddr1 := sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr1")))
 	cAddr2 := sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr2")))
