@@ -221,3 +221,49 @@ func (suite *KeeperTestSuite) TestBudgetCollection() {
 		})
 	}
 }
+
+func (suite *KeeperTestSuite) TestBudgetExpiration() {
+	// TODO: not implemented
+}
+
+func (suite *KeeperTestSuite) TestGetSetTotalCollectedCoins() {
+	collectedCoins := suite.keeper.GetTotalCollectedCoins(suite.ctx, "budget1")
+	suite.Require().Nil(collectedCoins)
+
+	suite.keeper.SetTotalCollectedCoins(suite.ctx, "budget1", sdk.NewCoins(sdk.NewInt64Coin(denom1, 1000000)))
+	collectedCoins = suite.keeper.GetTotalCollectedCoins(suite.ctx, "budget1")
+	suite.Require().True(coinsEq(sdk.NewCoins(sdk.NewInt64Coin(denom1, 1000000)), collectedCoins))
+
+	suite.keeper.AddTotalCollectedCoins(suite.ctx, "budget1", sdk.NewCoins(sdk.NewInt64Coin(denom2, 1000000)))
+	collectedCoins = suite.keeper.GetTotalCollectedCoins(suite.ctx, "budget1")
+	suite.Require().True(coinsEq(sdk.NewCoins(sdk.NewInt64Coin(denom1, 1000000), sdk.NewInt64Coin(denom2, 1000000)), collectedCoins))
+
+	suite.keeper.AddTotalCollectedCoins(suite.ctx, "budget2", sdk.NewCoins(sdk.NewInt64Coin(denom1, 1000000)))
+	collectedCoins = suite.keeper.GetTotalCollectedCoins(suite.ctx, "budget2")
+	suite.Require().True(coinsEq(sdk.NewCoins(sdk.NewInt64Coin(denom1, 1000000)), collectedCoins))
+}
+
+func (suite *KeeperTestSuite) TestTotalCollectedCoins() {
+	budget := types.Budget{
+		Name:                "budget1",
+		Rate:                sdk.NewDecWithPrec(5, 2), // 5%
+		BudgetSourceAddress: suite.budgetSourceAddrs[0].String(),
+		CollectionAddress:   suite.collectionAddrs[0].String(),
+		StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
+		EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+	}
+
+	params := suite.keeper.GetParams(suite.ctx)
+	params.Budgets = []types.Budget{budget}
+	suite.keeper.SetParams(suite.ctx, params)
+
+	balance := suite.app.BankKeeper.GetAllBalances(suite.ctx, suite.budgetSourceAddrs[0])
+	expectedCoins, _ := sdk.NewDecCoinsFromCoins(balance...).MulDec(sdk.NewDecWithPrec(5, 2)).TruncateDecimal()
+
+	suite.ctx = suite.ctx.WithBlockTime(mustParseRFC3339("2021-08-31T00:00:00Z"))
+	err := suite.keeper.BudgetCollection(suite.ctx)
+	suite.Require().NoError(err)
+
+	collectedCoins := suite.keeper.GetTotalCollectedCoins(suite.ctx, "budget1")
+	suite.Require().True(coinsEq(expectedCoins, collectedCoins))
+}

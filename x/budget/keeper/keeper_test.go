@@ -44,6 +44,7 @@ type KeeperTestSuite struct {
 	app               *simapp.BudgetApp
 	ctx               sdk.Context
 	keeper            keeper.Keeper
+	querier           keeper.Querier
 	addrs             []sdk.AccAddress
 	budgetSourceAddrs []sdk.AccAddress
 	collectionAddrs   []sdk.AccAddress
@@ -61,6 +62,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.app = app
 	suite.ctx = ctx
 	suite.keeper = suite.app.BudgetKeeper
+	suite.querier = keeper.Querier{Keeper: suite.keeper}
 	suite.addrs = simapp.AddTestAddrs(suite.app, suite.ctx, 10, sdk.ZeroInt())
 	cAddr1 := sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr1")))
 	cAddr2 := sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr2")))
@@ -80,6 +82,10 @@ func (suite *KeeperTestSuite) SetupTest() {
 	}
 	err := simapp.FundAccount(suite.app.BankKeeper, suite.ctx, suite.budgetSourceAddrs[3], smallBalances)
 	suite.Require().NoError(err)
+}
+
+func coinsEq(exp, got sdk.Coins) (bool, string, string, string) {
+	return exp.IsEqual(got), "expected:\t%v\ngot:\t\t%v", exp.String(), got.String()
 }
 
 func mustParseRFC3339(s string) time.Time {
