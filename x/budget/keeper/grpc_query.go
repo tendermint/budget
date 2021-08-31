@@ -36,7 +36,12 @@ func (k Querier) Budgets(c context.Context, req *types.QueryBudgetsRequest) (*ty
 
 	var budgets []types.BudgetResponse
 	for _, b := range params.Budgets {
-		// TODO: filter budgets
+		if req.Name != "" && b.Name != req.Name ||
+			req.BudgetSourceAddress != "" && b.BudgetSourceAddress != req.BudgetSourceAddress ||
+			req.CollectionAddress != "" && b.CollectionAddress != req.CollectionAddress {
+			continue
+		}
+		
 		collectedCoins := k.GetTotalCollectedCoins(ctx, b.Name)
 		budgets = append(budgets, types.BudgetResponse{
 			Budget:              b,
