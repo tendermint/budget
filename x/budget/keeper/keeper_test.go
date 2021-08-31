@@ -82,6 +82,10 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.Require().NoError(err)
 }
 
+func coinsEq(exp, got sdk.Coins) (bool, string, string, string) {
+	return exp.IsEqual(got), "expected:\t%v\ngot:\t\t%v", exp.String(), got.String()
+}
+
 func mustParseRFC3339(s string) time.Time {
 	t, err := time.Parse(time.RFC3339, s)
 	if err != nil {
