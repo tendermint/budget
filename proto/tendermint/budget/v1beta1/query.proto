@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package cosmos.budget.v1beta1;
+
+import "tendermint/budget/v1beta1/budget.proto";
+import "cosmos/base/query/v1beta1/pagination.proto";
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/api/annotations.proto";
+import "cosmos_proto/cosmos.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/tendermint/budget/x/budget/types";
+
+// Query defines the gRPC query service for the budget module.
+service Query {
+  // Params returns parameters of the budget module.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/cosmos/budget/v1beta1/params";
+  }
+
+  // Budgets returns all budgets.
+  rpc Budgets(QueryBudgetsRequest) returns (QueryBudgetsResponse) {
+    option (google.api.http).get = "/cosmos/budget/v1beta1/budgets";
+  }
+}
+
+// QueryParamsRequest is the request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+// QueryBudgetsRequest is the request type for the Query/Budgets RPC method.
+message QueryBudgetsRequest {
+  string name                  = 1;
+  string budget_source_address = 2;
+  string collection_address    = 3;
+}
+
+// QueryBudgetsResponse is the response type for the Query/Budgets RPC method.
+message QueryBudgetsResponse {
+  repeated BudgetResponse budgets = 1 [(gogoproto.nullable) = false];
+}
+
+message BudgetResponse {
+  Budget   budget                                         = 1 [(gogoproto.nullable) = false];
+  repeated cosmos.base.v1beta1.Coin total_collected_coins = 2 [
+    (gogoproto.moretags)     = "yaml:\"total_collected_coins\"",
+    (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
+    (gogoproto.nullable)     = false
+  ];
+}

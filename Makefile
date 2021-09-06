@@ -49,8 +49,8 @@ build_tags_comma_sep := $(subst $(whitespace),$(comma),$(build_tags))
 
 # process linker flags
 
-ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=taxd \
-		  -X github.com/cosmos/cosmos-sdk/version.AppName=taxd \
+ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=budget \
+		  -X github.com/cosmos/cosmos-sdk/version.AppName=budgetd \
 		  -X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 		  -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
 		  -X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
@@ -75,22 +75,22 @@ include contrib/devtools/Makefile
 
 build: go.sum
 ifeq ($(OS),Windows_NT)
-	go build $(BUILD_FLAGS) -o build/taxd.exe ./cmd/taxd
+	go build $(BUILD_FLAGS) -o build/budgetd.exe ./cmd/budgetd
 else
-	go build $(BUILD_FLAGS) -o build/taxd ./cmd/taxd
+	go build $(BUILD_FLAGS) -o build/budgetd ./cmd/budgetd
 endif
 
 build-linux: go.sum
 	LEDGER_ENABLED=false GOOS=linux GOARCH=amd64 $(MAKE) build
 
 install: go.sum
-	go install $(BUILD_FLAGS) ./cmd/taxd
+	go install $(BUILD_FLAGS) ./cmd/budgetd
 
 build-reproducible: go.sum
 	$(DOCKER) rm latest-build || true
 	$(DOCKER) run --volume=$(CURDIR):/sources:ro \
         --env TARGET_PLATFORMS='linux/amd64 darwin/amd64 linux/arm64' \
-        --env APP=taxd \
+        --env APP=budgetd \
         --env VERSION=$(VERSION) \
         --env COMMIT=$(COMMIT) \
         --env LEDGER_ENABLED=$(LEDGER_ENABLED) \
@@ -178,7 +178,7 @@ lint:
 format:
 	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "*.pb.go" -not -path "*/statik*" | xargs gofmt -w -s
 	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "*.pb.go" -not -path "*/statik*" | xargs misspell -w
-	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "*.pb.go" -not -path "*/statik*" | xargs goimports -w -local github.com/tendermint/tax
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "*.pb.go" -not -path "*/statik*" | xargs goimports -w -local github.com/tendermint/budget
 
 .PHONY: format
 

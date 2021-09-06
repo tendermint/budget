@@ -17,7 +17,7 @@ import (
 
 // ExportAppStateAndValidators exports the state of the application for a genesis
 // file.
-func (app *TaxApp) ExportAppStateAndValidators(
+func (app *BudgetApp) ExportAppStateAndValidators(
 	forZeroHeight bool, jailAllowedAddrs []string,
 ) (servertypes.ExportedApp, error) {
 	// as if they could withdraw from the start of the next block
@@ -49,7 +49,7 @@ func (app *TaxApp) ExportAppStateAndValidators(
 // prepare for fresh start at zero height
 // NOTE zero height genesis is a temporary feature which will be deprecated
 //      in favour of export at a block height
-func (app *TaxApp) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddrs []string) {
+func (app *BudgetApp) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddrs []string) {
 	applyAllowedAddrs := false
 
 	// check if there is a allowed address list

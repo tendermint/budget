@@ -1,6 +1,6 @@
 package params
 
 const (
-	// TODO: tax determine the weights
-	DefaultWeightUpdateTaxesProposal int = 0
+	// TODO: budget determine the weights
+	DefaultWeightUpdateBudgetsProposal int = 0
 )

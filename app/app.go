@@ -85,16 +85,16 @@ import (
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	taxparams "github.com/tendermint/tax/app/params"
-	"github.com/tendermint/tax/x/tax"
-	taxkeeper "github.com/tendermint/tax/x/tax/keeper"
-	taxtypes "github.com/tendermint/tax/x/tax/types"
+	budgetparams "github.com/tendermint/budget/app/params"
+	"github.com/tendermint/budget/x/budget"
+	budgetkeeper "github.com/tendermint/budget/x/budget/keeper"
+	budgettypes "github.com/tendermint/budget/x/budget/types"
 
 	// unnamed import of statik for swagger UI support
-	_ "github.com/tendermint/tax/client/docs/statik"
+	_ "github.com/tendermint/budget/client/docs/statik"
 )
 
-const appName = "TaxApp"
+const appName = "BudgetApp"
 
 var (
 	// DefaultNodeHome default home directories for the application daemon
@@ -113,7 +113,7 @@ var (
 		distr.AppModuleBasic{},
 		gov.NewAppModuleBasic(
 			paramsclient.ProposalHandler, distrclient.ProposalHandler, upgradeclient.ProposalHandler, upgradeclient.CancelProposalHandler,
-			// todo: tax proposal handler
+			// todo: budget proposal handler
 		),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
@@ -123,8 +123,8 @@ var (
 		evidence.AppModuleBasic{},
 		authzmodule.AppModuleBasic{},
 		vesting.AppModuleBasic{},
-		tax.AppModuleBasic{},
-		// todo: tax ordering
+		budget.AppModuleBasic{},
+		// todo: budget ordering
 	)
 
 	// module account permissions
@@ -135,18 +135,18 @@ var (
 		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
-		taxtypes.ModuleName:            nil,
-		// todo: tax Staking Reserve Coin TBD
+		budgettypes.ModuleName:         nil,
+		// todo: budget Staking Reserve Coin TBD
 	}
 )
 
 // Verify app interface at compile time
-var _ simapp.App = (*TaxApp)(nil)
+var _ simapp.App = (*BudgetApp)(nil)
 
-// TaxApp extends an ABCI application, but with most of its parameters exported.
+// BudgetApp extends an ABCI application, but with most of its parameters exported.
 // They are exported for convenience in creating helper functions, as object
 // capabilities aren't needed for testing.
-type TaxApp struct {
+type BudgetApp struct {
 	*baseapp.BaseApp
 	legacyAmino       *codec.LegacyAmino
 	appCodec          codec.Codec
@@ -174,7 +174,7 @@ type TaxApp struct {
 	AuthzKeeper      authzkeeper.Keeper
 	EvidenceKeeper   evidencekeeper.Keeper
 	FeeGrantKeeper   feegrantkeeper.Keeper
-	TaxKeeper        taxkeeper.Keeper
+	BudgetKeeper     budgetkeeper.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -192,15 +192,15 @@ func init() {
 		panic(err)
 	}
 
-	DefaultNodeHome = filepath.Join(userHomeDir, ".taxapp")
+	DefaultNodeHome = filepath.Join(userHomeDir, ".budgetapp")
 }
 
-// NewTaxApp returns a reference to an initialized TaxApp.
-func NewTaxApp(
+// NewBudgetApp returns a reference to an initialized BudgetApp.
+func NewBudgetApp(
 	logger log.Logger, db dbm.DB, traceStore io.Writer, loadLatest bool, skipUpgradeHeights map[int64]bool,
-	homePath string, invCheckPeriod uint, encodingConfig taxparams.EncodingConfig,
+	homePath string, invCheckPeriod uint, encodingConfig budgetparams.EncodingConfig,
 	appOpts servertypes.AppOptions, baseAppOptions ...func(*baseapp.BaseApp),
-) *TaxApp {
+) *BudgetApp {
 
 	appCodec := encodingConfig.Marshaler
 	legacyAmino := encodingConfig.Amino
@@ -215,8 +215,8 @@ func NewTaxApp(
 		authtypes.StoreKey, banktypes.StoreKey, stakingtypes.StoreKey,
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
-		evidencetypes.StoreKey, capabilitytypes.StoreKey, taxtypes.StoreKey,
-		// todo: tax ordering
+		evidencetypes.StoreKey, capabilitytypes.StoreKey, authzkeeper.StoreKey, budgettypes.StoreKey,
+		// todo: budget ordering
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -224,7 +224,7 @@ func NewTaxApp(
 	//// not include this key.
 	//memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey, "testingkey")
 
-	app := &TaxApp{
+	app := &BudgetApp{
 		BaseApp:           bApp,
 		legacyAmino:       legacyAmino,
 		appCodec:          appCodec,
@@ -281,11 +281,11 @@ func NewTaxApp(
 
 	app.AuthzKeeper = authzkeeper.NewKeeper(keys[authzkeeper.StoreKey], appCodec, app.BaseApp.MsgServiceRouter())
 
-	app.TaxKeeper = taxkeeper.NewKeeper(
-		appCodec, keys[taxtypes.StoreKey], app.GetSubspace(taxtypes.ModuleName), app.AccountKeeper,
+	app.BudgetKeeper = budgetkeeper.NewKeeper(
+		appCodec, keys[budgettypes.StoreKey], app.GetSubspace(budgettypes.ModuleName), app.AccountKeeper,
 		app.BankKeeper, app.ModuleAccountAddrs(),
 	)
-	// todo: tax ordering
+	// todo: budget ordering
 
 	// register the proposal types
 	govRouter := govtypes.NewRouter()
@@ -335,8 +335,8 @@ func NewTaxApp(
 		gov.NewAppModule(appCodec, app.GovKeeper, app.AccountKeeper, app.BankKeeper),
 		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper),
 		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
-		// todo: tax ordering
-		tax.NewAppModule(appCodec, app.TaxKeeper, app.AccountKeeper, app.BankKeeper),
+		// todo: budget ordering
+		budget.NewAppModule(appCodec, app.BudgetKeeper, app.AccountKeeper, app.BankKeeper),
 		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		upgrade.NewAppModule(app.UpgradeKeeper),
@@ -350,7 +350,7 @@ func NewTaxApp(
 	// CanWithdrawInvariant invariant.
 	// NOTE: staking module is required if HistoricalEntries param > 0
 	app.mm.SetOrderBeginBlockers(
-		upgradetypes.ModuleName, capabilitytypes.ModuleName, minttypes.ModuleName, taxtypes.ModuleName, distrtypes.ModuleName, slashingtypes.ModuleName,
+		upgradetypes.ModuleName, capabilitytypes.ModuleName, minttypes.ModuleName, budgettypes.ModuleName, distrtypes.ModuleName, slashingtypes.ModuleName,
 		evidencetypes.ModuleName, stakingtypes.ModuleName,
 	)
 
@@ -368,8 +368,8 @@ func NewTaxApp(
 		capabilitytypes.ModuleName, authtypes.ModuleName, banktypes.ModuleName, distrtypes.ModuleName,
 		stakingtypes.ModuleName, slashingtypes.ModuleName, govtypes.ModuleName, minttypes.ModuleName,
 		crisistypes.ModuleName, genutiltypes.ModuleName, evidencetypes.ModuleName, authz.ModuleName,
-		feegrant.ModuleName, taxtypes.ModuleName,
-		// todo: tax ordering
+		feegrant.ModuleName, budgettypes.ModuleName,
+		// todo: budget ordering
 	)
 
 	app.mm.RegisterInvariants(&app.CrisisKeeper)
@@ -391,8 +391,8 @@ func NewTaxApp(
 		feegrantmodule.NewAppModule(appCodec, app.AccountKeeper, app.BankKeeper, app.FeeGrantKeeper, app.interfaceRegistry),
 		gov.NewAppModule(appCodec, app.GovKeeper, app.AccountKeeper, app.BankKeeper),
 		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper),
-		tax.NewAppModule(appCodec, app.TaxKeeper, app.AccountKeeper, app.BankKeeper),
-		// todo: tax ordering
+		budget.NewAppModule(appCodec, app.BudgetKeeper, app.AccountKeeper, app.BankKeeper),
+		// todo: budget ordering
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
@@ -439,20 +439,20 @@ func NewTaxApp(
 }
 
 // Name returns the name of the App.
-func (app *TaxApp) Name() string { return app.BaseApp.Name() }
+func (app *BudgetApp) Name() string { return app.BaseApp.Name() }
 
 // BeginBlocker application updates every begin block.
-func (app *TaxApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
+func (app *BudgetApp) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
 	return app.mm.BeginBlock(ctx, req)
 }
 
 // EndBlocker application updates every end block.
-func (app *TaxApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
+func (app *BudgetApp) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
 	return app.mm.EndBlock(ctx, req)
 }
 
 // InitChainer application update at chain initialization.
-func (app *TaxApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
+func (app *BudgetApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState GenesisState
 	if err := json.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
 		panic(err)
@@ -462,12 +462,12 @@ func (app *TaxApp) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.
 }
 
 // LoadHeight loads a particular height.
-func (app *TaxApp) LoadHeight(height int64) error {
+func (app *BudgetApp) LoadHeight(height int64) error {
 	return app.LoadVersion(height)
 }
 
 // ModuleAccountAddrs returns all the app's module account addresses.
-func (app *TaxApp) ModuleAccountAddrs() map[string]bool {
+func (app *BudgetApp) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
@@ -476,64 +476,64 @@ func (app *TaxApp) ModuleAccountAddrs() map[string]bool {
 	return modAccAddrs
 }
 
-// LegacyAmino returns TaxApp's amino codec.
+// LegacyAmino returns BudgetApp's amino codec.
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
-func (app *TaxApp) LegacyAmino() *codec.LegacyAmino {
+func (app *BudgetApp) LegacyAmino() *codec.LegacyAmino {
 	return app.legacyAmino
 }
 
-// AppCodec returns TaxApp's app codec.
+// AppCodec returns BudgetApp's app codec.
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
-func (app *TaxApp) AppCodec() codec.Codec {
+func (app *BudgetApp) AppCodec() codec.Codec {
 	return app.appCodec
 }
 
-// InterfaceRegistry returns TaxApp's InterfaceRegistry
-func (app *TaxApp) InterfaceRegistry() types.InterfaceRegistry {
+// InterfaceRegistry returns BudgetApp's InterfaceRegistry
+func (app *BudgetApp) InterfaceRegistry() types.InterfaceRegistry {
 	return app.interfaceRegistry
 }
 
 // GetKey returns the KVStoreKey for the provided store key.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *TaxApp) GetKey(storeKey string) *sdk.KVStoreKey {
+func (app *BudgetApp) GetKey(storeKey string) *sdk.KVStoreKey {
 	return app.keys[storeKey]
 }
 
 // GetTKey returns the TransientStoreKey for the provided store key.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *TaxApp) GetTKey(storeKey string) *sdk.TransientStoreKey {
+func (app *BudgetApp) GetTKey(storeKey string) *sdk.TransientStoreKey {
 	return app.tkeys[storeKey]
 }
 
 // GetMemKey returns the MemStoreKey for the provided mem key.
 //
 // NOTE: This is solely used for testing purposes.
-func (app *TaxApp) GetMemKey(storeKey string) *sdk.MemoryStoreKey {
+func (app *BudgetApp) GetMemKey(storeKey string) *sdk.MemoryStoreKey {
 	return app.memKeys[storeKey]
 }
 
 // GetSubspace returns a param subspace for a given module name.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *TaxApp) GetSubspace(moduleName string) paramstypes.Subspace {
+func (app *BudgetApp) GetSubspace(moduleName string) paramstypes.Subspace {
 	subspace, _ := app.ParamsKeeper.GetSubspace(moduleName)
 	return subspace
 }
 
 // SimulationManager implements the SimulationApp interface
-func (app *TaxApp) SimulationManager() *module.SimulationManager {
+func (app *BudgetApp) SimulationManager() *module.SimulationManager {
 	return app.sm
 }
 
 // RegisterAPIRoutes registers all application module routes with the provided
 // API server.
-func (app *TaxApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
+func (app *BudgetApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
 	clientCtx := apiSvr.ClientCtx
 	rpc.RegisterRoutes(clientCtx, apiSvr.Router)
 	// Register legacy tx routes.
@@ -554,12 +554,12 @@ func (app *TaxApp) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APICon
 }
 
 // RegisterTxService implements the Application.RegisterTxService method.
-func (app *TaxApp) RegisterTxService(clientCtx client.Context) {
+func (app *BudgetApp) RegisterTxService(clientCtx client.Context) {
 	authtx.RegisterTxService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.BaseApp.Simulate, app.interfaceRegistry)
 }
 
 // RegisterTendermintService implements the Application.RegisterTendermintService method.
-func (app *TaxApp) RegisterTendermintService(clientCtx client.Context) {
+func (app *BudgetApp) RegisterTendermintService(clientCtx client.Context) {
 	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
 }
 
@@ -582,8 +582,8 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(banktypes.ModuleName)
 	paramsKeeper.Subspace(stakingtypes.ModuleName)
 	paramsKeeper.Subspace(minttypes.ModuleName)
-	paramsKeeper.Subspace(taxtypes.ModuleName)
-	// todo: tax ordering
+	paramsKeeper.Subspace(budgettypes.ModuleName)
+	// todo: budget ordering
 	paramsKeeper.Subspace(distrtypes.ModuleName)
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
 	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govtypes.ParamKeyTable())
