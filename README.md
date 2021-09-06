@@ -1,8 +1,8 @@
-# Tax Module
+# Budget Module
 
-A tax module is a Cosmos SDK module that implements tax functionality. 
+A budget module is a Cosmos SDK module that implements budget functionality. 
 
-⚠ **Tax module v1 is in active development - see "master" branch for the v1 mainnet version** ⚠
+⚠ **Budger module v1 is in active development - see "master" branch for the v1 mainnet version** ⚠
 
 ## Installation
 ### Requirements
@@ -17,8 +17,8 @@ Cosmos SDK  | v0.44.0 or higher
 ### Get Farming Module source code
 
 ```bash
-git clone https://github.com/tendermint/farming.git
-cd farming
+git clone https://github.com/tendermint/budget.git
+cd budget
 make install
 ```
 
