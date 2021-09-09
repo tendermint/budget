@@ -7,59 +7,6 @@ import (
 )
 
 func (suite *KeeperTestSuite) TestBudgetCollection() {
-	budgets1 := []types.Budget{
-		{
-			Name:                "budget1",
-			Rate:                sdk.MustNewDecFromStr("0.5"),
-			BudgetSourceAddress: suite.budgetSourceAddrs[0].String(),
-			CollectionAddress:   suite.collectionAddrs[0].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
-		},
-		{
-			Name:                "budget2",
-			Rate:                sdk.MustNewDecFromStr("0.5"),
-			BudgetSourceAddress: suite.budgetSourceAddrs[0].String(),
-			CollectionAddress:   suite.collectionAddrs[1].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
-		},
-		{
-			Name:                "budget3",
-			Rate:                sdk.MustNewDecFromStr("1.0"),
-			BudgetSourceAddress: suite.budgetSourceAddrs[1].String(),
-			CollectionAddress:   suite.collectionAddrs[2].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
-		},
-		{
-			Name:                "budget4",
-			Rate:                sdk.MustNewDecFromStr("1"),
-			BudgetSourceAddress: suite.budgetSourceAddrs[2].String(),
-			CollectionAddress:   suite.collectionAddrs[3].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("0000-01-01T00:00:00Z"),
-		},
-	}
-	budgets3 := []types.Budget{
-		{
-			Name:                "budget5",
-			Rate:                sdk.MustNewDecFromStr("0.5"),
-			BudgetSourceAddress: suite.budgetSourceAddrs[3].String(),
-			CollectionAddress:   suite.collectionAddrs[0].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
-		},
-		{
-			Name:                "budget6",
-			Rate:                sdk.MustNewDecFromStr("0.5"),
-			BudgetSourceAddress: suite.budgetSourceAddrs[3].String(),
-			CollectionAddress:   suite.collectionAddrs[1].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
-		},
-	}
-
 	for _, tc := range []struct {
 		name           string
 		budgets        []types.Budget
@@ -70,7 +17,7 @@ func (suite *KeeperTestSuite) TestBudgetCollection() {
 	}{
 		{
 			"basic budgets case",
-			budgets1,
+			suite.budgets[:4],
 			types.DefaultEpochBlocks,
 			[]sdk.AccAddress{
 				suite.collectionAddrs[0],
@@ -94,7 +41,7 @@ func (suite *KeeperTestSuite) TestBudgetCollection() {
 		},
 		{
 			"only expired budget case",
-			[]types.Budget{budgets1[3]},
+			[]types.Budget{suite.budgets[3]},
 			types.DefaultEpochBlocks,
 			[]sdk.AccAddress{
 				suite.collectionAddrs[3],
@@ -108,7 +55,7 @@ func (suite *KeeperTestSuite) TestBudgetCollection() {
 		},
 		{
 			"budget source has small balances case",
-			budgets3,
+			suite.budgets[4:6],
 			types.DefaultEpochBlocks,
 			[]sdk.AccAddress{
 				suite.collectionAddrs[0],
@@ -176,7 +123,7 @@ func (suite *KeeperTestSuite) TestBudgetCollection() {
 		},
 		{
 			"disabled budget epoch with budgets",
-			budgets1,
+			suite.budgets[:4],
 			0,
 			[]sdk.AccAddress{
 				suite.collectionAddrs[0],
@@ -260,10 +207,13 @@ func (suite *KeeperTestSuite) TestTotalCollectedCoins() {
 	balance := suite.app.BankKeeper.GetAllBalances(suite.ctx, suite.budgetSourceAddrs[0])
 	expectedCoins, _ := sdk.NewDecCoinsFromCoins(balance...).MulDec(sdk.NewDecWithPrec(5, 2)).TruncateDecimal()
 
+	collectedCoins := suite.keeper.GetTotalCollectedCoins(suite.ctx, "budget1")
+	suite.Require().Equal(sdk.Coins(nil), collectedCoins)
+
 	suite.ctx = suite.ctx.WithBlockTime(mustParseRFC3339("2021-08-31T00:00:00Z"))
 	err := suite.keeper.BudgetCollection(suite.ctx)
 	suite.Require().NoError(err)
 
-	collectedCoins := suite.keeper.GetTotalCollectedCoins(suite.ctx, "budget1")
+	collectedCoins = suite.keeper.GetTotalCollectedCoins(suite.ctx, "budget1")
 	suite.Require().True(coinsEq(expectedCoins, collectedCoins))
 }

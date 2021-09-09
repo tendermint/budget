@@ -98,6 +98,25 @@ func (k Keeper) GetTotalCollectedCoins(ctx sdk.Context, budgetName string) sdk.C
 	return collectedCoins.TotalCollectedCoins
 }
 
+// IterateAllTotalCollectedCoins iterates over all the stored TotalCollectedCoins and performs a callback function.
+// Stops iteration when callback returns true.
+func (k Keeper) IterateAllTotalCollectedCoins(ctx sdk.Context, cb func(record types.BudgetRecord) (stop bool)) {
+	store := ctx.KVStore(k.storeKey)
+	iterator := sdk.KVStorePrefixIterator(store, types.TotalCollectedCoinsKeyPrefix)
+
+	defer iterator.Close()
+	for ; iterator.Valid(); iterator.Next() {
+		var record types.BudgetRecord
+		var collectedCoins types.TotalCollectedCoins
+		k.cdc.MustUnmarshal(iterator.Value(), &collectedCoins)
+		record.Name = types.ParseTotalCollectedCoinsKey(iterator.Key())
+		record.TotalCollectedCoins = collectedCoins.TotalCollectedCoins
+		if cb(record) {
+			break
+		}
+	}
+}
+
 // SetTotalCollectedCoins sets total collected coins for a budget.
 func (k Keeper) SetTotalCollectedCoins(ctx sdk.Context, budgetName string, amount sdk.Coins) {
 	store := ctx.KVStore(k.storeKey)

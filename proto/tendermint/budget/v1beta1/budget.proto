@@ -52,6 +52,7 @@ message Budget {
       [(gogoproto.stdtime) = true, (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"end_time\""];
 }
 
+// The cumulative coins collected in the budget since the bucket was created.
 message TotalCollectedCoins {
   option (gogoproto.goproto_getters) = false;
 
