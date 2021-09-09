@@ -30,5 +30,5 @@ func ParseTotalCollectedCoinsKey(key []byte) (budgetName string) {
 	if !bytes.HasPrefix(key, TotalCollectedCoinsKeyPrefix) {
 		panic("key does not have proper prefix")
 	}
-	return string(key[1:len(key)])
+	return string(key[1:])
 }
