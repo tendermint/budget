@@ -134,6 +134,7 @@ func (m *Budget) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Budget proto.InternalMessageInfo
 
+// The cumulative coins collected in the budget since the bucket was created.
 type TotalCollectedCoins struct {
 	TotalCollectedCoins github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,1,rep,name=total_collected_coins,json=totalCollectedCoins,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"total_collected_coins" yaml:"total_collected_coins"`
 }

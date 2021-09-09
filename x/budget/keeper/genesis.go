@@ -8,29 +8,28 @@ import (
 
 // InitGenesis initializes the budget module's state from a given genesis state.
 func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
-	if err := k.ValidateGenesis(ctx, genState); err != nil {
+	if err := types.ValidateGenesis(genState); err != nil {
 		panic(err)
 	}
 
 	k.SetParams(ctx, genState.Params)
 	moduleAcc := k.accountKeeper.GetModuleAccount(ctx, types.ModuleName)
 	k.accountKeeper.SetModuleAccount(ctx, moduleAcc)
+
+	for _, record := range genState.BudgetRecords {
+		k.SetTotalCollectedCoins(ctx, record.Name, record.TotalCollectedCoins)
+	}
 }
 
 // ExportGenesis returns the budget module's genesis state.
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	params := k.GetParams(ctx)
-	return types.NewGenesisState(params)
-}
-
-// ValidateGenesis validates the budget module's genesis state.
-func (k Keeper) ValidateGenesis(ctx sdk.Context, genState types.GenesisState) error {
-	if err := genState.Params.Validate(); err != nil {
-		return err
+	var budgetRecords []types.BudgetRecord
+	for _, budget := range params.Budgets {
+		budgetRecords = append(budgetRecords, types.BudgetRecord{
+			Name:                budget.Name,
+			TotalCollectedCoins: k.GetTotalCollectedCoins(ctx, budget.Name),
+		})
 	}
-
-	cc, _ := ctx.CacheContext()
-	k.SetParams(cc, genState.Params)
-
-	return nil
+	return types.NewGenesisState(params, budgetRecords)
 }

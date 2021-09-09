@@ -19,6 +19,7 @@ type Budget struct {
 
 ### Total collected coins
 
+The total collected coins is cumulative coins collected in the budget since the bucket was created.
 The total collected coins for each budget are stored as follows:
 ```
 0x11 | BudgetName -> TotalCollectedCoins

@@ -260,10 +260,13 @@ func (suite *KeeperTestSuite) TestTotalCollectedCoins() {
 	balance := suite.app.BankKeeper.GetAllBalances(suite.ctx, suite.budgetSourceAddrs[0])
 	expectedCoins, _ := sdk.NewDecCoinsFromCoins(balance...).MulDec(sdk.NewDecWithPrec(5, 2)).TruncateDecimal()
 
+	collectedCoins := suite.keeper.GetTotalCollectedCoins(suite.ctx, "budget1")
+	suite.Require().Equal(sdk.Coins(nil), collectedCoins)
+
 	suite.ctx = suite.ctx.WithBlockTime(mustParseRFC3339("2021-08-31T00:00:00Z"))
 	err := suite.keeper.BudgetCollection(suite.ctx)
 	suite.Require().NoError(err)
 
-	collectedCoins := suite.keeper.GetTotalCollectedCoins(suite.ctx, "budget1")
+	collectedCoins = suite.keeper.GetTotalCollectedCoins(suite.ctx, "budget1")
 	suite.Require().True(coinsEq(expectedCoins, collectedCoins))
 }
