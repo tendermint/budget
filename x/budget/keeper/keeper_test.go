@@ -14,15 +14,6 @@ import (
 	"github.com/tendermint/budget/x/budget/types"
 )
 
-//// createTestApp returns a budget app with custom BudgetKeeper.
-//func createTestApp(isCheckTx bool) (*app.BudgetApp, sdk.Context) {
-//	app := app.Setup(isCheckTx)
-//	ctx := app.BaseApp.NewContext(isCheckTx, tmproto.Header{})
-//	app.BudgetKeeper.SetParams(ctx, types.DefaultParams())
-//
-//	return app, ctx
-//}
-
 const (
 	denom1 = "denom1"
 	denom2 = "denom2"
@@ -48,6 +39,7 @@ type KeeperTestSuite struct {
 	addrs             []sdk.AccAddress
 	budgetSourceAddrs []sdk.AccAddress
 	collectionAddrs   []sdk.AccAddress
+	budgets           []types.Budget
 }
 
 func TestKeeperTestSuite(t *testing.T) {
@@ -82,6 +74,57 @@ func (suite *KeeperTestSuite) SetupTest() {
 	}
 	err := simapp.FundAccount(suite.app.BankKeeper, suite.ctx, suite.budgetSourceAddrs[3], smallBalances)
 	suite.Require().NoError(err)
+
+	suite.budgets = []types.Budget{
+		{
+			Name:                "budget1",
+			Rate:                sdk.MustNewDecFromStr("0.5"),
+			BudgetSourceAddress: suite.budgetSourceAddrs[0].String(),
+			CollectionAddress:   suite.collectionAddrs[0].String(),
+			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+		},
+		{
+			Name:                "budget2",
+			Rate:                sdk.MustNewDecFromStr("0.5"),
+			BudgetSourceAddress: suite.budgetSourceAddrs[0].String(),
+			CollectionAddress:   suite.collectionAddrs[1].String(),
+			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+		},
+		{
+			Name:                "budget3",
+			Rate:                sdk.MustNewDecFromStr("1.0"),
+			BudgetSourceAddress: suite.budgetSourceAddrs[1].String(),
+			CollectionAddress:   suite.collectionAddrs[2].String(),
+			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+		},
+		{
+			Name:                "budget4",
+			Rate:                sdk.MustNewDecFromStr("1"),
+			BudgetSourceAddress: suite.budgetSourceAddrs[2].String(),
+			CollectionAddress:   suite.collectionAddrs[3].String(),
+			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             mustParseRFC3339("0000-01-01T00:00:00Z"),
+		},
+		{
+			Name:                "budget5",
+			Rate:                sdk.MustNewDecFromStr("0.5"),
+			BudgetSourceAddress: suite.budgetSourceAddrs[3].String(),
+			CollectionAddress:   suite.collectionAddrs[0].String(),
+			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+		},
+		{
+			Name:                "budget6",
+			Rate:                sdk.MustNewDecFromStr("0.5"),
+			BudgetSourceAddress: suite.budgetSourceAddrs[3].String(),
+			CollectionAddress:   suite.collectionAddrs[1].String(),
+			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+		},
+	}
 }
 
 func coinsEq(exp, got sdk.Coins) (bool, string, string, string) {

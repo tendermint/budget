@@ -25,11 +25,11 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	params := k.GetParams(ctx)
 	var budgetRecords []types.BudgetRecord
-	for _, budget := range params.Budgets {
-		budgetRecords = append(budgetRecords, types.BudgetRecord{
-			Name:                budget.Name,
-			TotalCollectedCoins: k.GetTotalCollectedCoins(ctx, budget.Name),
-		})
-	}
+
+	k.IterateAllTotalCollectedCoins(ctx, func(record types.BudgetRecord) (stop bool) {
+		budgetRecords = append(budgetRecords, record)
+		return false
+	})
+
 	return types.NewGenesisState(params, budgetRecords)
 }

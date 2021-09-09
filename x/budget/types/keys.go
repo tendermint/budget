@@ -1,5 +1,9 @@
 package types
 
+import (
+	"bytes"
+)
+
 const (
 	// ModuleName is the name of the budget module
 	ModuleName = "budget"
@@ -20,4 +24,11 @@ var (
 
 func GetTotalCollectedCoinsKey(budgetName string) []byte {
 	return append(TotalCollectedCoinsKeyPrefix, []byte(budgetName)...)
+}
+
+func ParseTotalCollectedCoinsKey(key []byte) (budgetName string) {
+	if !bytes.HasPrefix(key, TotalCollectedCoinsKeyPrefix) {
+		panic("key does not have proper prefix")
+	}
+	return string(key[1:len(key)])
 }
