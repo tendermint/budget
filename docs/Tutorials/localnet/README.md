@@ -42,6 +42,12 @@ $BINARY collect-gentxs
 sed -i '' 's/enable = false/enable = true/g' $HOME_BUDGETAPP/config/app.toml
 sed -i '' 's/swagger = false/swagger = true/g' $HOME_BUDGETAPP/config/app.toml
 
+# Modify parameters for the governance proposal
+sed -i '' 's%"amount": "10000000"%"amount": "1"%g' $HOME_BUDGETAPP/config/genesis.json
+sed -i '' 's%"quorum": "0.334000000000000000",%"quorum": "0.000000000000000001",%g' $HOME_BUDGETAPP/config/genesis.json
+sed -i '' 's%"threshold": "0.500000000000000000",%"threshold": "0.000000000000000001",%g' $HOME_BUDGETAPP/config/genesis.json
+sed -i '' 's%"voting_period": "172800s"%"voting_period": "30s"%g' $HOME_BUDGETAPP/config/genesis.json
+
 # Start
 $BINARY start
 ```
