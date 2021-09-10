@@ -1,6 +1,8 @@
 package keeper_test
 
 import (
+	_ "github.com/stretchr/testify/suite"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/tendermint/budget/x/budget/types"
@@ -9,7 +11,6 @@ import (
 func (suite *KeeperTestSuite) TestGRPCParams() {
 	resp, err := suite.querier.Params(sdk.WrapSDKContext(suite.ctx), &types.QueryParamsRequest{})
 	suite.Require().NoError(err)
-
 	suite.Require().Equal(suite.keeper.GetParams(suite.ctx), resp.Params)
 }
 

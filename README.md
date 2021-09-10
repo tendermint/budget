@@ -1,8 +1,8 @@
 # Budget Module
 
-A budget module is a Cosmos SDK module that implements budget functionality. 
+A budget module is a Cosmos SDK module that implements budget functionality. It is an independent module from other SDK modules and core functionality is to distribute inflation and gas fees to different budget plans. Read [spec docs](./x/budget/spec/01_concepts.md) to get to know more about the module.
 
-⚠ **Budger module v1 is in active development - see "master" branch for the v1 mainnet version** ⚠
+⚠ **Budger module v1 is in active development - see "master" branch for the latest update** ⚠
 
 ## Installation
 ### Requirements
@@ -14,7 +14,7 @@ Requirement | Notes
 Go version  | Go1.15 or higher
 Cosmos SDK  | v0.44.0 or higher
 
-### Get Farming Module source code
+### Get Budget Module source code
 
 ```bash
 git clone https://github.com/tendermint/budget.git
@@ -41,4 +41,6 @@ $ make localnet
 
 ## Resources
 
-...
+- [Documentation about Command-line Interfaces](./docs/How-To/api)
+- [Documentation about REST APIs](./docs/How-To/cli)
+- [MVP Demo](./docs/Tutorials/demo.md)
