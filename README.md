@@ -41,4 +41,6 @@ $ make localnet
 
 ## Resources
 
-...
+- [Documentation about Command-line Interfaces](./docs/How-To/api)
+- [Documentation about REST APIs](./docs/How-To/cli)
+- [MVP Demo](./docs/Tutorials/demo.md)
