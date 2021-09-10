@@ -172,6 +172,7 @@ budgetd q budget params --output json | jq
 ### Budgets
 
 ```bash
+# Query all the budget plans exist in the network
 budgetd q budget budgets --output json | jq
 ```
 
