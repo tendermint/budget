@@ -134,6 +134,10 @@ budgetd tx gov vote 1 yes \
 # Query the proposal again to check the status
 # the status should be PROPOSAL_STATUS_PASSED
 budgetd q gov proposals --output json | jq
+ 
+# Query the balances of collection_address for a few times to see
+# if its balances increase over time
+budgetd q bank balances cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl --output json | jq
 ```
 
 ## Query
