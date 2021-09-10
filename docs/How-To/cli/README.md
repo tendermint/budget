@@ -78,7 +78,7 @@ There is no command-line interface for the Budget module. However, in order to q
 Let's create `proposal.json` file. Depending on what budget plan you plan to create, change the following values of the fields for your need. In this case, we plan to create a budget plan that distributes partial amount from the ATOM inflation for Gravity DEX farming plan. 
 
 - `name`: is the name of the budget plan used for display
-- `description`: is the budget plan's description used for display
+- `description`: is the description of the budget plan used for display
 - `rate`: is the distributing amount by ratio of the total budget source
 - `budget_source_address`: is the farming module's `farmingPoolAddr` address
 - `collection_address`: is the distribution module's `feeCollector` module account address
