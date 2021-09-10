@@ -10,7 +10,7 @@ This document provides a high-level overview of how the command-line (CLI) inter
 ## Table of Contetns
 
 - [Prerequisite](#Prerequisite)
-- [Command-line Interface](#Command-Line-Interface)
+- [Command-line Interfaces](#Command-Line-Interfaces)
 
 ## Prerequisite 
 
@@ -53,15 +53,88 @@ $BINARY collect-gentxs
 sed -i '' 's/enable = false/enable = true/g' $HOME_BUDGETAPP/config/app.toml
 sed -i '' 's/swagger = false/swagger = true/g' $HOME_BUDGETAPP/config/app.toml
 
+# Modify parameters for the governance proposal
+sed -i '' 's%"amount": "10000000"%"amount": "1"%g' $HOME_BUDGETAPP/config/genesis.json
+sed -i '' 's%"quorum": "0.334000000000000000",%"quorum": "0.000000000000000001",%g' $HOME_BUDGETAPP/config/genesis.json
+sed -i '' 's%"threshold": "0.500000000000000000",%"threshold": "0.000000000000000001",%g' $HOME_BUDGETAPP/config/genesis.json
+sed -i '' 's%"voting_period": "172800s"%"voting_period": "30s"%g' $HOME_BUDGETAPP/config/genesis.json
+
 # Start
 $BINARY start
 ```
-## Command-Line Interface
+## Command-Line Interfaces
 
-- [Transaction N/A](#Transaction)
+- [Transaction](#Transaction)
 - [Query](#Query)
     * [Params](#Params)
     * [Budgets](#Budgets)
+
+## Transaction
+
+There is no command-line interface for the Budget module. However, in order to query budget parameters and plans we are going to submit a governance proposal to create a budget plan in this documentation.
+
+### Create a Budget Plan
+
+Let's create `proposal.json` file. Depending on what budget plan you plan to create, change the following values of the fields for your need. In this case, we plan to create a budget plan that distributes partial amount from the ATOM inflation for Gravity DEX farming plan. 
+
+- `name`: is the name of the budget plan used for display
+- `description`: is the budget plan's description used for display
+- `rate`: is the distributing amount by ratio of the total budget source
+- `budget_source_address`: is the farming module's `farmingPoolAddr` address
+- `collection_address`: is the distribution module's `feeCollector` module account address
+- `start_time`: is start time of the budget plan 
+- `end_time`: is end time of the budget plan
+
+```json
+{
+  "title": "Create a Budget Plan",
+  "description": "Here is an example of how to add a budget plan by using ParameterChangeProposal",
+  "changes": [
+    {
+      "subspace": "budget",
+      "key": "Budgets",
+      "value": [
+        {
+          "name": "gravity-dex-farming-20213Q-20221Q",
+          "rate": "0.300000000000000000",
+          "budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+          "collection_address": "cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl",
+          "start_time": "2021-10-01T00:00:00Z",
+          "end_time": "2022-04-01T00:00:00Z"
+        }
+      ]
+    }
+  ],
+  "deposit": "10000000stake"
+}
+```
+
+```bash
+# Submit a governance proposal
+budgetd tx gov submit-proposal param-change proposal.json \
+--chain-id localnet \
+--from user1 \
+--keyring-backend test \
+--broadcast-mode block \
+--yes
+
+# Query the proposal to check the status
+# the status should be PROPOSAL_STATUS_VOTING_PERIOD
+budgetd q gov proposals --output json | jq
+
+# Vote
+budgetd tx gov vote 1 yes \
+--chain-id localnet \
+--from val1 \
+--keyring-backend test \
+--broadcast-mode block \
+--yes
+
+# Wait a while (30s) for the proposal to pass
+# Query the proposal again to check the status
+# the status should be PROPOSAL_STATUS_PASSED
+budgetd q gov proposals --output json | jq
+```
 
 ## Query
 
@@ -71,13 +144,24 @@ https://github.com/tendermint/budget/blob/master/proto/tendermint/budget/v1beta1
 
 ```bash
 # Query the values set as budget parameters
+# Note that default params are empty. You need to submit governance proposal to create budget plan
+# Reference the Transaction section in thid documentation
 budgetd q budget params --output json | jq
 ```
 
 ```json
 {
   "epoch_blocks": 1,
-  "budgets": []
+  "budgets": [
+    {
+      "name": "gravity-dex-farming-20213Q-20221Q",
+      "rate": "0.300000000000000000",
+      "budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+      "collection_address": "cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl",
+      "start_time": "2021-10-01T00:00:00Z",
+      "end_time": "2022-04-01T00:00:00Z"
+    }
+  ]
 }
 ```
 
@@ -89,6 +173,23 @@ budgetd q budget budgets --output json | jq
 
 ```json
 {
-  "budgets": []
+  "budgets": [
+    {
+      "budget": {
+        "name": "gravity-dex-farming-20213Q-20221Q",
+        "rate": "0.300000000000000000",
+        "budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+        "collection_address": "cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl",
+        "start_time": "2021-10-01T00:00:00Z",
+        "end_time": "2022-04-01T00:00:00Z"
+      },
+      "total_collected_coins": [
+        {
+          "denom": "stake",
+          "amount": "2220"
+        }
+      ]
+    }
+  ]
 }
 ```
