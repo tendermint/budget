@@ -80,8 +80,8 @@ Let's create `proposal.json` file. Depending on what budget plan you plan to cre
 - `name`: is the name of the budget plan used for display
 - `description`: is the description of the budget plan used for display
 - `rate`: is the distributing amount by ratio of the total budget source
-- `budget_source_address`: is the farming module's `farmingPoolAddr` address
-- `collection_address`: is the distribution module's `feeCollector` module account address
+- `budget_source_address`: is the distribution module's `feeCollector` module account address
+- `collection_address`: is the farming module's `farmingPoolAddr` address
 - `start_time`: is start time of the budget plan 
 - `end_time`: is end time of the budget plan
 
