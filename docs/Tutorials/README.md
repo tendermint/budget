@@ -14,4 +14,5 @@ This section contains Tutorials documentation for Budget module.
 
 Tutorials Documentation will come in various forms:
 
-* [Demo](./demo) - any type of demo or presentation for Budget module
+* [Demo](./demo) - contains any type of demo or presentation for Budget module
+* [Localnet](./localnet) - contains guideline of how to build `budgetd` and bootstrap local network
