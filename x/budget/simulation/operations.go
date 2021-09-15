@@ -1,6 +1,7 @@
 package simulation
 
 import (
+	"fmt"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -15,7 +16,7 @@ import (
 
 // Simulation operation weights constants
 const (
-	OpWeightUpdateBudgetProposal = "op_weight_update_budget_proposal"
+	OpWeightUpdateBudget = "op_weight_update_budget_proposal"
 )
 
 // WeightedOperations returns all the operations from the module with their respective weights
@@ -27,19 +28,20 @@ func WeightedOperations(
 	// TODO: Not implemented, it should be weight of UpdateBudgetProposal or ParamChanges, not msg
 	return simulation.WeightedOperations{
 		simulation.NewWeightedOperation(
-			100,
-			SimulateUpdateBudgetProposal(ak, bk, k),
+			10,
+			SimulateUpdateBudget(ak, bk, k),
 		),
 	}
 }
 
 // SimulateMsgCreateFixedAmountPlan generates a MsgCreateFixedAmountPlan with random values
 // nolint: interfacer
-func SimulateUpdateBudgetProposal(ak types.AccountKeeper, bk types.BankKeeper, k keeper.Keeper) simtypes.Operation {
+func SimulateUpdateBudget(ak types.AccountKeeper, bk types.BankKeeper, k keeper.Keeper) simtypes.Operation {
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
 		// TODO: not implemented yet
+		fmt.Println("SimulateUpdateBudget")
 		return simtypes.OperationMsg{}, nil, nil
 	}
 }
