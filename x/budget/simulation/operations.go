@@ -1,7 +1,6 @@
 package simulation
 
 import (
-	"fmt"
 	"math/rand"
 
 	"github.com/cosmos/cosmos-sdk/baseapp"
@@ -14,6 +13,8 @@ import (
 	"github.com/tendermint/budget/x/budget/types"
 )
 
+// TODO: it can be replaced ParamChanges for randomize budgets
+
 // Simulation operation weights constants
 const (
 	OpWeightUpdateBudget = "op_weight_update_budget_proposal"
@@ -25,7 +26,6 @@ func WeightedOperations(
 	bk types.BankKeeper, k keeper.Keeper,
 ) simulation.WeightedOperations {
 
-	// TODO: Not implemented, it should be weight of UpdateBudgetProposal or ParamChanges, not msg
 	return simulation.WeightedOperations{
 		simulation.NewWeightedOperation(
 			10,
@@ -40,8 +40,6 @@ func SimulateUpdateBudget(ak types.AccountKeeper, bk types.BankKeeper, k keeper.
 	return func(
 		r *rand.Rand, app *baseapp.BaseApp, ctx sdk.Context, accs []simtypes.Account, chainID string,
 	) (simtypes.OperationMsg, []simtypes.FutureOperation, error) {
-		// TODO: not implemented yet
-		fmt.Println("SimulateUpdateBudget")
 		return simtypes.OperationMsg{}, nil, nil
 	}
 }

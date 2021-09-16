@@ -12,13 +12,11 @@ import (
 
 // DONTCOVER
 
-// TODO: Not implemented
-
 // ParamChanges defines the parameters that can be modified by param change proposals
 // on the simulation
 func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 	return []simtypes.ParamChange{
-		// TODO: Gen functions
+		// TODO: Randomize
 		simulation.NewSimParamChange(types.ModuleName, string(types.KeyEpochBlocks),
 			func(r *rand.Rand) string {
 				return fmt.Sprintf("\"%d\"", GenEpochBlocks(r))
