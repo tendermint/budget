@@ -12,16 +12,6 @@ func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 
 // RegisterInterfaces registers the x/budget interfaces types with the interface registry
 func RegisterInterfaces(registry types.InterfaceRegistry) {
-	//registry.RegisterImplementations(
-	//	(*sdk.Msg)(nil),
-	//)
-
-	//registry.RegisterImplementations(
-	//	(*govtypes.Content)(nil),
-	//	&UpdateBudgetsProposal{},
-	//)
-
-	//msgservice.RegisterMsgServiceDesc(registry, Msg_serviceDesc())
 }
 
 var (

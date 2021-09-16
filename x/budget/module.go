@@ -22,7 +22,7 @@ import (
 	"github.com/tendermint/budget/x/budget/client/cli"
 	"github.com/tendermint/budget/x/budget/keeper"
 
-	//"github.com/tendermint/budget/x/budget/simulation"
+	"github.com/tendermint/budget/x/budget/simulation"
 	"github.com/tendermint/budget/x/budget/types"
 )
 
@@ -43,10 +43,7 @@ func (AppModuleBasic) Name() string {
 }
 
 // RegisterLegacyAminoCodec registers the budget module's types for the given codec.
-func (AppModuleBasic) RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
-	// TODO: It could be deprecated
-	types.RegisterLegacyAminoCodec(cdc)
-}
+func (AppModuleBasic) RegisterLegacyAminoCodec(_ *codec.LegacyAmino) {}
 
 // DefaultGenesis returns default genesis state as raw bytes for the budget
 // module.
@@ -65,10 +62,7 @@ func (AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, config sdkclient.TxEn
 }
 
 // RegisterRESTRoutes registers the REST routes for the budget module.
-func (AppModuleBasic) RegisterRESTRoutes(clientCtx sdkclient.Context, rtr *mux.Router) {
-	// TODO: unimplemented
-	//rest.RegisterHandlers(clientCtx, rtr)
-}
+func (AppModuleBasic) RegisterRESTRoutes(_ sdkclient.Context, _ *mux.Router) {}
 
 // RegisterGRPCGatewayRoutes registers the gRPC Gateway routes for the budget module.
 func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx sdkclient.Context, mux *runtime.ServeMux) {
@@ -90,9 +84,7 @@ func (AppModuleBasic) GetQueryCmd() *cobra.Command {
 }
 
 // RegisterInterfaces implements InterfaceModule
-func (b AppModuleBasic) RegisterInterfaces(registry cdctypes.InterfaceRegistry) {
-	types.RegisterInterfaces(registry)
-}
+func (b AppModuleBasic) RegisterInterfaces(_ cdctypes.InterfaceRegistry) {}
 
 // AppModule implements an application module for the budget module.
 type AppModule struct {
@@ -184,36 +176,28 @@ func (AppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []abci.Validato
 
 // GenerateGenesisState creates a randomized GenState of the budget module.
 func (AppModule) GenerateGenesisState(simState *module.SimulationState) {
-	// TODO: implement
-	//simulation.RandomizedGenState(simState)
+	simulation.RandomizedGenState(simState)
 }
 
 // ProposalContents returns all the budget content functions used to
 // simulate governance proposals.
 func (am AppModule) ProposalContents(simState module.SimulationState) []simtypes.WeightedProposalContent {
-	// TODO: implement
 	return nil
-	//return simulation.ProposalContents(am.keeper)
 }
 
 // RandomizedParams creates randomized budget param changes for the simulator.
 func (AppModule) RandomizedParams(r *rand.Rand) []simtypes.ParamChange {
-	return nil
-	// TODO: implement
-	//return simulation.ParamChanges(r)
+	return simulation.ParamChanges(r)
 }
 
 // RegisterStoreDecoder registers a decoder for budget module's types
 func (am AppModule) RegisterStoreDecoder(sdr sdk.StoreDecoderRegistry) {
-	// TODO: implement
-	//sdr[types.StoreKey] = simulation.NewDecodeStore(am.cdc)
+	sdr[types.StoreKey] = simulation.NewDecodeStore(am.cdc)
 }
 
 // WeightedOperations returns the all the gov module operations with their respective weights.
 func (am AppModule) WeightedOperations(simState module.SimulationState) []simtypes.WeightedOperation {
-	// TODO: implement
-	return nil
-	//return simulation.WeightedOperations(
-	//	simState.AppParams, simState.Cdc, am.accountKeeper, am.bankKeeper, am.keeper, am.stakingKeeper,
-	//)
+	return simulation.WeightedOperations(
+		simState.AppParams, simState.Cdc, am.accountKeeper, am.bankKeeper, am.keeper,
+	)
 }

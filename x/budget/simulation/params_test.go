@@ -1,6 +1,6 @@
 package simulation_test
 
-// TODO: Not implemented
+// TODO: write testcode after Randomize
 
 //func TestParamChanges(t *testing.T) {
 //	s := rand.NewSource(1)
