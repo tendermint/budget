@@ -14,5 +14,5 @@ This section contains how-to guides for different aspects of the Budget module.
 
 How-To  Documentation will come in various forms:
 
-* [REST APIs](./api) - all the available REST APIs in the Budget module.
+* [gRPC-gateway REST Routes](./api) - all the available REST APIs in the Budget module.
 * [Command-line Interfaces](./cli) - all the available command-line interfaces in the Budget module.

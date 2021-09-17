@@ -22,13 +22,18 @@ There is no command-line interface for the Budget module. However, in order to q
 
 ### Create a Budget Plan
 
-Let's create `proposal.json` file. Depending on what budget plan you plan to create, change the following values of the fields for your need. In this case, we plan to create a budget plan that distributes partial amount from the ATOM inflation for Gravity DEX farming plan. 
+Let's create `proposal.json` file. Depending on what budget plan you plan to create, change the following values of the fields for your need. In this case, we plan to create a budget plan that distributes partial amount of coins from the Cosmos Hub's gas fees and ATOM inflation accrued in [FeeCollector](https://github.com/cosmos/cosmos-sdk/blob/master/x/auth/types/keys.go#L15) module account for Gravity DEX farming plan to GravityDEXFarmingBudget account (see the code below)
+
+```go
+sdk.AccAddress(address.Module(ModuleName, []byte("GravityDEXFarmingBudget")))
+// cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky
+```
 
 - `name`: is the name of the budget plan used for display
 - `description`: is the description of the budget plan used for display
 - `rate`: is the distributing amount by ratio of the total budget source
-- `budget_source_address`: is the distribution module's `feeCollector` module account address
-- `collection_address`: is the farming module's `farmingPoolAddr` address
+- `budget_source_address`: is the address where the source of budget comes from
+- `collection_address`: is the address that collects budget from the budget source address 
 - `start_time`: is start time of the budget plan 
 - `end_time`: is end time of the budget plan
 
@@ -57,7 +62,7 @@ Let's create `proposal.json` file. Depending on what budget plan you plan to cre
 ```
 
 ```bash
-# Submit a governance proposal
+# Submit a public ratio plan governance proposal
 budgetd tx gov submit-proposal param-change proposal.json \
 --chain-id localnet \
 --from user1 \
@@ -65,8 +70,7 @@ budgetd tx gov submit-proposal param-change proposal.json \
 --broadcast-mode block \
 --yes
 
-# Query the proposal to check the status
-# the status should be PROPOSAL_STATUS_VOTING_PERIOD
+# Query the proposal to check the status PROPOSAL_STATUS_VOTING_PERIOD
 budgetd q gov proposals --output json | jq
 
 # Vote
@@ -77,13 +81,15 @@ budgetd tx gov vote 1 yes \
 --broadcast-mode block \
 --yes
 
+#
 # Wait a while (30s) for the proposal to pass
-# Query the proposal again to check the status
-# the status should be PROPOSAL_STATUS_PASSED
+#
+
+# Query the proposal again to check the status PROPOSAL_STATUS_PASSED
 budgetd q gov proposals --output json | jq
  
-# Query the balances of collection_address for a few times to see
-# if its balances increase over time
+# Query the balances of collection_address for a couple times 
+# the balances should increrase over time as gas fees and part of ATOM inflation flow in
 budgetd q bank balances cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl --output json | jq
 ```
 
