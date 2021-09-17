@@ -19,33 +19,54 @@ paths:
                 items:
                   type: object
                   properties:
-                    name:
-                      type: string
-                      title: name defines the name of the budget
-                    rate:
-                      type: string
-                      title: >-
-                        rate specifies the distributing amount by ratio of total
-                        budget source
-                    budget_source_address:
-                      type: string
-                      title: >-
-                        budget_source_address defines the bech32-encoded address
-                        that source of the budget
-                    collection_address:
-                      type: string
-                      title: >-
-                        collection_address defines the bech32-encoded address of
-                        the budget pool to distribute
-                    start_time:
-                      type: string
-                      format: date-time
-                      title: start_time specifies the start time of the budget
-                    end_time:
-                      type: string
-                      format: date-time
-                      title: end_time specifies the end time of the budget
-                  description: Budget defines the budget struct.
+                    budget:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+                          title: name defines the name of the budget
+                        rate:
+                          type: string
+                          title: >-
+                            rate specifies the distributing amount by ratio of
+                            total budget source
+                        budget_source_address:
+                          type: string
+                          title: >-
+                            budget_source_address defines the bech32-encoded
+                            address that source of the budget
+                        collection_address:
+                          type: string
+                          title: >-
+                            collection_address defines the bech32-encoded
+                            address of the budget pool to distribute
+                        start_time:
+                          type: string
+                          format: date-time
+                          title: start_time specifies the start time of the budget
+                        end_time:
+                          type: string
+                          format: date-time
+                          title: end_time specifies the end time of the budget
+                      description: Budget defines the budget struct.
+                    total_collected_coins:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          denom:
+                            type: string
+                          amount:
+                            type: string
+                        description: >-
+                          Coin defines a token with a denomination and an
+                          amount.
+
+
+                          NOTE: The amount field is an Int which implements the
+                          custom method
+
+                          signatures required by gogoproto.
             description: >-
               QueryBudgetsResponse is the response type for the Query/Budgets
               RPC method.
@@ -243,11 +264,11 @@ paths:
           in: query
           required: false
           type: string
-        - name: collection_address
+        - name: budget_source_address
           in: query
           required: false
           type: string
-        - name: budget_source_address
+        - name: collection_address
           in: query
           required: false
           type: string
@@ -508,6 +529,18 @@ paths:
       tags:
         - Query
 definitions:
+  cosmos.base.v1beta1.Coin:
+    type: object
+    properties:
+      denom:
+        type: string
+      amount:
+        type: string
+    description: |-
+      Coin defines a token with a denomination and an amount.
+
+      NOTE: The amount field is an Int which implements the custom method
+      signatures required by gogoproto.
   cosmos.budget.v1beta1.Budget:
     type: object
     properties:
@@ -536,6 +569,53 @@ definitions:
         format: date-time
         title: end_time specifies the end time of the budget
     description: Budget defines the budget struct.
+  cosmos.budget.v1beta1.BudgetResponse:
+    type: object
+    properties:
+      budget:
+        type: object
+        properties:
+          name:
+            type: string
+            title: name defines the name of the budget
+          rate:
+            type: string
+            title: >-
+              rate specifies the distributing amount by ratio of total budget
+              source
+          budget_source_address:
+            type: string
+            title: >-
+              budget_source_address defines the bech32-encoded address that
+              source of the budget
+          collection_address:
+            type: string
+            title: >-
+              collection_address defines the bech32-encoded address of the
+              budget pool to distribute
+          start_time:
+            type: string
+            format: date-time
+            title: start_time specifies the start time of the budget
+          end_time:
+            type: string
+            format: date-time
+            title: end_time specifies the end time of the budget
+        description: Budget defines the budget struct.
+      total_collected_coins:
+        type: array
+        items:
+          type: object
+          properties:
+            denom:
+              type: string
+            amount:
+              type: string
+          description: |-
+            Coin defines a token with a denomination and an amount.
+
+            NOTE: The amount field is an Int which implements the custom method
+            signatures required by gogoproto.
   cosmos.budget.v1beta1.Params:
     type: object
     properties:
@@ -593,33 +673,53 @@ definitions:
         items:
           type: object
           properties:
-            name:
-              type: string
-              title: name defines the name of the budget
-            rate:
-              type: string
-              title: >-
-                rate specifies the distributing amount by ratio of total budget
-                source
-            budget_source_address:
-              type: string
-              title: >-
-                budget_source_address defines the bech32-encoded address that
-                source of the budget
-            collection_address:
-              type: string
-              title: >-
-                collection_address defines the bech32-encoded address of the
-                budget pool to distribute
-            start_time:
-              type: string
-              format: date-time
-              title: start_time specifies the start time of the budget
-            end_time:
-              type: string
-              format: date-time
-              title: end_time specifies the end time of the budget
-          description: Budget defines the budget struct.
+            budget:
+              type: object
+              properties:
+                name:
+                  type: string
+                  title: name defines the name of the budget
+                rate:
+                  type: string
+                  title: >-
+                    rate specifies the distributing amount by ratio of total
+                    budget source
+                budget_source_address:
+                  type: string
+                  title: >-
+                    budget_source_address defines the bech32-encoded address
+                    that source of the budget
+                collection_address:
+                  type: string
+                  title: >-
+                    collection_address defines the bech32-encoded address of the
+                    budget pool to distribute
+                start_time:
+                  type: string
+                  format: date-time
+                  title: start_time specifies the start time of the budget
+                end_time:
+                  type: string
+                  format: date-time
+                  title: end_time specifies the end time of the budget
+              description: Budget defines the budget struct.
+            total_collected_coins:
+              type: array
+              items:
+                type: object
+                properties:
+                  denom:
+                    type: string
+                  amount:
+                    type: string
+                description: >-
+                  Coin defines a token with a denomination and an amount.
+
+
+                  NOTE: The amount field is an Int which implements the custom
+                  method
+
+                  signatures required by gogoproto.
     description: >-
       QueryBudgetsResponse is the response type for the Query/Budgets RPC
       method.

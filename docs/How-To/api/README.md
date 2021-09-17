@@ -2,6 +2,11 @@
 Title: REST APIs
 Description: A high-level overview of gRPC-gateway REST Routes in budget module.
 ---
+
+## Swagger Documentation
+
+- [Swagger Docs v0.1.0](https://app.swaggerhub.com/apis-docs/gravity-devs/budget/0.1.0)
+
 ## gRPC-gateway REST Routes
 
 In order to test out the following REST routes, you need to set up a local node to query from. You can refer to this [localnet tutorial](./Tutorials/localnet) on how to build `budgetd` binary and bootstrap a local network in your local machine.
