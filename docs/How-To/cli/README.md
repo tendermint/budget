@@ -62,7 +62,7 @@ sdk.AccAddress(address.Module(ModuleName, []byte("GravityDEXFarmingBudget")))
 ```
 
 ```bash
-# Submit a public ratio plan governance proposal
+# Submit a parameter changes proposal to create a budget plan
 budgetd tx gov submit-proposal param-change proposal.json \
 --chain-id localnet \
 --from user1 \
