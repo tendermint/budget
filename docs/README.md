@@ -1,6 +1,6 @@
 # Documentation
 
-How to use the Cosmos Cash Documentation.
+How to use the budget module documentation.
 
 * [Documentation](#documentation)
    * [Overview](#overview)
