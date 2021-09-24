@@ -1,3 +1,6 @@
+[![codecov](https://codecov.io/gh/tendermint/budget/branch/master/graph/badge.svg)](https://codecov.io/gh/tendermint/budget?branch=master)
+[![PkgGoDev](https://pkg.go.dev/badge/github.com/tendermint/budget)](https://pkg.go.dev/github.com/tendermint/budget)
+
 # Budget Module
 
 A budget module is a Cosmos SDK module that implements budget functionality. It is an independent module from other SDK modules and core functionality is to enable anyone to create a budget plan through governance param change proposal. Once it is agreed within the community, voted, and passed, it uses the budget source address to distribute amount of coins by the rate defined in the plan to the collection address. Collecting all budgets and distribution take place every epoch blocks that can be modified by a governance proposal.
