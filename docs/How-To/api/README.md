@@ -12,7 +12,7 @@ Description: A high-level overview of gRPC-gateway REST Routes in budget module.
 In order to test out the following REST routes, you need to set up a local node to query from. You can refer to this [localnet tutorial](./Tutorials/localnet) on how to build `budgetd` binary and bootstrap a local network in your local machine.
 
 Query the values set as budget parameters
-http://localhost:1317/cosmos/budget/v1beta1/params
+http://localhost:1317/cosmos/budget/v1beta1/params <!-- markdown-link-check-disable-line -->
 
 ```json
 {
@@ -33,7 +33,7 @@ http://localhost:1317/cosmos/budget/v1beta1/params
 ```
 
 Query all the budget plans exist in the network
-http://localhost:1317/cosmos/budget/v1beta1/budgets
+http://localhost:1317/cosmos/budget/v1beta1/budgets <!-- markdown-link-check-disable-line -->
 
 ```json
 {
