@@ -24,27 +24,11 @@ For further background information please see [the ADR relating to the documenta
 
 The scope and structure of the Explanation documentation follows this layout.
 
-### Topics
-
-Topics are discursive documents that explore some particular feature or theme.  For example, an article might investigate Decentralised Identity Documents or Self-Sovereign Identity.
-
-To contribute, create a folder in [topics](./topics) with a self-descriptive name. Add your content as needed.
-
-### Presentations
-
-The [Presentations](PRESENTATIONS.md) file describes and links to presentations about Budget module at various events. Presentations also include YouTube videos,  podcasts, interviews, and so on. 
-
-
 ### Architecture Decisions Records (ADRs)
 
  ADRs are the mechanism for contributors to raise design proposals. In turn, the ADRs explain for subsequent contributors the rationale behind Budget module design and implementation. For example, [ADR 002: Documentation Structure](./ADR/adr-002-docs-structure.md) explains why the Budget module documentation structure was chosen. 
 
 See the Architecture Decision Records (ADR) [README](./ADR/README.md) file for more details about how to raise and propose an ADR.
-
-### Articles
-
-This folder contains all articles relating to Budget module, includes papers, blog posts, and so on. For details, see [Articles README](articles/README.md).
-
 
 ## Discussions
 
@@ -57,7 +41,7 @@ Future: Budget module currently doesn't have a Discord or Telegram Channel. When
 * All documentation is written following [Google Documentation Best Practice](https://google.github.io/styleguide/docguide/best_practices.html)
 * Autogenerate documentation from the code whenever possible.
 * Raise a PR for all documentation changes
-* Follow our [Code of Conduct](../CONTRIBUTING.md)
+* Follow our [Code of Conduct](../../CONTRIBUTING.md)
 
 ## Reference
 
