@@ -34,9 +34,13 @@ An example of how to add a budget plan can be found in this [docs/How-To/cli](..
 ### Validity Checks
 
 - Budget name only allows letters(`A-Z, a-z`), digits(`0-9`), and `-` without spaces. Also, it has the maximum length of 50 and it should not be duplicate with the existing budget names.
+
 - Validate `CollectionAddress` address.
+
 - Validate `BudgetSourceAddress` address.
+
 - EndTime should not be earlier than StartTime.
+
 - The total rate of budgets with the same `BudgetSourceAddress` value should not exceed 1 (100%).
 
 +++ https://github.com/tendermint/budget/blob/master/x/budget/types/budget.go#L33-L63

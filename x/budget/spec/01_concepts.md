@@ -13,7 +13,9 @@ A primary use case is for Gravity DEX farming plan. A budget module can be used 
 Cosmos SDK's current reward workflow
 
 - In AnteHandler
+
     - Gas fees are collected in ante handler and they are sent to `FeeCollectorName` module account
+
     - Reference the following lines of code
 
       +++ https://github.com/cosmos/cosmos-sdk/blob/v0.43.0-rc0/x/auth/ante/fee.go#L112-L135
@@ -21,6 +23,7 @@ Cosmos SDK's current reward workflow
 - In `x/mint` module
 
   - ATOM inflation is minted in `x/mint` module and they are sent to `FeeCollectorName` module account
+
   - Reference the following lines of code
 
     +++ https://github.com/cosmos/cosmos-sdk/blob/v0.43.0-rc0/x/mint/abci.go#L27-L40
@@ -30,21 +33,32 @@ Cosmos SDK's current reward workflow
 - In `x/distribution` module
 
   - Send all rewards in `FeeCollectorName` to distribution module account
+  
   - From `distributionModuleAccount`, substitute `communityTax`
+
   - Rest are distributed to proposer and validator reward pools
+
   - Substituted amount for community budget is saved in kv store
+
   - Reference the following lines of code
 
     +++ https://github.com/cosmos/cosmos-sdk/blob/v0.43.0-rc0/x/distribution/keeper/allocation.go#L13-L102
 
-Implementation of Budget Module
+Implementation with Budget Module
 
   - A budget module is 100% independent from other Cosmos SDK's existing modules
+
   - BeginBlock processing order is the following order
+
       - mint module → budget module → d istribution module
+
   - Distribute ATOM inflation and transaction gas fees to different budget purposes
+
     - ATOM inflation and gas fees are accumulated in `feeCollectorName` module account
+
     - Distribute budget amounts from `FeeCollectorName` module account to each budget pool module account
+
     - Rest amounts stay in `FeeCollectorName` so that distribution module can use it for community fund and staking rewards distribution as what it is doing now
+
   - Create, modify or remove budget plans via governance process
     - A budget plan can be created, modified or removed by parameter change governance proposal

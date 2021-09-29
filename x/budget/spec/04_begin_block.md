@@ -9,7 +9,10 @@ At each `BeginBlock`, get all budgets registered in `params.Budgets` and select 
 ## Workflow
 
 1. Get all the budgets registered in `params.Budgets` and proceed with the valid and not expired budgets. Otherwise, it exits and waits for the next block. 
+
 2. Create a map by `BudgetSourceAddress` to handle the budgets for the same `BudgetSourceAddress` together based on the same balance when calculating rates for the same `BudgetSourceAddress`.
+
 3. Collect budgets from `BudgetSourceAddress` and send amount of coins to `CollectionAddress` relative to the rate of each budget`.
+
 4. Write metrics about successful budget collection and emit events.
 
