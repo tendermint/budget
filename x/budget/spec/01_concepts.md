@@ -6,7 +6,7 @@
 
 `x/budget` is a simple Cosmos SDK module that implements budget functionality. It is an independent module from other SDK modules and core functionality is to enable anyone to create a budget plan through parameter change governance proposal. Once it is agreed within the community, voted, and passed, it uses `BudgetSourceAddress` to distribute amount of coins relative to the rate defined in the plan to the `CollectionAddress`. At each `BeginBlock`, collecting all budgets and distribution take place every `EpochBlocks`. `EpochBlocks` is a global parameter that can be modified by a governance proposal.
 
-A primary use case is for Gravity DEX farming plan. A budget module can be used to create a budget plan that has `BudgetSourceAddress` for Cosmos Hub's [FeeCollector](https://github.com/cosmos/cosmos-sdk/blob/master/x/auth/types/keys.go#L15) module account which collects transaction gas fees and part of ATOM inflation. Then, `BudgetSourceAddress` plans to distribute some amount of coins to `CollectionAddress` for farming plan. 
+A primary use case is for Gravity DEX farming plan. A budget module can be used to create a budget plan that has `BudgetSourceAddress` for Cosmos Hub's [FeeCollector](https://github.com/cosmos/cosmos-sdk/blob/v0.44.0/x/auth/types/keys.go#L15) module account which collects transaction gas fees and part of ATOM inflation. Then, `BudgetSourceAddress` plans to distribute some amount of coins to `CollectionAddress` for farming plan. 
 
 ### Budget Plan for ATOM Inflation Use Case
 
