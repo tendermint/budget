@@ -18,7 +18,7 @@ Cosmos SDK's current reward workflow
 
     - Reference the following lines of code
 
-      +++ https://github.com/cosmos/cosmos-sdk/blob/v0.43.0-rc0/x/auth/ante/fee.go#L112-L135
+      +++ https://github.com/cosmos/cosmos-sdk/blob/v0.44.0/x/auth/ante/fee.go#L112-L140
 
 - In `x/mint` module
 
@@ -26,9 +26,9 @@ Cosmos SDK's current reward workflow
 
   - Reference the following lines of code
 
-    +++ https://github.com/cosmos/cosmos-sdk/blob/v0.43.0-rc0/x/mint/abci.go#L27-L40
+    +++ https://github.com/cosmos/cosmos-sdk/blob/v0.44.0/x/mint/abci.go#L27-L40
 
-    +++ https://github.com/cosmos/cosmos-sdk/blob/v0.43.0-rc0/x/mint/keeper/keeper.go#L108-L110
+    +++ https://github.com/cosmos/cosmos-sdk/blob/v0.44.0/x/mint/keeper/keeper.go#L108-L110
 
 - In `x/distribution` module
 
@@ -42,7 +42,7 @@ Cosmos SDK's current reward workflow
 
   - Reference the following lines of code
 
-    +++ https://github.com/cosmos/cosmos-sdk/blob/v0.43.0-rc0/x/distribution/keeper/allocation.go#L13-L102
+    +++ https://github.com/cosmos/cosmos-sdk/blob/v0.44.0/x/distribution/keeper/allocation.go#L13-L102
 
 Implementation with Budget Module
 
@@ -50,11 +50,11 @@ Implementation with Budget Module
 
   - BeginBlock processing order is the following order
 
-      - mint module → budget module → d istribution module
+      - mint module → budget module → distribution module
 
   - Distribute ATOM inflation and transaction gas fees to different budget purposes
 
-    - ATOM inflation and gas fees are accumulated in `feeCollectorName` module account
+    - ATOM inflation and gas fees are accumulated in `FeeCollectorName` module account
 
     - Distribute budget amounts from `FeeCollectorName` module account to each budget pool module account
 

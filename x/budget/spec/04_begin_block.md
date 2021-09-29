@@ -4,6 +4,8 @@
 
 At each `BeginBlock`, get all budgets registered in `params.Budgets` and select the valid budgets to distribute rewards for the previous block by its respective rate.
 
+At each `BeginBlock`, get all budgets registered in `params.Budgets` and select the valid budgets to collect budgets for the block by its respective rate.
+
 +++ https://github.com/tendermint/budget/blob/master/x/budget/abci.go#L15-L22
 
 ## Workflow
@@ -14,5 +16,5 @@ At each `BeginBlock`, get all budgets registered in `params.Budgets` and select 
 
 3. Collect budgets from `BudgetSourceAddress` and send amount of coins to `CollectionAddress` relative to the rate of each budget`.
 
-4. Write metrics about successful budget collection and emit events.
+4. Cumulate `TotalCollectedCoins` and emit events about the successful budget collection for each budget.
 
