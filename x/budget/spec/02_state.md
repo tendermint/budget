@@ -1,33 +1,35 @@
 <!-- order: 2 -->
-
 # State
-
 ## Budget
 
-The Budget structure is not stored in kv, but in parameters in the budget module as budgets.
+Budget object is not stored in KVStore. 
 
 ```go
+// Budget contains budget information
 type Budget struct {
-	Name                string // name defines the name of the budget
-	Rate                sdk.Dec // rate specifies the distributing amount by ratio of total budget source
-	BudgetSourceAddress string // budget_source_address defines the bech32-encoded address that source of the budget
-	CollectionAddress   string // collection_address defines the bech32-encoded address of the budget pool to distribute
-	StartTime           time.Time // start_time specifies the start time of the budget
-	EndTime             time.Time // end_time specifies the end time of the budget
+	Name                string    // name of the budget 
+	Rate                sdk.Dec   // distributing amount by ratio of total budget source
+	BudgetSourceAddress string    // bech32-encoded address that source of the budget
+	CollectionAddress   string    // bech32-encoded address that collects budget from the budget source address
+	StartTime           time.Time // start time of the budget plan
+	EndTime             time.Time // end time of the budget plan
 }
 ```
 
-### Total collected coins
++++ https://github.com/tendermint/budget/blob/master/proto/tendermint/budget/v1beta1/budget.proto#L25-L53
 
-The total collected coins is cumulative coins collected in the budget since the bucket was created.
-The total collected coins for each budget are stored as follows:
-```
-0x11 | BudgetName -> TotalCollectedCoins
-```
+## TotalCollectedCoins
 
-Where `TotalCollectedCoins` is just a wrapper around `sdk.Coins`:
 ```go
+// TotalCollectedCoins are cumulative coins collected in the budget since the bucket was created.
 type TotalCollectedCoins struct {
 	TotalCollectedCoins sdk.Coins
 }
 ```
+
++++ https://github.com/tendermint/budget/blob/master/proto/tendermint/budget/v1beta1/budget.proto#L55-L64
+
+
+For the purpose of tracking total collected coins for a budget, budget name is used as key to find it in store.
+
+- TotalCollectedCoins: `0x11 | BudgetName -> TotalCollectedCoins`

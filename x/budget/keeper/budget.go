@@ -56,6 +56,17 @@ func (k Keeper) BudgetCollection(ctx sdk.Context) error {
 			// TODO: sendcoins after validation
 			sendCoins(budgetSourceAcc, collectionAcc, collectionCoins)
 			k.AddTotalCollectedCoins(ctx, budget.Name, collectionCoins)
+
+			ctx.EventManager().EmitEvents(sdk.Events{
+				sdk.NewEvent(
+					types.EventTypeBudgetCollected,
+					sdk.NewAttribute(types.AttributeValueName, budget.Name),
+					sdk.NewAttribute(types.AttributeValueCollectionAddress, budget.CollectionAddress),
+					sdk.NewAttribute(types.AttributeValueBudgetSourceAddress, budget.BudgetSourceAddress),
+					sdk.NewAttribute(types.AttributeValueRate, budget.Rate.String()),
+					sdk.NewAttribute(types.AttributeValueAmount, collectionCoins.String()),
+				),
+			})
 		}
 		// temporary validation logic
 		if totalCollectionCoins.IsAnyGT(validatedExpectedCollectionCoins) {
