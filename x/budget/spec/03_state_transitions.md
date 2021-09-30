@@ -5,7 +5,7 @@
 This document describes the state transaction operations pertaining to the budget module.
 
 - BudgetCollection
-- `TotalCollectedCoins`
+- TotalCollectedCoins
 ## BudgetCollection
 
 Get all budgets registered in `params.Budgets` and select the valid budgets to collect budgets for the block by its respective plan.
