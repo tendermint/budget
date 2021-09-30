@@ -4,59 +4,43 @@
 
 The budget module contains the following parameters:
 
-| Key         | Type     | Example                                                                                                                                                                                                                                                                                                                       |
-| ----------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| EpochBlocks | uint32   | {"epoch_blocks":1}                                                                                                                                                                                                                                                                                                            |
-| Budgets     | []Budget | {"budgets":[{"name":"liquidity-farming-20213Q-20221Q","rate":"0.300000000000000000","budget_source_address":"cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta","collection_address":"cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl","start_time":"2021-10-01T00:00:00Z","end_time":"2022-04-01T00:00:00Z"}]} |
+
+| Key         | Type     | Example                                                                              |
+| ----------- | -------- | ------------------------------------------------------------------------------------ |
+| EpochBlocks | uint32   | {"epoch_blocks":1}                                                                   |
+| Budgets     | []Budget | {"budgets":[{"name":"liquidity-farming-20213Q-20221Q","rate":"0.300000000000000000","budget_source_address":"cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta","collection_address":"cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl","start_time":"2021-10-01T00:00:00Z","end_time":"2022-04-01T00:00:00Z"}]}                                        |
 
 ## EpochBlocks
 
 The universal epoch length in number of blocks.
-Every process for budget collecting is executed with this epoch_blocks frequency.
+Every process for budget collecting is executed with this `epoch_blocks` frequency.
 
-the default value is 1 and when the value is 0, all budget collections are disabled.
-when current height % `params.EpochBlocks` == 0  the budget collection logic is executed.
+The default value is 1 and all budget collections are disabled if the value is 0. Budget collection logic is executed with the following condition. 
+
+```
+params.EpochBlocks > 0 && Current Block Height % params.EpochBlocks == 0
+```
+
+You can reference [the line of the code](https://github.com/tendermint/budget/blob/master/x/budget/keeper/budget.go#L78).
 
 ## Budgets
 
-The structure of the Budget can be found at [State](02_state.md).
+The Budget structure can be found in [02_state.md](02_state.md).
 
-Budgets parameter can be added, deleted, and modified through [gov.ParameterChangeProposal](https://docs.cosmos.network/master/modules/gov/01_concepts.html#proposal-submission), and for each purpose, the changes in the existing budget list should be applied and set.
+Parameter of a budget can be added, modified, and deleted through [parameter change governance proposal](https://docs.cosmos.network/master/modules/gov/01_concepts.html#proposal-submission).
 
-Below is an example of adding budget.
-
-`budgetd tx gov submit-proposal param-change proposal.json`
-
-proposal.json
-
-```json
-{
-  "title": "Add a example budget",
-  "description": "This proposition is an example of adding Budgets using ParameterChangeProposal.",
-  "changes": [
-    {
-      "subspace": "budget",
-      "key": "Budgets",
-      "value": [
-        {
-          "name": "liquidity-farming-20213Q-20221Q",
-          "rate": "0.300000000000000000",
-          "budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
-          "collection_address": "cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl",
-          "start_time": "2021-10-01T00:00:00Z",
-          "end_time": "2022-04-01T00:00:00Z"
-        }
-      ]
-    }
-  ],
-  "deposit": "10000000uatom"
-}
-```
+An example of how to add a budget plan can be found in this [docs/How-To/cli](../../../docs/How-To/cli) guide. 
 
 ### Validity Checks
 
-- Name only allowed letters(`A-Z, a-z`), digits(`0-9`), and `-` without spaces and the maximum length is 50 and not duplicated.
-- The total rate of Budgets with the same `BudgetSourceAddress` value should not exceed 1.
+- Budget name only allows letters(`A-Z, a-z`), digits(`0-9`), and `-` without spaces. Also, it has the maximum length of 50 and it should not be duplicate with the existing budget names.
+
+- Validate `CollectionAddress` address.
+
+- Validate `BudgetSourceAddress` address.
+
 - EndTime should not be earlier than StartTime.
-- Check that the `CollectionAddress` is a valid address.
-- Check that the `BudgetSourceAddress` is a valid address.
+
+- The total rate of budgets with the same `BudgetSourceAddress` value should not exceed 1 (100%).
+
++++ https://github.com/tendermint/budget/blob/master/x/budget/types/budget.go#L33-L63
