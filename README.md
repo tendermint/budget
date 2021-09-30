@@ -7,7 +7,7 @@ A budget module is a Cosmos SDK module that implements budget functionality. It 
 
 One use case is for Gravity DEX farming plan. Budget module can be used to create a budget plan that defines Cosmos Hub's FeeCollector module account where transaction gas fees and part of ATOM inflation are collected as budget source address and uses custom module account (created by budget creator) as collection address. Read [spec docs](./x/budget/spec/01_concepts.md) to get to know more about the module.
 
-⚠ **Budger module v1 is in active development - see "master" branch for the latest update** ⚠
+⚠ **Budget module v1 is in active development - see "master" branch for the latest update** ⚠
 
 ## Installation
 ### Requirements
