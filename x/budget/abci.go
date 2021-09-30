@@ -12,7 +12,7 @@ import (
 	"github.com/tendermint/budget/x/budget/types"
 )
 
-// BeginBlocker distribute budget rewards for the previous block
+// BeginBlocker distribute budget rewards for the current block
 func BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock, k keeper.Keeper) {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyBeginBlocker)
 	err := k.BudgetCollection(ctx)
