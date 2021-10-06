@@ -72,10 +72,9 @@ func (AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx sdkclient.Context, mux
 }
 
 // GetTxCmd returns the root tx command for the budget module.
+// Modifying parameters of a budget can be done through governance process, not through transaction level.
 func (AppModuleBasic) GetTxCmd() *cobra.Command {
-	// Modification of Budgets of Params proceeds to governance proposition, not to Tx.
 	return nil
-
 }
 
 // GetQueryCmd returns the root query command for the budget module.

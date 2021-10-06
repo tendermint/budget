@@ -71,6 +71,7 @@ $ %s query %s params
 	return cmd
 }
 
+// GetCmdQueryBudgets implements the query budgets command.
 func GetCmdQueryBudgets() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "budgets",
