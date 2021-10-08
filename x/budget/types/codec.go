@@ -10,7 +10,7 @@ import (
 func RegisterLegacyAminoCodec(cdc *codec.LegacyAmino) {
 }
 
-// RegisterInterfaces registers the x/budget interfaces types with the interface registry
+// RegisterInterfaces registers the x/budget interfaces types with the interface registry.
 func RegisterInterfaces(registry types.InterfaceRegistry) {
 }
 
