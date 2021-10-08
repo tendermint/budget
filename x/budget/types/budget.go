@@ -87,7 +87,9 @@ type BudgetsBySource struct {
 
 type BudgetsBySourceMap map[string]BudgetsBySource
 
-// GetBudgetsBySourceMap returns BudgetsBySourceMap that has a list of budgets with the same BudgetSourceAddress and its total rate.
+// GetBudgetsBySourceMap returns BudgetsBySourceMap that has a list of budgets and their total rate
+// which contain the same BudgetSourceAddress. It can be used to track of what budgets are avilable with BudgetSourceAddress
+// and validate their total rate.
 func GetBudgetsBySourceMap(budgets []Budget) BudgetsBySourceMap {
 	budgetsMap := make(BudgetsBySourceMap)
 	for _, budget := range budgets {

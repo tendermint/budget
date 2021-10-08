@@ -7,8 +7,9 @@ import (
 	"github.com/tendermint/budget/x/budget/types"
 )
 
+// BudgetCollection collets all the valid budgets registered in params.Budgets and
+// distributes the total collected coins to collection address.
 func (k Keeper) BudgetCollection(ctx sdk.Context) error {
-	// Get all the Budgets registered in params.Budgets and select only the valid budgets. If there is no valid budget, exit.
 	budgets := k.CollectibleBudgets(ctx)
 	if len(budgets) == 0 {
 		return nil
@@ -22,8 +23,9 @@ func (k Keeper) BudgetCollection(ctx sdk.Context) error {
 			outputs = append(outputs, banktypes.NewOutput(to, coins))
 		}
 	}
-	// Create a map by BudgetSourceAddress to handle the budgets for the same BudgetSourceAddress together based on the
-	// same balance when calculating rates for the same BudgetSourceAddress.
+
+	// Get a map GetBudgetsBySourceMap that has a list of budgets and their total rate, which
+	// contain the same BudgetSourceAddress
 	budgetsBySourceMap := types.GetBudgetsBySourceMap(budgets)
 	for budgetSource, budgetsBySource := range budgetsBySourceMap {
 		budgetSourceAcc, err := sdk.AccAddressFromBech32(budgetSource)
@@ -53,6 +55,7 @@ func (k Keeper) BudgetCollection(ctx sdk.Context) error {
 			collectionCoins, changeCoins := budgetSourceBalances.MulDecTruncate(budget.Rate).TruncateDecimal()
 			totalCollectionCoins = totalCollectionCoins.Add(collectionCoins...)
 			totalChangeCoins = totalChangeCoins.Add(changeCoins...)
+
 			// TODO: sendcoins after validation
 			sendCoins(budgetSourceAcc, collectionAcc, collectionCoins)
 			k.AddTotalCollectedCoins(ctx, budget.Name, collectionCoins)
