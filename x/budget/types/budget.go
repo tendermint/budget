@@ -64,7 +64,7 @@ func (budget Budget) Expired(blockTime time.Time) bool {
 func ValidityAddr(bech32 string) (sdk.AccAddress, error) {
 	acc, err := sdk.AccAddressFromBech32(bech32)
 	if err != nil {
-		return nil, sdkerrors.Wrap(sdkerrors.ErrInvalidAddress, acc.String())
+		return nil, err
 	}
 	return acc, nil
 }

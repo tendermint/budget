@@ -11,7 +11,6 @@ import (
 	"github.com/tendermint/budget/x/budget/types"
 )
 
-// TODO: not implemented
 func TestValidateGenesis(t *testing.T) {
 	startTime, _ := time.Parse(time.RFC3339, "0000-01-01T00:00:00Z")
 	endTime, _ := time.Parse(time.RFC3339, "9999-12-31T00:00:00Z")
@@ -84,7 +83,7 @@ func TestValidateGenesis(t *testing.T) {
 					},
 				}
 			},
-			"budget1: budget name can be duplicated",
+			"budget1: budget name cannot be duplicated",
 		},
 		{
 			"invalid budget name case",
@@ -97,7 +96,7 @@ func TestValidateGenesis(t *testing.T) {
 					},
 				}
 			},
-			"invalid name: budget name only allowed letters, digits, and dash without spaces and the maximum length is 50",
+			"invalid name: budget name only allows letters, digits, and dash(-) without spaces and the maximum length is 50",
 		},
 		{
 			"invalid total_collected_coin case",
