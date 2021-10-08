@@ -29,10 +29,17 @@ func GenEpochBlocks(r *rand.Rand) uint32 {
 // GenGenBudgets returns randomized budgets.
 func GenBudgets(r *rand.Rand) []types.Budget {
 	ranBudgets := make([]types.Budget, 0)
-	for i := 0; i < simulation.RandIntBetween(r, 1, 5); i++ {
+	// TODO:
+	// if budget source address is the same, then we should lower rate and a number of budgets.
+	// Otherwise, get an error "the total rate of budgets with the same budget source address value should not exceed 1"
+	//
+	// 1. consider to use randomized BudgetSourceAddress
+	// 2. use Cosmos Hub's FeeCollector module account and reduce rate and number of budgets
+	//
+	for i := 0; i < simulation.RandIntBetween(r, 1, 2); i++ {
 		budget := types.Budget{
 			Name:                "simulation-test-" + simulation.RandStringOfLength(r, 5),
-			Rate:                sdk.NewDecFromIntWithPrec(sdk.NewInt(int64(simulation.RandIntBetween(r, 1, 10))), 1),
+			Rate:                sdk.NewDecFromIntWithPrec(sdk.NewInt(int64(simulation.RandIntBetween(r, 1, 2))), 1),
 			BudgetSourceAddress: "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta", // Cosmos Hub's FeeCollector module account
 			CollectionAddress:   sdk.AccAddress(address.Module(types.ModuleName, []byte("GravityDEXFarmingBudget"))).String(),
 			StartTime:           types.ParseTime("2000-01-01T00:00:00Z"),
