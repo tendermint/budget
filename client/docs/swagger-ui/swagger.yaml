@@ -48,7 +48,7 @@ paths:
                           type: string
                           format: date-time
                           title: end_time specifies the end time of the budget
-                      description: Budget defines the budget struct.
+                      description: Budget defines a budget object.
                     total_collected_coins:
                       type: array
                       items:
@@ -291,10 +291,10 @@ paths:
                     type: integer
                     format: int64
                     title: >-
-                      The universal epoch length in number of blocks, Every
-                      process for budget collecting is executed with this
+                      The universal epoch length in number of blocks
 
-                      epoch_blocks frequency
+                      A collection of budgets is executed with this epoch_blocks
+                      parameter
                   budgets:
                     type: array
                     items:
@@ -326,14 +326,13 @@ paths:
                           type: string
                           format: date-time
                           title: end_time specifies the end time of the budget
-                      description: Budget defines the budget struct.
-                    description: >-
-                      Budgets parameter can be added, deleted, and modified
-                      through gov.ParameterChangeProposal, and for each purpose,
+                      description: Budget defines a budget object.
+                    title: >-
+                      Budgets parameter can be added, modified, and deleted
+                      through 
 
-                      the changes in the existing budget list should be applied
-                      and set.
-                description: Params defines the set of params for the budget module.
+                      parameter change governance proposal
+                description: Params defines the parameters for the budget module.
             description: >-
               QueryParamsResponse is the response type for the Query/Params RPC
               method.
@@ -568,7 +567,7 @@ definitions:
         type: string
         format: date-time
         title: end_time specifies the end time of the budget
-    description: Budget defines the budget struct.
+    description: Budget defines a budget object.
   cosmos.budget.v1beta1.BudgetResponse:
     type: object
     properties:
@@ -601,7 +600,7 @@ definitions:
             type: string
             format: date-time
             title: end_time specifies the end time of the budget
-        description: Budget defines the budget struct.
+        description: Budget defines a budget object.
       total_collected_coins:
         type: array
         items:
@@ -622,11 +621,9 @@ definitions:
       epoch_blocks:
         type: integer
         format: int64
-        title: >-
-          The universal epoch length in number of blocks, Every process for
-          budget collecting is executed with this
-
-          epoch_blocks frequency
+        title: |-
+          The universal epoch length in number of blocks
+          A collection of budgets is executed with this epoch_blocks parameter
       budgets:
         type: array
         items:
@@ -658,13 +655,11 @@ definitions:
               type: string
               format: date-time
               title: end_time specifies the end time of the budget
-          description: Budget defines the budget struct.
-        description: >-
-          Budgets parameter can be added, deleted, and modified through
-          gov.ParameterChangeProposal, and for each purpose,
-
-          the changes in the existing budget list should be applied and set.
-    description: Params defines the set of params for the budget module.
+          description: Budget defines a budget object.
+        title: |-
+          Budgets parameter can be added, modified, and deleted through 
+          parameter change governance proposal
+    description: Params defines the parameters for the budget module.
   cosmos.budget.v1beta1.QueryBudgetsResponse:
     type: object
     properties:
@@ -702,7 +697,7 @@ definitions:
                   type: string
                   format: date-time
                   title: end_time specifies the end time of the budget
-              description: Budget defines the budget struct.
+              description: Budget defines a budget object.
             total_collected_coins:
               type: array
               items:
@@ -733,10 +728,10 @@ definitions:
             type: integer
             format: int64
             title: >-
-              The universal epoch length in number of blocks, Every process for
-              budget collecting is executed with this
+              The universal epoch length in number of blocks
 
-              epoch_blocks frequency
+              A collection of budgets is executed with this epoch_blocks
+              parameter
           budgets:
             type: array
             items:
@@ -768,13 +763,11 @@ definitions:
                   type: string
                   format: date-time
                   title: end_time specifies the end time of the budget
-              description: Budget defines the budget struct.
-            description: >-
-              Budgets parameter can be added, deleted, and modified through
-              gov.ParameterChangeProposal, and for each purpose,
-
-              the changes in the existing budget list should be applied and set.
-        description: Params defines the set of params for the budget module.
+              description: Budget defines a budget object.
+            title: |-
+              Budgets parameter can be added, modified, and deleted through 
+              parameter change governance proposal
+        description: Params defines the parameters for the budget module.
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
   google.protobuf.Any:
     type: object
