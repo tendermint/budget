@@ -8,7 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/cosmos/cosmos-sdk/types/simulation"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/tendermint/budget/x/budget/types"
 )
@@ -23,23 +23,27 @@ const (
 
 // GenEpochBlocks returns randomized epoch blocks.
 func GenEpochBlocks(r *rand.Rand) uint32 {
-	return uint32(simulation.RandIntBetween(r, int(types.DefaultEpochBlocks), 10))
+	return uint32(simtypes.RandIntBetween(r, int(types.DefaultEpochBlocks), 10))
 }
 
-// GenGenBudgets returns randomized budgets.
+// GenBudgets returns randomized budgets.
 func GenBudgets(r *rand.Rand) []types.Budget {
 	ranBudgets := make([]types.Budget, 0)
-	// TODO:
-	// if budget source address is the same, then we should lower rate and a number of budgets.
-	// Otherwise, get an error "the total rate of budgets with the same budget source address value should not exceed 1"
-	//
-	// 1. consider to use randomized BudgetSourceAddress
-	// 2. use Cosmos Hub's FeeCollector module account and reduce rate and number of budgets
-	//
-	for i := 0; i < simulation.RandIntBetween(r, 1, 2); i++ {
+	/*
+		Consideration
+
+		1. Randomize BudgetSourceAddress
+			-> Generated account has no coins to distribute
+		2. Use BudgetSourceAddress as Cosmos Hub's FeeCollector module account (cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta)
+			-> Should set lower rate and set a number of budgets lower than 2~3 -> max up to 3 budgets with 10~30% budget rate each
+			-> Otherwise, get an error "the total rate of budgets with the same budget source address value should not exceed 1"
+	*/
+
+	for i := 0; i < simtypes.RandIntBetween(r, 1, 3); i++ {
 		budget := types.Budget{
-			Name:                "simulation-test-" + simulation.RandStringOfLength(r, 5),
-			Rate:                sdk.NewDecFromIntWithPrec(sdk.NewInt(int64(simulation.RandIntBetween(r, 1, 2))), 1),
+			Name: "simulation-test-" + simtypes.RandStringOfLength(r, 5),
+			Rate: sdk.NewDecFromIntWithPrec(sdk.NewInt(int64(simtypes.RandIntBetween(r, 1, 4))), 1), // 10~30%
+			// BudgetSourceAddress: simtypes.RandomAccounts(r, 1000)[0].Address.String(),
 			BudgetSourceAddress: "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta", // Cosmos Hub's FeeCollector module account
 			CollectionAddress:   sdk.AccAddress(address.Module(types.ModuleName, []byte("GravityDEXFarmingBudget"))).String(),
 			StartTime:           types.ParseTime("2000-01-01T00:00:00Z"),
