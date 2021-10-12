@@ -29,22 +29,12 @@ func GenEpochBlocks(r *rand.Rand) uint32 {
 // GenBudgets returns randomized budgets.
 func GenBudgets(r *rand.Rand) []types.Budget {
 	ranBudgets := make([]types.Budget, 0)
-	/*
-		Consideration
-
-		1. Randomize BudgetSourceAddress
-			-> Generated account has no coins to distribute
-		2. Use BudgetSourceAddress as Cosmos Hub's FeeCollector module account (cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta)
-			-> Should set lower rate and set a number of budgets lower than 2~3 -> max up to 3 budgets with 10~30% budget rate each
-			-> Otherwise, get an error "the total rate of budgets with the same budget source address value should not exceed 1"
-	*/
 
 	for i := 0; i < simtypes.RandIntBetween(r, 1, 3); i++ {
 		budget := types.Budget{
-			Name: "simulation-test-" + simtypes.RandStringOfLength(r, 5),
-			Rate: sdk.NewDecFromIntWithPrec(sdk.NewInt(int64(simtypes.RandIntBetween(r, 1, 4))), 1), // 10~30%
-			// BudgetSourceAddress: simtypes.RandomAccounts(r, 1000)[0].Address.String(),
-			BudgetSourceAddress: "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta", // Cosmos Hub's FeeCollector module account
+			Name:                "simulation-test-" + simtypes.RandStringOfLength(r, 5),
+			Rate:                sdk.NewDecFromIntWithPrec(sdk.NewInt(int64(simtypes.RandIntBetween(r, 1, 4))), 1), // 10~30%
+			BudgetSourceAddress: "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",                                   // Cosmos Hub's FeeCollector module account
 			CollectionAddress:   sdk.AccAddress(address.Module(types.ModuleName, []byte("GravityDEXFarmingBudget"))).String(),
 			StartTime:           types.ParseTime("2000-01-01T00:00:00Z"),
 			EndTime:             types.ParseTime("9999-12-31T00:00:00Z"),
