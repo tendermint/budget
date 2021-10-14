@@ -8,6 +8,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"
 	"github.com/cosmos/cosmos-sdk/types/module"
+	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 
 	"github.com/tendermint/budget/x/budget/types"
 )
@@ -20,29 +21,31 @@ const (
 	Budgets     = "budgets"
 )
 
-// GenEpochBlocks return default DefaultEpochBlocks
+// GenEpochBlocks returns randomized epoch blocks.
 func GenEpochBlocks(r *rand.Rand) uint32 {
-	// TODO: randomize
-	return types.DefaultEpochBlocks
+	return uint32(simtypes.RandIntBetween(r, int(types.DefaultEpochBlocks), 10))
 }
 
-// GenGenBudgets return randomized budgets
+// GenBudgets returns randomized budgets.
 func GenBudgets(r *rand.Rand) []types.Budget {
-	// TODO: randomize
-	budgetSamples := []types.Budget{
-		{
-			Name:                "budget1",
-			Rate:                sdk.MustNewDecFromStr("0.5"),
-			BudgetSourceAddress: "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta", // Address corresponding to fee_collector module account in cosmoshub case
+	ranBudgets := make([]types.Budget, 0)
+
+	for i := 0; i < simtypes.RandIntBetween(r, 1, 3); i++ {
+		budget := types.Budget{
+			Name:                "simulation-test-" + simtypes.RandStringOfLength(r, 5),
+			Rate:                sdk.NewDecFromIntWithPrec(sdk.NewInt(int64(simtypes.RandIntBetween(r, 1, 4))), 1), // 10~30%
+			BudgetSourceAddress: "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",                                   // Cosmos Hub's FeeCollector module account
 			CollectionAddress:   sdk.AccAddress(address.Module(types.ModuleName, []byte("GravityDEXFarmingBudget"))).String(),
 			StartTime:           types.ParseTime("2000-01-01T00:00:00Z"),
 			EndTime:             types.ParseTime("9999-12-31T00:00:00Z"),
-		},
+		}
+		ranBudgets = append(ranBudgets, budget)
 	}
-	return budgetSamples
+
+	return ranBudgets
 }
 
-// RandomizedGenState generates a random GenesisState for budget
+// RandomizedGenState generates a random GenesisState for budget.
 func RandomizedGenState(simState *module.SimulationState) {
 	var epochBlocks uint32
 	var budgets []types.Budget
