@@ -7,9 +7,9 @@ import (
 	"github.com/tendermint/budget/x/budget/types"
 )
 
-// BudgetCollection collets all the valid budgets registered in params.Budgets and
+// CollectBudgets collects all the valid budgets registered in params.Budgets and
 // distributes the total collected coins to collection address.
-func (k Keeper) BudgetCollection(ctx sdk.Context) error {
+func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 	budgets := k.CollectibleBudgets(ctx)
 	if len(budgets) == 0 {
 		return nil
