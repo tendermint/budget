@@ -37,11 +37,11 @@ func (budget Budget) Validate() error {
 		return err
 	}
 
-	if _, err := ValidityAddr(budget.CollectionAddress); err != nil {
+	if _, err := sdk.AccAddressFromBech32(budget.CollectionAddress); err != nil {
 		return err
 	}
 
-	if _, err := ValidityAddr(budget.BudgetSourceAddress); err != nil {
+	if _, err := sdk.AccAddressFromBech32(budget.BudgetSourceAddress); err != nil {
 		return err
 	}
 
@@ -58,15 +58,6 @@ func (budget Budget) Validate() error {
 // Expired validates the budget's end time expiration.
 func (budget Budget) Expired(blockTime time.Time) bool {
 	return !budget.EndTime.After(blockTime)
-}
-
-// ValidityAddr validates the bech32 address format.
-func ValidityAddr(bech32 string) (sdk.AccAddress, error) {
-	acc, err := sdk.AccAddressFromBech32(bech32)
-	if err != nil {
-		return nil, err
-	}
-	return acc, nil
 }
 
 // ValidateName is the default validation function for Budget.Name.
