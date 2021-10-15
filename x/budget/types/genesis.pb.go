@@ -68,11 +68,11 @@ func (m *GenesisState) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_GenesisState proto.InternalMessageInfo
 
-// records the state of each budget after genesis export or import.
+// BudgetRecord records the state of each budget after genesis import or export.
 type BudgetRecord struct {
-	// the name of the budget
+	// name defines the name of the budget
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
-	// the cumulative coins collected in the budget since the bucket was created.
+	// total_collected_coins specifis the total collected coins in a budget ever since the budget is created
 	TotalCollectedCoins github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,2,rep,name=total_collected_coins,json=totalCollectedCoins,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"total_collected_coins" yaml:"total_collected_coins"`
 }
 

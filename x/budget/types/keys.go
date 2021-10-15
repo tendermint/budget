@@ -19,13 +19,16 @@ const (
 )
 
 var (
+	// Keys for store prefixes
 	TotalCollectedCoinsKeyPrefix = []byte{0x11}
 )
 
+// GetTotalCollectedCoinsKey creates the key for the total collected coins for a budget.
 func GetTotalCollectedCoinsKey(budgetName string) []byte {
 	return append(TotalCollectedCoinsKeyPrefix, []byte(budgetName)...)
 }
 
+// ParseTotalCollectedCoinsKey parses the total collected coins key and returns the budget name.
 func ParseTotalCollectedCoinsKey(key []byte) (budgetName string) {
 	if !bytes.HasPrefix(key, TotalCollectedCoinsKeyPrefix) {
 		panic("key does not have proper prefix")

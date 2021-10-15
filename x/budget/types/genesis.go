@@ -1,6 +1,6 @@
 package types
 
-// NewGenesisState returns new GenesisState.
+// NewGenesisState returns new GenesisState instance.
 func NewGenesisState(params Params, records []BudgetRecord) *GenesisState {
 	return &GenesisState{
 		Params:        params,

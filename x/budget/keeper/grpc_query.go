@@ -18,6 +18,7 @@ type Querier struct {
 
 var _ types.QueryServer = Querier{}
 
+// Params queries the parameters of the budget module.
 func (k Querier) Params(c context.Context, _ *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
 	var params types.Params
@@ -25,6 +26,7 @@ func (k Querier) Params(c context.Context, _ *types.QueryParamsRequest) (*types.
 	return &types.QueryParamsResponse{Params: params}, nil
 }
 
+// Budgets queries all budgets.
 func (k Querier) Budgets(c context.Context, req *types.QueryBudgetsRequest) (*types.QueryBudgetsResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "invalid request")

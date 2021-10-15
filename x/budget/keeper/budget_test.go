@@ -6,7 +6,7 @@ import (
 	"github.com/tendermint/budget/x/budget/types"
 )
 
-func (suite *KeeperTestSuite) TestBudgetCollection() {
+func (suite *KeeperTestSuite) TestCollectBudgets() {
 	for _, tc := range []struct {
 		name           string
 		budgets        []types.Budget
@@ -155,7 +155,7 @@ func (suite *KeeperTestSuite) TestBudgetCollection() {
 			params.EpochBlocks = tc.epochBlocks
 			suite.keeper.SetParams(suite.ctx, params)
 
-			err := suite.keeper.BudgetCollection(suite.ctx)
+			err := suite.keeper.CollectBudgets(suite.ctx)
 			if tc.expectErr {
 				suite.Error(err)
 			} else {
@@ -211,7 +211,7 @@ func (suite *KeeperTestSuite) TestTotalCollectedCoins() {
 	suite.Require().Equal(sdk.Coins(nil), collectedCoins)
 
 	suite.ctx = suite.ctx.WithBlockTime(mustParseRFC3339("2021-08-31T00:00:00Z"))
-	err := suite.keeper.BudgetCollection(suite.ctx)
+	err := suite.keeper.CollectBudgets(suite.ctx)
 	suite.Require().NoError(err)
 
 	collectedCoins = suite.keeper.GetTotalCollectedCoins(suite.ctx, "budget1")

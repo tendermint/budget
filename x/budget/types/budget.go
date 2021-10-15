@@ -16,6 +16,7 @@ var (
 	reBudgetName       = regexp.MustCompile(fmt.Sprintf(`^%s$`, reBudgetNameString))
 )
 
+// String returns a human-readable string representation of the budget.
 func (budget Budget) String() string {
 	out, _ := budget.MarshalYAML()
 	return out.(string)
@@ -30,28 +31,20 @@ func (budget Budget) MarshalYAML() (interface{}, error) {
 	return string(bz), err
 }
 
+// Validate validates the budget.
 func (budget Budget) Validate() error {
-	//Name only allowed letters(`A-Z, a-z`), digits(`0-9`), and `-` without spaces and the maximum length is 50.
-	err := ValidateName(budget.Name)
-	if err != nil {
+	if err := ValidateName(budget.Name); err != nil {
 		return err
 	}
 
-	// Check that the CollectionAddress is a valid address.
-	_, err = ValidityAddr(budget.CollectionAddress)
-	if err != nil {
-		// TODO: return error with Wrapping
+	if _, err := sdk.AccAddressFromBech32(budget.CollectionAddress); err != nil {
 		return err
 	}
 
-	// Check that the BudgetSourceAddress is a valid address.
-	_, err = ValidityAddr(budget.BudgetSourceAddress)
-	if err != nil {
-		// TODO: return error with Wrapping
+	if _, err := sdk.AccAddressFromBech32(budget.BudgetSourceAddress); err != nil {
 		return err
 	}
 
-	// EndTime should not be earlier than StartTime.
 	if budget.EndTime.Before(budget.StartTime) {
 		return ErrInvalidStartEndTime
 	}
@@ -62,19 +55,14 @@ func (budget Budget) Validate() error {
 	return nil
 }
 
+// Expired validates the budget's end time expiration.
 func (budget Budget) Expired(blockTime time.Time) bool {
 	return !budget.EndTime.After(blockTime)
 }
 
-func ValidityAddr(bech32 string) (sdk.AccAddress, error) {
-	acc, err := sdk.AccAddressFromBech32(bech32)
-	if err != nil {
-		return nil, err
-	}
-	return acc, nil
-}
-
 // ValidateName is the default validation function for Budget.Name.
+// A budget name only allows alphabet letters(`A-Z, a-z`), digit numbers(`0-9`), and `-`.
+// It doesn't allow spaces and the maximum length is 50 characters.
 func ValidateName(name string) error {
 	if !reBudgetName.MatchString(name) {
 		return sdkerrors.Wrap(ErrInvalidBudgetName, name)
@@ -82,6 +70,7 @@ func ValidateName(name string) error {
 	return nil
 }
 
+// BudgetsBySource defines the total rate of budget lists.
 type BudgetsBySource struct {
 	Budgets   []Budget
 	TotalRate sdk.Dec
@@ -89,8 +78,9 @@ type BudgetsBySource struct {
 
 type BudgetsBySourceMap map[string]BudgetsBySource
 
-// GetBudgetsBySourceMap returns a map by BudgetSourceAddress to handle the budgets for the same BudgetSourceAddress together based on the
-// same balance when calculating rates for the same BudgetSourceAddress.
+// GetBudgetsBySourceMap returns BudgetsBySourceMap that has a list of budgets and their total rate
+// which contain the same BudgetSourceAddress. It can be used to track of what budgets are avilable with BudgetSourceAddress
+// and validate their total rate.
 func GetBudgetsBySourceMap(budgets []Budget) BudgetsBySourceMap {
 	budgetsMap := make(BudgetsBySourceMap)
 	for _, budget := range budgets {

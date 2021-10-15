@@ -16,7 +16,7 @@ func (suite *KeeperTestSuite) TestInitGenesis() {
 	suite.Require().Equal(emptyGenState, suite.keeper.ExportGenesis(suite.ctx))
 	suite.Require().Nil(emptyGenState.BudgetRecords)
 
-	err := suite.keeper.BudgetCollection(suite.ctx)
+	err := suite.keeper.CollectBudgets(suite.ctx)
 	suite.Require().NoError(err)
 	var genState *types.GenesisState
 	suite.Require().NotPanics(func() {

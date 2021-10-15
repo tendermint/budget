@@ -58,7 +58,7 @@ func (suite *KeeperTestSuite) TestGRPCBudgets() {
 	expectedCoins, _ := sdk.NewDecCoinsFromCoins(balance...).MulDec(sdk.NewDecWithPrec(5, 2)).TruncateDecimal()
 
 	suite.ctx = suite.ctx.WithBlockTime(mustParseRFC3339("2021-08-31T00:00:00Z"))
-	err := suite.keeper.BudgetCollection(suite.ctx)
+	err := suite.keeper.CollectBudgets(suite.ctx)
 	suite.Require().NoError(err)
 
 	for _, tc := range []struct {

@@ -12,8 +12,9 @@ import (
 
 const (
 	// MaxBudgetNameLength is the maximum length of the name of each budget.
-	MaxBudgetNameLength int    = 50
-	DefaultEpochBlocks  uint32 = 1
+	MaxBudgetNameLength int = 50
+	// DefaultEpochBlocks is the default epoch blocks.
+	DefaultEpochBlocks uint32 = 1
 )
 
 // Parameter store keys
@@ -66,6 +67,8 @@ func (p Params) Validate() error {
 	return nil
 }
 
+// ValidateBudgets validates budget name and total rate.
+// The total rate of budgets with the same budget source address must not exceed 1.
 func ValidateBudgets(i interface{}) error {
 	budgets, ok := i.([]Budget)
 	if !ok {
@@ -92,6 +95,7 @@ func ValidateBudgets(i interface{}) error {
 	return nil
 }
 
+// ValidateEpochBlocks validates epoch blocks.
 func ValidateEpochBlocks(i interface{}) error {
 	_, ok := i.(uint32)
 	if !ok {

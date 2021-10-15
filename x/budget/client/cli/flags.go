@@ -10,6 +10,7 @@ const (
 	FlagCollectionAddress   = "collection-address"
 )
 
+// flagSetBudgets returns the FlagSet used for budgets.
 func flagSetBudgets() *flag.FlagSet {
 	fs := flag.NewFlagSet("", flag.ContinueOnError)
 
