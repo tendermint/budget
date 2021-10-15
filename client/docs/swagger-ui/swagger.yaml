@@ -329,7 +329,7 @@ paths:
                       description: Budget defines a budget object.
                     title: >-
                       Budgets parameter can be added, modified, and deleted
-                      through 
+                      through
 
                       parameter change governance proposal
                 description: Params defines the parameters for the budget module.
@@ -657,7 +657,7 @@ definitions:
               title: end_time specifies the end time of the budget
           description: Budget defines a budget object.
         title: |-
-          Budgets parameter can be added, modified, and deleted through 
+          Budgets parameter can be added, modified, and deleted through
           parameter change governance proposal
     description: Params defines the parameters for the budget module.
   cosmos.budget.v1beta1.QueryBudgetsResponse:
@@ -765,7 +765,7 @@ definitions:
                   title: end_time specifies the end time of the budget
               description: Budget defines a budget object.
             title: |-
-              Budgets parameter can be added, modified, and deleted through 
+              Budgets parameter can be added, modified, and deleted through
               parameter change governance proposal
         description: Params defines the parameters for the budget module.
     description: QueryParamsResponse is the response type for the Query/Params RPC method.

@@ -17,7 +17,7 @@ message Params {
   // A collection of budgets is executed with this epoch_blocks parameter
   uint32 epoch_blocks = 1 [(gogoproto.moretags) = "yaml:\"epoch_blocks\""];
 
-  // Budgets parameter can be added, modified, and deleted through 
+  // Budgets parameter can be added, modified, and deleted through
   // parameter change governance proposal
   repeated Budget budgets = 2 [(gogoproto.moretags) = "yaml:\"budgets\"", (gogoproto.nullable) = false];
 }

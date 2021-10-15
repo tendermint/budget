@@ -30,13 +30,13 @@ var _ = time.Kitchen
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-// Params defines the set of params for the budget module.
+// Params defines the parameters for the budget module.
 type Params struct {
-	// The universal epoch length in number of blocks, Every process for budget collecting is executed with this
-	// epoch_blocks frequency
+	// The universal epoch length in number of blocks
+	// A collection of budgets is executed with this epoch_blocks parameter
 	EpochBlocks uint32 `protobuf:"varint,1,opt,name=epoch_blocks,json=epochBlocks,proto3" json:"epoch_blocks,omitempty" yaml:"epoch_blocks"`
-	// Budgets parameter can be added, deleted, and modified through gov.ParameterChangeProposal, and for each purpose,
-	// the changes in the existing budget list should be applied and set.
+	// Budgets parameter can be added, modified, and deleted through
+	// parameter change governance proposal
 	Budgets []Budget `protobuf:"bytes,2,rep,name=budgets,proto3" json:"budgets" yaml:"budgets"`
 }
 
@@ -86,7 +86,7 @@ func (m *Params) GetBudgets() []Budget {
 	return nil
 }
 
-// Budget defines the budget struct.
+// Budget defines a budget object.
 type Budget struct {
 	// name defines the name of the budget
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
@@ -134,8 +134,9 @@ func (m *Budget) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Budget proto.InternalMessageInfo
 
-// The cumulative coins collected in the budget since the bucket was created.
+// TotalCollectedCoins defines total collected coins with relevant metadata.
 type TotalCollectedCoins struct {
+	// total_collected_coins specifis the total collected coins in a budget ever since the budget is created
 	TotalCollectedCoins github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,1,rep,name=total_collected_coins,json=totalCollectedCoins,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"total_collected_coins" yaml:"total_collected_coins"`
 }
 
