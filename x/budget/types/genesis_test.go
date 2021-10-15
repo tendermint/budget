@@ -58,7 +58,7 @@ func TestValidateGenesis(t *testing.T) {
 					},
 				}
 			},
-			"invalid budget source address cosmos1xq6geq9rc9zgkqmn9kxz2rykwe52thp0w9vz2w: decoding bech32 failed: failed converting data to bytes: invalid character not part of charset: 105: invalid address",
+			"invalid budget source address cosmos1invalidaddress: decoding bech32 failed: failed converting data to bytes: invalid character not part of charset: 105: invalid address",
 		},
 		{
 			"duplicate budget name",
