@@ -113,9 +113,7 @@ func (AppModule) Name() string {
 }
 
 // RegisterInvariants registers the budget module invariants.
-func (am AppModule) RegisterInvariants(ir sdk.InvariantRegistry) {
-	keeper.RegisterInvariants(ir, am.keeper)
-}
+func (AppModule) RegisterInvariants(_ sdk.InvariantRegistry) {}
 
 // Route returns the message routing key for the budget module.
 func (am AppModule) Route() sdk.Route {

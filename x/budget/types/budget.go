@@ -75,14 +75,15 @@ func ValidateName(name string) error {
 
 // BudgetsBySource defines the total rate of budget lists.
 type BudgetsBySource struct {
-	Budgets   []Budget
-	TotalRate sdk.Dec
+	Budgets         []Budget
+	CollectionCoins []sdk.Coins
+	TotalRate       sdk.Dec
 }
 
 type BudgetsBySourceMap map[string]BudgetsBySource
 
 // GetBudgetsBySourceMap returns BudgetsBySourceMap that has a list of budgets and their total rate
-// which contain the same BudgetSourceAddress. It can be used to track of what budgets are avilable with BudgetSourceAddress
+// which contain the same BudgetSourceAddress. It can be used to track of what budgets are available with BudgetSourceAddress
 // and validate their total rate.
 func GetBudgetsBySourceMap(budgets []Budget) BudgetsBySourceMap {
 	budgetsMap := make(BudgetsBySourceMap)

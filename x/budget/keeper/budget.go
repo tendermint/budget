@@ -15,9 +15,6 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 		return nil
 	}
 
-	var inputs []banktypes.Input
-	var outputs []banktypes.Output
-
 	// Get a map GetBudgetsBySourceMap that has a list of budgets and their total rate, which
 	// contain the same BudgetSourceAddress
 	budgetsBySourceMap := types.GetBudgetsBySourceMap(budgets)
@@ -30,33 +27,31 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 		if budgetSourceBalances.IsZero() {
 			continue
 		}
-		expectedCollectionCoins, _ := budgetSourceBalances.MulDecTruncate(budgetsBySource.TotalRate).TruncateDecimal()
-		var validatedExpectedCollectionCoins sdk.Coins
-		for _, coin := range expectedCollectionCoins {
-			if coin.IsValid() && coin.IsZero() {
-				validatedExpectedCollectionCoins = append(validatedExpectedCollectionCoins, coin)
-			}
-		}
-		expectedDiffCoins := expectedCollectionCoins.Sub(validatedExpectedCollectionCoins)
 
-		var totalCollectionCoins sdk.Coins
-		var totalChangeCoins sdk.DecCoins
-		for _, budget := range budgetsBySource.Budgets {
+		var inputs []banktypes.Input
+		var outputs []banktypes.Output
+		budgetsBySource.CollectionCoins = make([]sdk.Coins, len(budgetsBySource.Budgets))
+		for i, budget := range budgetsBySource.Budgets {
 			collectionAcc, err := sdk.AccAddressFromBech32(budget.CollectionAddress)
 			if err != nil {
 				continue
 			}
-			collectionCoins, changeCoins := budgetSourceBalances.MulDecTruncate(budget.Rate).TruncateDecimal()
-			totalCollectionCoins = totalCollectionCoins.Add(collectionCoins...)
-			totalChangeCoins = totalChangeCoins.Add(changeCoins...)
 
-			if !collectionCoins.Empty() && collectionCoins.IsValid() {
-				inputs = append(inputs, banktypes.NewInput(budgetSourceAcc, collectionCoins))
-				outputs = append(outputs, banktypes.NewOutput(collectionAcc, collectionCoins))
+			collectionCoins, _ := budgetSourceBalances.MulDecTruncate(budget.Rate).TruncateDecimal()
+			if collectionCoins.Empty() || !collectionCoins.IsValid() {
+				continue
 			}
 
-			k.AddTotalCollectedCoins(ctx, budget.Name, collectionCoins)
+			inputs = append(inputs, banktypes.NewInput(budgetSourceAcc, collectionCoins))
+			outputs = append(outputs, banktypes.NewOutput(collectionAcc, collectionCoins))
+			budgetsBySource.CollectionCoins[i] = collectionCoins
+		}
 
+		if err := k.bankKeeper.InputOutputCoins(ctx, inputs, outputs); err != nil {
+			continue
+		}
+		for i, budget := range budgetsBySource.Budgets {
+			k.AddTotalCollectedCoins(ctx, budget.Name, budgetsBySource.CollectionCoins[i])
 			ctx.EventManager().EmitEvents(sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeBudgetCollected,
@@ -64,22 +59,11 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 					sdk.NewAttribute(types.AttributeValueCollectionAddress, budget.CollectionAddress),
 					sdk.NewAttribute(types.AttributeValueBudgetSourceAddress, budget.BudgetSourceAddress),
 					sdk.NewAttribute(types.AttributeValueRate, budget.Rate.String()),
-					sdk.NewAttribute(types.AttributeValueAmount, collectionCoins.String()),
+					sdk.NewAttribute(types.AttributeValueAmount, budgetsBySource.CollectionCoins[i].String()),
 				),
 			})
 		}
-		// temporary validation logic
-		if totalCollectionCoins.IsAnyGT(validatedExpectedCollectionCoins) {
-			panic("totalCollectionCoins.IsAnyGT(expectedCollectionCoins)")
-		}
-		if _, neg := sdk.NewDecCoinsFromCoins(expectedDiffCoins...).SafeSub(totalChangeCoins); neg {
-			panic("expectedChangeCoins.Sub(totalChangeCoins).IsAnyNegative()")
-		}
 	}
-	if err := k.bankKeeper.InputOutputCoins(ctx, inputs, outputs); err != nil {
-		return err
-	}
-	// TODO: add metric
 	return nil
 }
 
