@@ -42,7 +42,7 @@ func (budget Budget) Validate() error {
 	}
 
 	if _, err := sdk.AccAddressFromBech32(budget.BudgetSourceAddress); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid budget source address %s: %v", budget.CollectionAddress, err)
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid budget source address %s: %v", budget.BudgetSourceAddress, err)
 	}
 
 	if budget.EndTime.Before(budget.StartTime) {
