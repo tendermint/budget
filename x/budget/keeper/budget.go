@@ -17,12 +17,6 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 
 	var inputs []banktypes.Input
 	var outputs []banktypes.Output
-	sendCoins := func(from, to sdk.AccAddress, coins sdk.Coins) {
-		if !coins.Empty() && coins.IsValid() {
-			inputs = append(inputs, banktypes.NewInput(from, coins))
-			outputs = append(outputs, banktypes.NewOutput(to, coins))
-		}
-	}
 
 	// Get a map GetBudgetsBySourceMap that has a list of budgets and their total rate, which
 	// contain the same BudgetSourceAddress
@@ -56,8 +50,11 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 			totalCollectionCoins = totalCollectionCoins.Add(collectionCoins...)
 			totalChangeCoins = totalChangeCoins.Add(changeCoins...)
 
-			// TODO: sendcoins after validation
-			sendCoins(budgetSourceAcc, collectionAcc, collectionCoins)
+			if !collectionCoins.Empty() && collectionCoins.IsValid() {
+				inputs = append(inputs, banktypes.NewInput(budgetSourceAcc, collectionCoins))
+				outputs = append(outputs, banktypes.NewOutput(collectionAcc, collectionCoins))
+			}
+
 			k.AddTotalCollectedCoins(ctx, budget.Name, collectionCoins)
 
 			ctx.EventManager().EmitEvents(sdk.Events{
@@ -86,7 +83,8 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 	return nil
 }
 
-// Get all the Budgets registered in params.Budgets and return only the valid and not expired budgets
+// CollectibleBudgets returns scan through the budgets registered in params.Budgets
+// and returns only the valid and not expired budgets.
 func (k Keeper) CollectibleBudgets(ctx sdk.Context) (budgets []types.Budget) {
 	params := k.GetParams(ctx)
 	if params.EpochBlocks > 0 && ctx.BlockHeight()%int64(params.EpochBlocks) == 0 {

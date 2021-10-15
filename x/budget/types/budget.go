@@ -38,20 +38,23 @@ func (budget Budget) Validate() error {
 	}
 
 	if _, err := sdk.AccAddressFromBech32(budget.CollectionAddress); err != nil {
-		return err
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid collection address %s: %v", budget.CollectionAddress, err)
 	}
 
 	if _, err := sdk.AccAddressFromBech32(budget.BudgetSourceAddress); err != nil {
-		return err
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid budget source address %s: %v", budget.BudgetSourceAddress, err)
 	}
 
 	if budget.EndTime.Before(budget.StartTime) {
 		return ErrInvalidStartEndTime
 	}
 
-	if budget.Rate == sdk.ZeroDec() {
-		return ErrZeroBudgetRate
+	if !budget.Rate.IsPositive() {
+		return sdkerrors.Wrapf(ErrInvalidBudgetRate, "budget rate must not be positive: %s", budget.Rate)
+	} else if budget.Rate.GT(sdk.OneDec()) {
+		return sdkerrors.Wrapf(ErrInvalidBudgetRate, "budget rate must not exceed 1: %s", budget.Rate)
 	}
+
 	return nil
 }
 

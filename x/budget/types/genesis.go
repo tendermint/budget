@@ -1,5 +1,9 @@
 package types
 
+import (
+	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+)
+
 // NewGenesisState returns new GenesisState instance.
 func NewGenesisState(params Params, records []BudgetRecord) *GenesisState {
 	return &GenesisState{
@@ -23,7 +27,9 @@ func ValidateGenesis(data GenesisState) error {
 	}
 	for _, record := range data.BudgetRecords {
 		if err := record.TotalCollectedCoins.Validate(); err != nil {
-			return err
+			return sdkerrors.Wrapf(
+				sdkerrors.ErrInvalidCoins,
+				"invalid total collected coins %s: %v", record.TotalCollectedCoins, err)
 		}
 		if err := ValidateName(record.Name); err != nil {
 			return err

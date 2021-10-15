@@ -58,10 +58,10 @@ func TestValidateGenesis(t *testing.T) {
 					},
 				}
 			},
-			"decoding bech32 failed: failed converting data to bytes: invalid character not part of charset: 105",
+			"invalid budget source address cosmos1invalidaddress: decoding bech32 failed: failed converting data to bytes: invalid character not part of charset: 105: invalid address",
 		},
 		{
-			"duplicated budget case",
+			"duplicate budget name",
 			func(genState *types.GenesisState) {
 				genState.Params = types.DefaultParams()
 				genState.Params.Budgets = []types.Budget{
@@ -83,7 +83,7 @@ func TestValidateGenesis(t *testing.T) {
 					},
 				}
 			},
-			"budget1: budget name cannot be duplicated",
+			"budget1: duplicate budget name",
 		},
 		{
 			"invalid budget name case",
@@ -109,7 +109,7 @@ func TestValidateGenesis(t *testing.T) {
 					},
 				}
 			},
-			"coin 0stake amount is not positive",
+			"invalid total collected coins 0stake: coin 0stake amount is not positive: invalid coins",
 		},
 	}
 	for _, tc := range testCases {

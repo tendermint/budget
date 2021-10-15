@@ -67,10 +67,10 @@ func TestValidateBudgets(t *testing.T) {
 	require.NoError(t, err)
 
 	err = types.ValidateBudgets(budgets[:3])
-	require.Error(t, err, types.ErrOverflowedBudgetRate)
+	require.ErrorIs(t, err, types.ErrInvalidTotalBudgetRate)
 
 	err = types.ValidateBudgets(budgets)
-	require.Error(t, err, types.ErrDuplicatedBudgetName)
+	require.ErrorIs(t, err, types.ErrDuplicateBudgetName)
 }
 
 func TestValidateEpochBlocks(t *testing.T) {

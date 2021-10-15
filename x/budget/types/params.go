@@ -81,15 +81,17 @@ func ValidateBudgets(i interface{}) error {
 			return err
 		}
 		if _, ok := names[budget.Name]; ok {
-			return sdkerrors.Wrap(ErrDuplicatedBudgetName, budget.Name)
+			return sdkerrors.Wrap(ErrDuplicateBudgetName, budget.Name)
 		}
 		names[budget.Name] = true
 	}
 
 	budgetsBySourceMap := GetBudgetsBySourceMap(budgets)
 	for addr, budgets := range budgetsBySourceMap {
-		if budgets.TotalRate.GT(sdk.NewDec(1)) {
-			return sdkerrors.Wrap(ErrOverflowedBudgetRate, addr)
+		if budgets.TotalRate.GT(sdk.OneDec()) {
+			return sdkerrors.Wrapf(
+				ErrInvalidTotalBudgetRate,
+				"total rate for budget source address %s must not exceed 1: %v", addr, budgets.TotalRate)
 		}
 	}
 	return nil
