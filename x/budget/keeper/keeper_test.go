@@ -4,6 +4,9 @@ import (
 	"testing"
 	"time"
 
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	"github.com/cosmos/cosmos-sdk/x/params"
+	"github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	"github.com/stretchr/testify/suite"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -37,10 +40,15 @@ type KeeperTestSuite struct {
 	ctx               sdk.Context
 	keeper            keeper.Keeper
 	querier           keeper.Querier
+	govHandler        govtypes.Handler
 	addrs             []sdk.AccAddress
 	budgetSourceAddrs []sdk.AccAddress
 	collectionAddrs   []sdk.AccAddress
 	budgets           []types.Budget
+}
+
+func testProposal(changes ...proposal.ParamChange) *proposal.ParameterChangeProposal {
+	return proposal.NewParameterChangeProposal("title", "description", changes)
 }
 
 func TestKeeperTestSuite(t *testing.T) {
@@ -48,12 +56,11 @@ func TestKeeperTestSuite(t *testing.T) {
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
-	app := simapp.Setup(false)
-	ctx := app.BaseApp.NewContext(false, tmproto.Header{})
-	app.BudgetKeeper.SetParams(ctx, types.DefaultParams())
+	suite.app = simapp.Setup(false)
+	suite.ctx = suite.app.BaseApp.NewContext(false, tmproto.Header{})
+	suite.govHandler = params.NewParamChangeProposalHandler(suite.app.ParamsKeeper)
+	suite.app.BudgetKeeper.SetParams(suite.ctx, types.DefaultParams())
 
-	suite.app = app
-	suite.ctx = ctx
 	suite.keeper = suite.app.BudgetKeeper
 	suite.querier = keeper.Querier{Keeper: suite.keeper}
 	suite.addrs = simapp.AddTestAddrs(suite.app, suite.ctx, 10, sdk.ZeroInt())

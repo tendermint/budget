@@ -1,7 +1,12 @@
 package keeper_test
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	"github.com/cosmos/cosmos-sdk/x/params/types/proposal"
+	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	"github.com/tendermint/budget/x/budget/types"
 )
@@ -171,6 +176,88 @@ func (suite *KeeperTestSuite) TestCollectBudgets() {
 
 func (suite *KeeperTestSuite) TestBudgetExpiration() {
 	// TODO: not implemented
+}
+
+
+func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
+	budget := types.Budget{
+		Name:                "budget1",
+		Rate:                sdk.NewDecWithPrec(5, 2), // 5%
+		BudgetSourceAddress: suite.budgetSourceAddrs[0].String(),
+		CollectionAddress:   suite.collectionAddrs[0].String(),
+		StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
+		EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+	}
+
+	params := suite.keeper.GetParams(suite.ctx)
+	params.Budgets = []types.Budget{budget}
+	suite.keeper.SetParams(suite.ctx, params)
+
+	//&suite.govHandler()
+	//suite.app.GovKeeper.SetVotingParams()
+	//proposal := govtypes.Proposal
+	//suite.app.GovKeeper.SetProposal()
+
+	a := sdk.MustNewDecFromStr("10")
+	b := sdk.MustNewDecFromStr("300")
+	fmt.Println(a.QuoTruncate(b).MulTruncate(a))
+	fmt.Println(a.Quo(b).MulTruncate(a))
+	fmt.Println(a.QuoTruncate(b).Mul(a))
+	fmt.Println(a.Quo(b).Mul(a))
+
+	testCases := []struct {
+		name     string
+		proposal *proposal.ParameterChangeProposal
+		onHandle func()
+		expErr   bool
+	}{
+		{
+			"all fields",
+			testProposal(proposal.NewParamChange(stakingtypes.ModuleName, string(stakingtypes.KeyMaxValidators), "1")),
+			func() {
+				maxVals := suite.app.StakingKeeper.MaxValidators(suite.ctx)
+				suite.Require().Equal(uint32(1), maxVals)
+			},
+			false,
+		},
+		{
+			"invalid type",
+			testProposal(proposal.NewParamChange(stakingtypes.ModuleName, string(stakingtypes.KeyMaxValidators), "-")),
+			func() {},
+			true,
+		},
+		{
+			"omit empty fields",
+			testProposal(proposal.ParamChange{
+				Subspace: govtypes.ModuleName,
+				Key:      string(govtypes.ParamStoreKeyDepositParams),
+				Value:    `{"min_deposit": [{"denom": "uatom","amount": "64000000"}]}`,
+			}),
+			func() {
+				depositParams := suite.app.GovKeeper.GetDepositParams(suite.ctx)
+				suite.Require().Equal(govtypes.DepositParams{
+					MinDeposit:       sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(64000000))),
+					MaxDepositPeriod: govtypes.DefaultPeriod,
+				}, depositParams)
+			},
+			false,
+		},
+	}
+
+	for _, tc := range testCases {
+		tc := tc
+		suite.Run(tc.name, func() {
+			err := suite.govHandler(suite.ctx, tc.proposal)
+			if tc.expErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				tc.onHandle()
+			}
+		})
+	}
+
+
 }
 
 func (suite *KeeperTestSuite) TestGetSetTotalCollectedCoins() {
