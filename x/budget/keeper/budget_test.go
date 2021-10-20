@@ -1,12 +1,10 @@
 package keeper_test
 
 import (
-	"fmt"
+	"encoding/json"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/cosmos/cosmos-sdk/x/params/types/proposal"
-	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	"github.com/tendermint/budget/x/budget/types"
 )
@@ -193,17 +191,12 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 	params.Budgets = []types.Budget{budget}
 	suite.keeper.SetParams(suite.ctx, params)
 
+	// TODO: beginblock budget -> mempool -> endblock gov paramchange
+	b, _ := json.Marshal(suite.budgets[6])
 	//&suite.govHandler()
 	//suite.app.GovKeeper.SetVotingParams()
 	//proposal := govtypes.Proposal
 	//suite.app.GovKeeper.SetProposal()
-
-	a := sdk.MustNewDecFromStr("10")
-	b := sdk.MustNewDecFromStr("300")
-	fmt.Println(a.QuoTruncate(b).MulTruncate(a))
-	fmt.Println(a.Quo(b).MulTruncate(a))
-	fmt.Println(a.QuoTruncate(b).Mul(a))
-	fmt.Println(a.Quo(b).Mul(a))
 
 	testCases := []struct {
 		name     string
@@ -211,34 +204,40 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 		onHandle func()
 		expErr   bool
 	}{
+		//{
+		//	"all fields",
+		//	testProposal(proposal.NewParamChange(stakingtypes.ModuleName, string(stakingtypes.KeyMaxValidators), "1")),
+		//	func() {
+		//		maxVals := suite.app.StakingKeeper.MaxValidators(suite.ctx)
+		//		suite.Require().Equal(uint32(1), maxVals)
+		//	},
+		//	false,
+		//},
+		//{
+		//	"invalid type",
+		//	testProposal(proposal.NewParamChange(stakingtypes.ModuleName, string(stakingtypes.KeyMaxValidators), "-")),
+		//	func() {},
+		//	true,
+		//},
+
 		{
-			"all fields",
-			testProposal(proposal.NewParamChange(stakingtypes.ModuleName, string(stakingtypes.KeyMaxValidators), "1")),
-			func() {
-				maxVals := suite.app.StakingKeeper.MaxValidators(suite.ctx)
-				suite.Require().Equal(uint32(1), maxVals)
-			},
-			false,
-		},
-		{
-			"invalid type",
-			testProposal(proposal.NewParamChange(stakingtypes.ModuleName, string(stakingtypes.KeyMaxValidators), "-")),
-			func() {},
-			true,
-		},
-		{
-			"omit empty fields",
+			"add budget",
 			testProposal(proposal.ParamChange{
-				Subspace: govtypes.ModuleName,
-				Key:      string(govtypes.ParamStoreKeyDepositParams),
-				Value:    `{"min_deposit": [{"denom": "uatom","amount": "64000000"}]}`,
+				Subspace: types.ModuleName,
+				Key:      string(types.KeyBudgets),
+				// TODO: add legacyAmino codec for budget object in order to call subspace.Update
+				//Value:    `{"name":"gravity-dex-farming-20213Q-20313Q","rate":"0.500000000000000000","budget_source_address":"cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta","collection_address":"cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky","start_time":"2021-09-01T00:00:00Z","end_time":"2031-09-30T00:00:00Z"}`,
+				Value:    string(b),
 			}),
 			func() {
-				depositParams := suite.app.GovKeeper.GetDepositParams(suite.ctx)
-				suite.Require().Equal(govtypes.DepositParams{
-					MinDeposit:       sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(64000000))),
-					MaxDepositPeriod: govtypes.DefaultPeriod,
-				}, depositParams)
+				params := suite.keeper.GetParams(suite.ctx)
+				suite.Require().Len(params.Budgets, 1)
+
+				//depositParams := suite.app.GovKeeper.GetDepositParams(suite.ctx)
+				//suite.Require().Equal(govtypes.DepositParams{
+				//	MinDeposit:       sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(64000000))),
+				//	MaxDepositPeriod: govtypes.DefaultPeriod,
+				//}, depositParams)
 			},
 			false,
 		},

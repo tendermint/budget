@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/params/types/proposal"
@@ -69,13 +70,15 @@ func (suite *KeeperTestSuite) SetupTest() {
 	cAddr3 := sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr3")))
 	cAddr4 := sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr4")))
 	cAddr5 := sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr5")))
+	cAddr6 := suite.app.AccountKeeper.GetModuleAccount(suite.ctx, authtypes.FeeCollectorName).GetAddress()
 	tAddr1 := sdk.AccAddress(address.Module(types.ModuleName, []byte("budgetSourceAddr1")))
 	tAddr2 := sdk.AccAddress(address.Module(types.ModuleName, []byte("budgetSourceAddr2")))
 	tAddr3 := sdk.AccAddress(address.Module(types.ModuleName, []byte("budgetSourceAddr3")))
 	tAddr4 := sdk.AccAddress(address.Module(types.ModuleName, []byte("budgetSourceAddr4")))
 	tAddr5 := sdk.AccAddress(address.Module(types.ModuleName, []byte("budgetSourceAddr5")))
-	suite.budgetSourceAddrs = []sdk.AccAddress{tAddr1, tAddr2, tAddr3, tAddr4, tAddr5}
-	suite.collectionAddrs = []sdk.AccAddress{cAddr1, cAddr2, cAddr3, cAddr4, cAddr5}
+	tAddr6 := sdk.AccAddress(address.Module("farming", []byte("GravityDEXFarmingBudget")))
+	suite.collectionAddrs = []sdk.AccAddress{cAddr1, cAddr2, cAddr3, cAddr4, cAddr5, cAddr6}
+	suite.budgetSourceAddrs = []sdk.AccAddress{tAddr1, tAddr2, tAddr3, tAddr4, tAddr5, tAddr6}
 	for _, addr := range append(suite.addrs, suite.budgetSourceAddrs[:3]...) {
 		err := simapp.FundAccount(suite.app.BankKeeper, suite.ctx, addr, initialBalances)
 		suite.Require().NoError(err)
@@ -131,6 +134,14 @@ func (suite *KeeperTestSuite) SetupTest() {
 			CollectionAddress:   suite.collectionAddrs[1].String(),
 			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
 			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+		},
+		{
+			Name:                "gravity-dex-farming-20213Q-20313Q",
+			Rate:                sdk.MustNewDecFromStr("0.5"),
+			BudgetSourceAddress: suite.budgetSourceAddrs[5].String(),
+			CollectionAddress:   suite.collectionAddrs[5].String(),
+			StartTime:           mustParseRFC3339("2021-09-01T00:00:00Z"),
+			EndTime:             mustParseRFC3339("2031-09-30T00:00:00Z"),
 		},
 	}
 }
