@@ -72,6 +72,7 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 func (k Keeper) CollectibleBudgets(ctx sdk.Context) (budgets []types.Budget) {
 	params := k.GetParams(ctx)
 	if params.EpochBlocks > 0 && ctx.BlockHeight()%int64(params.EpochBlocks) == 0 {
+		// TODO: Add comment in the PR
 		for _, budget := range params.Budgets {
 			err := budget.Validate()
 			if err == nil && !budget.Expired(ctx.BlockTime()) {
