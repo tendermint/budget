@@ -13,7 +13,7 @@ import (
 )
 
 // BeginBlocker collects budgets for the current block
-func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
+func BeginBlocker(ctx sdk.Context, _ abci.RequestBeginBlock, k keeper.Keeper) {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyBeginBlocker)
 	err := k.CollectBudgets(ctx)
 	if err != nil {
