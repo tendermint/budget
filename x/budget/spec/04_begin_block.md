@@ -12,7 +12,7 @@ At each `BeginBlock`, get all budgets registered in `params.Budgets` and select 
 
 2. Create a map by `BudgetSourceAddress` to handle the budgets for the same `BudgetSourceAddress` together based on the same balance when calculating rates for the same `BudgetSourceAddress`.
 
-3. Collect budgets from `BudgetSourceAddress` and send amount of coins to `CollectionAddress` relative to the rate of each budget`.
+3. Collect budgets from `BudgetSourceAddress` and send amount of coins to `CollectionAddress` relative to the rate of each budget.
 
 4. Cumulate `TotalCollectedCoins` and emit events about the successful budget collection for each budget.
 
