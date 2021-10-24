@@ -77,6 +77,8 @@ func (k Keeper) CollectibleBudgets(ctx sdk.Context) (budgets []types.Budget) {
 			// ^ We can avoid having to validate all budgets at every BeginBlock since
 			// we already know that the budgets are valid from the validation of params
 			if err == nil && !budget.Expired(ctx.BlockTime()) {
+				// ^ We can consider automatically deleting expired budgets, instead of
+				// expecting this to be done through governance proposals.
 				budgets = append(budgets, budget)
 			}
 		}
