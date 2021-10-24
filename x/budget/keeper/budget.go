@@ -74,6 +74,8 @@ func (k Keeper) CollectibleBudgets(ctx sdk.Context) (budgets []types.Budget) {
 	if params.EpochBlocks > 0 && ctx.BlockHeight()%int64(params.EpochBlocks) == 0 {
 		for _, budget := range params.Budgets {
 			err := budget.Validate()
+			// ^ We can avoid having to validate all budgets at every BeginBlock since
+			// we already know that the budgets are valid from the validation of params
 			if err == nil && !budget.Expired(ctx.BlockTime()) {
 				budgets = append(budgets, budget)
 			}
