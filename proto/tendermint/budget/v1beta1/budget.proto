@@ -43,6 +43,9 @@ message Budget {
   // collection_address defines the bech32-encoded address of the budget pool to distribute
   string collection_address = 4 [(gogoproto.moretags) = "yaml:\"collection_address\""];
 
+  // - budget_source_address can be changed to source_address, since this is already in the context of Budget
+  // - Consider changing collection_address -> budget_destination_address so it matches the source address
+
   // start_time specifies the start time of the budget
   google.protobuf.Timestamp start_time = 5
       [(gogoproto.stdtime) = true, (gogoproto.nullable) = false, (gogoproto.moretags) = "yaml:\"start_time\""];
