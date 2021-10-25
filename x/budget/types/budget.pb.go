@@ -93,9 +93,6 @@ type Budget struct {
 	// rate specifies the distributing amount by ratio of total budget source
 	Rate github_com_cosmos_cosmos_sdk_types.Dec `protobuf:"bytes,2,opt,name=rate,proto3,customtype=github.com/cosmos/cosmos-sdk/types.Dec" json:"rate" yaml:"rate"`
 	// budget_source_address defines the bech32-encoded address that source of the budget
-	// There does not require any interaction from the BudgetSourceAddress to accept that money will be withdrawn.
-	// If this address is for e.g. is dormant, participants of the blockchain can vote to transfer his money and be
-	// used by the community. Is this intentional?
 	BudgetSourceAddress string `protobuf:"bytes,3,opt,name=budget_source_address,json=budgetSourceAddress,proto3" json:"budget_source_address,omitempty" yaml:"budget_source_address"`
 	// collection_address defines the bech32-encoded address of the budget pool to distribute
 	CollectionAddress string `protobuf:"bytes,4,opt,name=collection_address,json=collectionAddress,proto3" json:"collection_address,omitempty" yaml:"collection_address"`

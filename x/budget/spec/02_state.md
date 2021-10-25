@@ -15,6 +15,9 @@ type Budget struct {
 	EndTime             time.Time // end time of the budget plan
 }
 ```
+There does not require any interaction from the BudgetSourceAddress to accept that money will be withdrawn.
+If this address is for e.g. is dormant, participants of the blockchain can vote to transfer his money and be
+used by the community. Is this intentional?
 
 +++ https://github.com/tendermint/budget/blob/master/proto/tendermint/budget/v1beta1/budget.proto#L25-L53
 
