@@ -1,0 +1,21 @@
+{
+  "title": "Create a Budget Plan",
+  "description": "An example of Budget Plan for Gravtiy DEX Farming",
+  "changes": [
+    {
+      "subspace": "budget",
+      "key": "Budgets",
+      "value": [
+        {
+          "name": "gravity-dex-farming-20213Q-20313Q",
+          "rate": "0.500000000000000000",
+          "budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+          "collection_address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky",
+          "start_time": "2021-09-01T00:00:00Z",
+          "end_time": "2031-09-30T00:00:00Z"
+        }
+      ]
+    }
+  ],
+  "deposit": "10000000stake"
+}

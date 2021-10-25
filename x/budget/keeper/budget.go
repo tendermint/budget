@@ -72,6 +72,7 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 func (k Keeper) CollectibleBudgets(ctx sdk.Context) (budgets []types.Budget) {
 	params := k.GetParams(ctx)
 	if params.EpochBlocks > 0 && ctx.BlockHeight()%int64(params.EpochBlocks) == 0 {
+		// TODO: Add comment in the PR
 		for _, budget := range params.Budgets {
 			// Initially I thought a malicious user can spam the network by creating several budgets proposals which
 			// would need to be processed for every EpochParam. This is not the case since the proposal requires a
