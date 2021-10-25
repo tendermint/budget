@@ -73,6 +73,13 @@ func (k Keeper) CollectibleBudgets(ctx sdk.Context) (budgets []types.Budget) {
 	params := k.GetParams(ctx)
 	if params.EpochBlocks > 0 && ctx.BlockHeight()%int64(params.EpochBlocks) == 0 {
 		for _, budget := range params.Budgets {
+			// Initially I thought a malicious user can spam the network by creating several budgets proposals which
+			// would need to be processed for every EpochParam. This is not the case since the proposal requires a
+			// deposit to be considered and it the proposal is rejected the attacker loses the deposit.
+			//
+			// For my interest, any reason the budgets are saved in the params instead of in the KVstore?
+			// This would remove having to validate the budget at every params.EpochBlocks and if the budgets are
+			// expired they can simply be removed
 			err := budget.Validate()
 			if err == nil && !budget.Expired(ctx.BlockTime()) {
 				budgets = append(budgets, budget)
