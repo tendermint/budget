@@ -95,7 +95,7 @@ budgetd q bank balances cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgm
 
 ## Query
 
-https://github.com/tendermint/budget/blob/master/proto/tendermint/budget/v1beta1/query.proto
+https://github.com/tendermint/budget/blob/main/proto/tendermint/budget/v1beta1/query.proto
 
 ### Params 
 

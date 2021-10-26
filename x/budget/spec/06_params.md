@@ -21,7 +21,7 @@ The default value is 1 and all budget collections are disabled if the value is 0
 params.EpochBlocks > 0 && Current Block Height % params.EpochBlocks == 0
 ```
 
-You can reference [the line of the code](https://github.com/tendermint/budget/blob/master/x/budget/keeper/budget.go#L78).
+You can reference [the line of the code](https://github.com/tendermint/budget/blob/main/x/budget/keeper/budget.go#L78).
 
 ## Budgets
 
@@ -43,4 +43,4 @@ An example of how to add a budget plan can be found in this [docs/How-To/cli](..
 
 - The total rate of budgets with the same `BudgetSourceAddress` value should not exceed 1 (100%).
 
-+++ https://github.com/tendermint/budget/blob/master/x/budget/types/budget.go#L33-L63
++++ https://github.com/tendermint/budget/blob/main/x/budget/types/budget.go#L33-L63
