@@ -4,7 +4,7 @@
 
 At each `BeginBlock`, get all budgets registered in `params.Budgets` and select the valid budgets to collect budgets for the block by its respective plan (defined rate, budget source address, collection address, start time and end time). Then, it distributes the collected amount of coins from `BudgetSourceAddrss` to `CollectionAddress`.
 
-+++ https://github.com/tendermint/budget/blob/master/x/budget/abci.go#L15-L22
++++ https://github.com/tendermint/budget/blob/main/x/budget/abci.go#L15-L22
 
 ## Workflow
 

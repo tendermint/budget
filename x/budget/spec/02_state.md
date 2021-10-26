@@ -16,7 +16,7 @@ type Budget struct {
 }
 ```
 
-+++ https://github.com/tendermint/budget/blob/master/proto/tendermint/budget/v1beta1/budget.proto#L25-L53
++++ https://github.com/tendermint/budget/blob/main/proto/tendermint/budget/v1beta1/budget.proto#L25-L53
 
 ## TotalCollectedCoins
 
@@ -27,7 +27,7 @@ type TotalCollectedCoins struct {
 }
 ```
 
-+++ https://github.com/tendermint/budget/blob/master/proto/tendermint/budget/v1beta1/budget.proto#L55-L64
++++ https://github.com/tendermint/budget/blob/main/proto/tendermint/budget/v1beta1/budget.proto#L55-L64
 
 
 For the purpose of tracking total collected coins for a budget, budget name is used as key to find it in store.
