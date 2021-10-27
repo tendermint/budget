@@ -360,7 +360,8 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 		suite.Run(tc.name, func() {
 			proposalJson := paramscutils.ParamChangeProposalJSON{}
 			bz, err := tc.proposal.Marshal()
-			encCfg.Amino.Unmarshal(bz, &proposalJson)
+			err = encCfg.Amino.Unmarshal(bz, &proposalJson)
+			suite.Require().NoError(err)
 			proposal := paramproposal.NewParameterChangeProposal(
 				proposalJson.Title, proposalJson.Description, proposalJson.Changes.ToParamChanges(),
 			)
