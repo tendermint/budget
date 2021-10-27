@@ -58,9 +58,9 @@ func (budget Budget) Validate() error {
 	return nil
 }
 
-// Expired validates the budget's end time expiration.
-func (budget Budget) Expired(blockTime time.Time) bool {
-	return !budget.EndTime.After(blockTime)
+// Collectible validates the budget has reached its start time and that the end time has not elapsed.
+func (budget Budget) Collectible(blockTime time.Time) bool {
+	return budget.StartTime.Before(blockTime) && budget.EndTime.After(blockTime)
 }
 
 // ValidateName is the default validation function for Budget.Name.

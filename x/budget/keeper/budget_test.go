@@ -1,11 +1,15 @@
 package keeper_test
 
 import (
-	"encoding/json"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 
+	paramscutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
+	paramproposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
+
+	"github.com/tendermint/budget/app"
 	"github.com/tendermint/budget/x/budget/types"
 )
 
@@ -176,86 +180,219 @@ func (suite *KeeperTestSuite) TestBudgetExpiration() {
 	// TODO: not implemented
 }
 
-
 func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
-	budget := types.Budget{
-		Name:                "budget1",
-		Rate:                sdk.NewDecWithPrec(5, 2), // 5%
-		BudgetSourceAddress: suite.budgetSourceAddrs[0].String(),
-		CollectionAddress:   suite.collectionAddrs[0].String(),
-		StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-		EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
-	}
-
+	encCfg := app.MakeTestEncodingConfig()
 	params := suite.keeper.GetParams(suite.ctx)
-	params.Budgets = []types.Budget{budget}
 	suite.keeper.SetParams(suite.ctx, params)
+	height := 1
+	suite.ctx = suite.ctx.WithBlockTime(mustParseRFC3339("2021-08-01T00:00:00Z"))
+	suite.ctx = suite.ctx.WithBlockHeight(int64(height))
 
-	// TODO: beginblock budget -> mempool -> endblock gov paramchange
-	b, _ := json.Marshal(suite.budgets[6])
-	//&suite.govHandler()
-	//suite.app.GovKeeper.SetVotingParams()
-	//proposal := govtypes.Proposal
-	//suite.app.GovKeeper.SetProposal()
-
-	testCases := []struct {
-		name     string
-		proposal *proposal.ParameterChangeProposal
-		onHandle func()
-		expErr   bool
+	for _, tc := range []struct {
+		name                   string
+		proposal               *proposal.ParameterChangeProposal
+		budgetCount            int
+		collectibleBudgetCount int
+		govTime                time.Time
+		nextBlockTime          time.Time
+		expErr                 error
 	}{
-		//{
-		//	"all fields",
-		//	testProposal(proposal.NewParamChange(stakingtypes.ModuleName, string(stakingtypes.KeyMaxValidators), "1")),
-		//	func() {
-		//		maxVals := suite.app.StakingKeeper.MaxValidators(suite.ctx)
-		//		suite.Require().Equal(uint32(1), maxVals)
-		//	},
-		//	false,
-		//},
-		//{
-		//	"invalid type",
-		//	testProposal(proposal.NewParamChange(stakingtypes.ModuleName, string(stakingtypes.KeyMaxValidators), "-")),
-		//	func() {},
-		//	true,
-		//},
 
 		{
-			"add budget",
+			"add budget 1",
 			testProposal(proposal.ParamChange{
 				Subspace: types.ModuleName,
 				Key:      string(types.KeyBudgets),
-				// TODO: add legacyAmino codec for budget object in order to call subspace.Update
-				//Value:    `{"name":"gravity-dex-farming-20213Q-20313Q","rate":"0.500000000000000000","budget_source_address":"cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta","collection_address":"cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky","start_time":"2021-09-01T00:00:00Z","end_time":"2031-09-30T00:00:00Z"}`,
-				Value:    string(b),
+				Value: `[
+					{
+					"name": "gravity-dex-farming-20213Q-20313Q",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2031-09-30T00:00:00Z"
+					}
+				]`,
 			}),
-			func() {
-				params := suite.keeper.GetParams(suite.ctx)
-				suite.Require().Len(params.Budgets, 1)
-
-				//depositParams := suite.app.GovKeeper.GetDepositParams(suite.ctx)
-				//suite.Require().Equal(govtypes.DepositParams{
-				//	MinDeposit:       sdk.NewCoins(sdk.NewCoin("uatom", sdk.NewInt(64000000))),
-				//	MaxDepositPeriod: govtypes.DefaultPeriod,
-				//}, depositParams)
-			},
-			false,
+			1,
+			0,
+			mustParseRFC3339("2021-08-01T00:00:00Z"),
+			mustParseRFC3339("2021-08-01T00:00:00Z"),
+			nil,
 		},
-	}
-
-	for _, tc := range testCases {
-		tc := tc
+		{
+			"add budget 2",
+			testProposal(proposal.ParamChange{
+				Subspace: types.ModuleName,
+				Key:      string(types.KeyBudgets),
+				Value: `[
+					{
+					"name": "gravity-dex-farming-20213Q-20313Q",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2031-09-30T00:00:00Z"
+					},
+					{
+					"name": "gravity-dex-farming-2",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos1m63436cdxnu9ymyj02e7k3xljkn8klyf5ahqa75degq748xxkmksvtlp8n",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2021-09-30T00:00:00Z"
+					}
+				]`,
+			}),
+			2,
+			2,
+			mustParseRFC3339("2021-09-03T00:00:00Z"),
+			mustParseRFC3339("2021-09-03T00:00:00Z"),
+			nil,
+		},
+		{
+			"add budget 3 with invalid total rate case 1",
+			testProposal(proposal.ParamChange{
+				Subspace: types.ModuleName,
+				Key:      string(types.KeyBudgets),
+				Value: `[
+					{
+					"name": "gravity-dex-farming-20213Q-20313Q",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2031-09-30T00:00:00Z"
+					},
+					{
+					"name": "gravity-dex-farming-2",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos1m63436cdxnu9ymyj02e7k3xljkn8klyf5ahqa75degq748xxkmksvtlp8n",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2021-09-30T00:00:00Z"
+					},
+					{
+					"name": "gravity-dex-farming-3",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos17avp6xs5c8ycqzy20yv99ccxwunu32e507kpm8ql5nfg47pzj9qqxhujxr",
+					"start_time": "2021-09-30T00:00:00Z",
+					"end_time": "2021-10-10T00:00:00Z"
+					}
+				]`,
+			}),
+			0,
+			0,
+			mustParseRFC3339("2021-09-29T00:00:00Z"),
+			mustParseRFC3339("2021-09-30T00:00:00Z"),
+			types.ErrInvalidTotalBudgetRate,
+		},
+		{
+			"add budget 3 with invalid total rate case 2",
+			testProposal(proposal.ParamChange{
+				Subspace: types.ModuleName,
+				Key:      string(types.KeyBudgets),
+				Value: `[
+					{
+					"name": "gravity-dex-farming-20213Q-20313Q",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2031-09-30T00:00:00Z"
+					},
+					{
+					"name": "gravity-dex-farming-2",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos1m63436cdxnu9ymyj02e7k3xljkn8klyf5ahqa75degq748xxkmksvtlp8n",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2021-09-30T00:00:00Z"
+					},
+					{
+					"name": "gravity-dex-farming-3",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos17avp6xs5c8ycqzy20yv99ccxwunu32e507kpm8ql5nfg47pzj9qqxhujxr",
+					"start_time": "2021-09-30T00:00:00Z",
+					"end_time": "2021-10-10T00:00:00Z"
+					}
+				]`,
+			}),
+			0,
+			0,
+			mustParseRFC3339("2021-10-01T00:00:00Z"),
+			mustParseRFC3339("2021-10-01T00:00:00Z"),
+			types.ErrInvalidTotalBudgetRate,
+		},
+		{
+			"add budget 3",
+			testProposal(proposal.ParamChange{
+				Subspace: types.ModuleName,
+				Key:      string(types.KeyBudgets),
+				Value: `[
+					{
+					"name": "gravity-dex-farming-20213Q-20313Q",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2031-09-30T00:00:00Z"
+					},
+					{
+					"name": "gravity-dex-farming-3",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos17avp6xs5c8ycqzy20yv99ccxwunu32e507kpm8ql5nfg47pzj9qqxhujxr",
+					"start_time": "2021-09-30T00:00:00Z",
+					"end_time": "2021-10-10T00:00:00Z"
+					}
+				]`,
+			}),
+			2,
+			2,
+			mustParseRFC3339("2021-10-01T00:00:00Z"),
+			mustParseRFC3339("2021-10-01T00:00:00Z"),
+			nil,
+		},
+	} {
 		suite.Run(tc.name, func() {
-			err := suite.govHandler(suite.ctx, tc.proposal)
-			if tc.expErr {
+			proposalJson := paramscutils.ParamChangeProposalJSON{}
+			bz, err := tc.proposal.Marshal()
+			encCfg.Amino.Unmarshal(bz, &proposalJson)
+			proposal := paramproposal.NewParameterChangeProposal(
+				proposalJson.Title, proposalJson.Description, proposalJson.Changes.ToParamChanges(),
+			)
+			suite.Require().NoError(err)
+
+			// endblock gov paramchange ->(new block)-> beginblock budget -> mempool -> endblock gov paramchange ->(new block)-> ...
+			suite.ctx = suite.ctx.WithBlockTime(tc.govTime)
+			err = suite.govHandler(suite.ctx, proposal)
+			if tc.expErr != nil {
 				suite.Require().Error(err)
 			} else {
 				suite.Require().NoError(err)
-				tc.onHandle()
+				params := suite.keeper.GetParams(suite.ctx)
+				suite.Require().Len(params.Budgets, tc.budgetCount)
+				budgets := suite.keeper.CollectibleBudgets(suite.ctx)
+				for _, budget := range params.Budgets {
+					err := budget.Validate()
+					suite.Require().NoError(err)
+				}
+				// (new block)
+				height += 1
+				suite.ctx = suite.ctx.WithBlockHeight(int64(height))
+				suite.ctx = suite.ctx.WithBlockTime(tc.nextBlockTime)
+				budgets = suite.keeper.CollectibleBudgets(suite.ctx)
+				suite.Require().Len(budgets, tc.collectibleBudgetCount)
+
+				// BeginBlocker
+				err := suite.keeper.CollectBudgets(suite.ctx)
+				suite.Require().NoError(err)
 			}
 		})
 	}
-
 
 }
 
