@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/tendermint/budget/x/budget/types"
@@ -14,7 +16,9 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
 
 	k.SetParams(ctx, genState.Params)
 	moduleAcc := k.accountKeeper.GetModuleAccount(ctx, types.ModuleName)
-	k.accountKeeper.SetModuleAccount(ctx, moduleAcc)
+	if moduleAcc == nil {
+		panic(fmt.Sprintf("%s module account has not been set", types.ModuleName))
+	}
 
 	for _, record := range genState.BudgetRecords {
 		k.SetTotalCollectedCoins(ctx, record.Name, record.TotalCollectedCoins)

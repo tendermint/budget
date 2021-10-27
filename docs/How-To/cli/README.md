@@ -25,8 +25,8 @@ There is no command-line interface for the Budget module. However, in order to q
 Let's create `proposal.json` file. Depending on what budget plan you plan to create, change the following values of the fields for your need. In this case, we plan to create a budget plan that distributes partial amount of coins from the Cosmos Hub's gas fees and ATOM inflation accrued in [FeeCollector](https://github.com/cosmos/cosmos-sdk/blob/master/x/auth/types/keys.go#L15) module account for Gravity DEX farming plan to GravityDEXFarmingBudget account (see the code below)
 
 ```go
-sdk.AccAddress(address.Module(ModuleName, []byte("GravityDEXFarmingBudget")))
 // cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky
+sdk.AccAddress(address.Module("farming", []byte("GravityDEXFarmingBudget")))
 ```
 
 - `name`: is the name of the budget plan used for display
@@ -95,7 +95,7 @@ budgetd q bank balances cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgm
 
 ## Query
 
-https://github.com/tendermint/budget/blob/master/proto/tendermint/budget/v1beta1/query.proto
+https://github.com/tendermint/budget/blob/main/proto/tendermint/budget/v1beta1/query.proto
 
 ### Params 
 
