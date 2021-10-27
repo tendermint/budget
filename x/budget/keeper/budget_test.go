@@ -360,6 +360,7 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 		suite.Run(tc.name, func() {
 			proposalJson := paramscutils.ParamChangeProposalJSON{}
 			bz, err := tc.proposal.Marshal()
+			suite.Require().NoError(err)
 			err = encCfg.Amino.Unmarshal(bz, &proposalJson)
 			suite.Require().NoError(err)
 			proposal := paramproposal.NewParameterChangeProposal(
@@ -376,7 +377,6 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 				suite.Require().NoError(err)
 				params := suite.keeper.GetParams(suite.ctx)
 				suite.Require().Len(params.Budgets, tc.budgetCount)
-				budgets := suite.keeper.CollectibleBudgets(suite.ctx)
 				for _, budget := range params.Budgets {
 					err := budget.Validate()
 					suite.Require().NoError(err)
@@ -385,7 +385,7 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 				height += 1
 				suite.ctx = suite.ctx.WithBlockHeight(int64(height))
 				suite.ctx = suite.ctx.WithBlockTime(tc.nextBlockTime)
-				budgets = suite.keeper.CollectibleBudgets(suite.ctx)
+				budgets := suite.keeper.CollectibleBudgets(suite.ctx)
 				suite.Require().Len(budgets, tc.collectibleBudgetCount)
 
 				// BeginBlocker
