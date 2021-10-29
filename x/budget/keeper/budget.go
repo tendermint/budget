@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"github.com/armon/go-metrics"
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -54,19 +55,23 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 		for i, budget := range budgetsBySource.Budgets {
 			k.AddTotalCollectedCoins(ctx, budget.Name, budgetsBySource.CollectionCoins[i])
 
-			// TODO
-			if !budgetsBySource.CollectionCoins[i].Empty() {
-				defer func() {
-					telemetry.IncrCounter(1, types.ModuleName, "budget")
-					// telemetry.SetGaugeWithLabels(
-					// 	[]string{"collection_address", budget.CollectionAddress},
-					// 	[]string{"",budgetsBySource.CollectionCoins[i].String()},
-					// 	[]metrics.Label{
-					// 		telemetry.NewLabel("denom", msg.Amount.Denom),
-					// 	},
-					// )
-				}()
-			}
+			defer func() {
+				for _, collectionCoins := range budgetsBySource.CollectionCoins {
+					for _, coin := range collectionCoins {
+						if coin.Amount.IsInt64() {
+							// TODO: need more tests
+							telemetry.SetGaugeWithLabels(
+								[]string{types.ModuleName, "budget", "collection_address", "collection_coin"},
+								float32(coin.Amount.Int64()),
+								[]metrics.Label{
+									telemetry.NewLabel("collection_address", budget.CollectionAddress),
+									telemetry.NewLabel("denom", coin.Denom),
+								},
+							)
+						}
+					}
+				}
+			}()
 
 			ctx.EventManager().EmitEvents(sdk.Events{
 				sdk.NewEvent(
