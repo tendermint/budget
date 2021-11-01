@@ -4,9 +4,8 @@ import (
 	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/x/params/types/proposal"
-
 	paramscutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
+	"github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 	paramproposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
 
 	"github.com/tendermint/budget/app"
@@ -394,7 +393,6 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 			}
 		})
 	}
-
 }
 
 func (suite *KeeperTestSuite) TestGetSetTotalCollectedCoins() {

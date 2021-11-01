@@ -60,7 +60,6 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.app = simapp.Setup(false)
 	suite.ctx = suite.app.BaseApp.NewContext(false, tmproto.Header{})
 	suite.govHandler = params.NewParamChangeProposalHandler(suite.app.ParamsKeeper)
-	suite.app.BudgetKeeper.SetParams(suite.ctx, types.DefaultParams())
 
 	suite.keeper = suite.app.BudgetKeeper
 	suite.querier = keeper.Querier{Keeper: suite.keeper}

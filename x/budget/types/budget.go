@@ -60,7 +60,7 @@ func (budget Budget) Validate() error {
 
 // Collectible validates the budget has reached its start time and that the end time has not elapsed.
 func (budget Budget) Collectible(blockTime time.Time) bool {
-	return budget.StartTime.Before(blockTime) && budget.EndTime.After(blockTime)
+	return !budget.StartTime.After(blockTime) && budget.EndTime.After(blockTime)
 }
 
 // ValidateName is the default validation function for Budget.Name.
