@@ -38,21 +38,28 @@ $BINARY add-genesis-account $($BINARY keys show user2 --keyring-backend test -a)
 $BINARY gentx val1 100000000stake --chain-id $CHAIN_ID --keyring-backend test
 $BINARY collect-gentxs
 
-# Check OS for sed -i option value
-export SED_I=""
-if [[ "$OSTYPE" == "darwin"* ]]; then 
-    export SED_I="''"
-fi 
+# Check platform
+platform='unknown'
+unamestr=`uname`
+if [ "$unamestr" = 'Linux' ]; then
+   platform='linux'
+fi
 
-# Modify app.toml
-sed -i $SED_I 's/enable = false/enable = true/g' $HOME_BUDGETAPP/config/app.toml
-sed -i $SED_I 's/swagger = false/swagger = true/g' $HOME_BUDGETAPP/config/app.toml
-
-# Modify parameters for the governance proposal
-sed -i $SED_I 's%"amount": "10000000"%"amount": "1"%g' $HOME_BUDGETAPP/config/genesis.json
-sed -i $SED_I 's%"quorum": "0.334000000000000000",%"quorum": "0.000000000000000001",%g' $HOME_BUDGETAPP/config/genesis.json
-sed -i $SED_I 's%"threshold": "0.500000000000000000",%"threshold": "0.000000000000000001",%g' $HOME_BUDGETAPP/config/genesis.json
-sed -i $SED_I 's%"voting_period": "172800s"%"voting_period": "30s"%g' $HOME_BUDGETAPP/config/genesis.json
+if [ $platform = 'linux' ]; then
+	sed -i 's/enable = false/enable = true/g' $HOME_BUDGETAPP/config/app.toml
+	sed -i 's/swagger = false/swagger = true/g' $HOME_BUDGETAPP/config/app.toml
+	sed -i 's%"amount": "10000000"%"amount": "1"%g' $HOME_BUDGETAPP/config/genesis.json
+	sed -i 's%"quorum": "0.334000000000000000",%"quorum": "0.000000000000000001",%g' $HOME_BUDGETAPP/config/genesis.json
+	sed -i 's%"threshold": "0.500000000000000000",%"threshold": "0.000000000000000001",%g' $HOME_BUDGETAPP/config/genesis.json
+	sed -i 's%"voting_period": "172800s"%"voting_period": "30s"%g' $HOME_BUDGETAPP/config/genesis.json
+else
+	sed -i '' 's/enable = false/enable = true/g' $HOME_BUDGETAPP/config/app.toml
+	sed -i '' 's/swagger = false/swagger = true/g' $HOME_BUDGETAPP/config/app.toml
+	sed -i '' 's%"amount": "10000000"%"amount": "1"%g' $HOME_BUDGETAPP/config/genesis.json
+	sed -i '' 's%"quorum": "0.334000000000000000",%"quorum": "0.000000000000000001",%g' $HOME_BUDGETAPP/config/genesis.json
+	sed -i '' 's%"threshold": "0.500000000000000000",%"threshold": "0.000000000000000001",%g' $HOME_BUDGETAPP/config/genesis.json
+	sed -i '' 's%"voting_period": "172800s"%"voting_period": "30s"%g' $HOME_BUDGETAPP/config/genesis.json
+fi
 
 # Start
 $BINARY start
