@@ -1,8 +1,14 @@
 package keeper_test
 
 import (
-	sdk "github.com/cosmos/cosmos-sdk/types"
+	"time"
 
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	paramscutils "github.com/cosmos/cosmos-sdk/x/params/client/utils"
+	"github.com/cosmos/cosmos-sdk/x/params/types/proposal"
+	paramproposal "github.com/cosmos/cosmos-sdk/x/params/types/proposal"
+
+	"github.com/tendermint/budget/app"
 	"github.com/tendermint/budget/x/budget/types"
 )
 
@@ -171,6 +177,222 @@ func (suite *KeeperTestSuite) TestCollectBudgets() {
 
 func (suite *KeeperTestSuite) TestBudgetExpiration() {
 	// TODO: not implemented
+}
+
+func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
+	encCfg := app.MakeTestEncodingConfig()
+	params := suite.keeper.GetParams(suite.ctx)
+	suite.keeper.SetParams(suite.ctx, params)
+	height := 1
+	suite.ctx = suite.ctx.WithBlockTime(mustParseRFC3339("2021-08-01T00:00:00Z"))
+	suite.ctx = suite.ctx.WithBlockHeight(int64(height))
+
+	for _, tc := range []struct {
+		name                   string
+		proposal               *proposal.ParameterChangeProposal
+		budgetCount            int
+		collectibleBudgetCount int
+		govTime                time.Time
+		nextBlockTime          time.Time
+		expErr                 error
+	}{
+
+		{
+			"add budget 1",
+			testProposal(proposal.ParamChange{
+				Subspace: types.ModuleName,
+				Key:      string(types.KeyBudgets),
+				Value: `[
+					{
+					"name": "gravity-dex-farming-20213Q-20313Q",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2031-09-30T00:00:00Z"
+					}
+				]`,
+			}),
+			1,
+			0,
+			mustParseRFC3339("2021-08-01T00:00:00Z"),
+			mustParseRFC3339("2021-08-01T00:00:00Z"),
+			nil,
+		},
+		{
+			"add budget 2",
+			testProposal(proposal.ParamChange{
+				Subspace: types.ModuleName,
+				Key:      string(types.KeyBudgets),
+				Value: `[
+					{
+					"name": "gravity-dex-farming-20213Q-20313Q",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2031-09-30T00:00:00Z"
+					},
+					{
+					"name": "gravity-dex-farming-2",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos1m63436cdxnu9ymyj02e7k3xljkn8klyf5ahqa75degq748xxkmksvtlp8n",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2021-09-30T00:00:00Z"
+					}
+				]`,
+			}),
+			2,
+			2,
+			mustParseRFC3339("2021-09-03T00:00:00Z"),
+			mustParseRFC3339("2021-09-03T00:00:00Z"),
+			nil,
+		},
+		{
+			"add budget 3 with invalid total rate case 1",
+			testProposal(proposal.ParamChange{
+				Subspace: types.ModuleName,
+				Key:      string(types.KeyBudgets),
+				Value: `[
+					{
+					"name": "gravity-dex-farming-20213Q-20313Q",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2031-09-30T00:00:00Z"
+					},
+					{
+					"name": "gravity-dex-farming-2",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos1m63436cdxnu9ymyj02e7k3xljkn8klyf5ahqa75degq748xxkmksvtlp8n",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2021-09-30T00:00:00Z"
+					},
+					{
+					"name": "gravity-dex-farming-3",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos17avp6xs5c8ycqzy20yv99ccxwunu32e507kpm8ql5nfg47pzj9qqxhujxr",
+					"start_time": "2021-09-30T00:00:00Z",
+					"end_time": "2021-10-10T00:00:00Z"
+					}
+				]`,
+			}),
+			0,
+			0,
+			mustParseRFC3339("2021-09-29T00:00:00Z"),
+			mustParseRFC3339("2021-09-30T00:00:00Z"),
+			types.ErrInvalidTotalBudgetRate,
+		},
+		{
+			"add budget 3 with invalid total rate case 2",
+			testProposal(proposal.ParamChange{
+				Subspace: types.ModuleName,
+				Key:      string(types.KeyBudgets),
+				Value: `[
+					{
+					"name": "gravity-dex-farming-20213Q-20313Q",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2031-09-30T00:00:00Z"
+					},
+					{
+					"name": "gravity-dex-farming-2",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos1m63436cdxnu9ymyj02e7k3xljkn8klyf5ahqa75degq748xxkmksvtlp8n",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2021-09-30T00:00:00Z"
+					},
+					{
+					"name": "gravity-dex-farming-3",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos17avp6xs5c8ycqzy20yv99ccxwunu32e507kpm8ql5nfg47pzj9qqxhujxr",
+					"start_time": "2021-09-30T00:00:00Z",
+					"end_time": "2021-10-10T00:00:00Z"
+					}
+				]`,
+			}),
+			0,
+			0,
+			mustParseRFC3339("2021-10-01T00:00:00Z"),
+			mustParseRFC3339("2021-10-01T00:00:00Z"),
+			types.ErrInvalidTotalBudgetRate,
+		},
+		{
+			"add budget 3",
+			testProposal(proposal.ParamChange{
+				Subspace: types.ModuleName,
+				Key:      string(types.KeyBudgets),
+				Value: `[
+					{
+					"name": "gravity-dex-farming-20213Q-20313Q",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2031-09-30T00:00:00Z"
+					},
+					{
+					"name": "gravity-dex-farming-3",
+					"rate": "0.500000000000000000",
+					"budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+					"collection_address": "cosmos17avp6xs5c8ycqzy20yv99ccxwunu32e507kpm8ql5nfg47pzj9qqxhujxr",
+					"start_time": "2021-09-30T00:00:00Z",
+					"end_time": "2021-10-10T00:00:00Z"
+					}
+				]`,
+			}),
+			2,
+			2,
+			mustParseRFC3339("2021-10-01T00:00:00Z"),
+			mustParseRFC3339("2021-10-01T00:00:00Z"),
+			nil,
+		},
+	} {
+		suite.Run(tc.name, func() {
+			proposalJson := paramscutils.ParamChangeProposalJSON{}
+			bz, err := tc.proposal.Marshal()
+			suite.Require().NoError(err)
+			err = encCfg.Amino.Unmarshal(bz, &proposalJson)
+			suite.Require().NoError(err)
+			proposal := paramproposal.NewParameterChangeProposal(
+				proposalJson.Title, proposalJson.Description, proposalJson.Changes.ToParamChanges(),
+			)
+			suite.Require().NoError(err)
+
+			// endblock gov paramchange ->(new block)-> beginblock budget -> mempool -> endblock gov paramchange ->(new block)-> ...
+			suite.ctx = suite.ctx.WithBlockTime(tc.govTime)
+			err = suite.govHandler(suite.ctx, proposal)
+			if tc.expErr != nil {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				params := suite.keeper.GetParams(suite.ctx)
+				suite.Require().Len(params.Budgets, tc.budgetCount)
+				for _, budget := range params.Budgets {
+					err := budget.Validate()
+					suite.Require().NoError(err)
+				}
+				// (new block)
+				height += 1
+				suite.ctx = suite.ctx.WithBlockHeight(int64(height))
+				suite.ctx = suite.ctx.WithBlockTime(tc.nextBlockTime)
+				budgets := suite.keeper.CollectibleBudgets(suite.ctx)
+				suite.Require().Len(budgets, tc.collectibleBudgetCount)
+
+				// BeginBlocker
+				err := suite.keeper.CollectBudgets(suite.ctx)
+				suite.Require().NoError(err)
+			}
+		})
+	}
 }
 
 func (suite *KeeperTestSuite) TestGetSetTotalCollectedCoins() {
