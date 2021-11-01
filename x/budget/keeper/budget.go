@@ -59,9 +59,8 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 				for _, collectionCoins := range budgetsBySource.CollectionCoins {
 					for _, coin := range collectionCoins {
 						if coin.Amount.IsInt64() {
-							// TODO: need more tests
 							telemetry.SetGaugeWithLabels(
-								[]string{types.ModuleName, "budget", "collection_address", "collection_coin"},
+								[]string{types.ModuleName},
 								float32(coin.Amount.Int64()),
 								[]metrics.Label{
 									telemetry.NewLabel("collection_address", budget.CollectionAddress),
