@@ -85,7 +85,7 @@ func ValidateBudgets(i interface{}) error {
 		}
 		names[budget.Name] = true
 	}
-
+	// TODO: Verifying only the date range
 	budgetsBySourceMap := GetBudgetsBySourceMap(budgets)
 	for addr, budgets := range budgetsBySourceMap {
 		if budgets.TotalRate.GT(sdk.OneDec()) {

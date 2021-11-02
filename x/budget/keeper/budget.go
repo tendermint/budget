@@ -10,7 +10,11 @@ import (
 // CollectBudgets collects all the valid budgets registered in params.Budgets and
 // distributes the total collected coins to collection address.
 func (k Keeper) CollectBudgets(ctx sdk.Context) error {
-	budgets := k.CollectibleBudgets(ctx)
+	params := k.GetParams(ctx)
+	var budgets []types.Budget
+	if params.EpochBlocks > 0 && ctx.BlockHeight()%int64(params.EpochBlocks) == 0 {
+		budgets = k.CollectibleBudgets(ctx, params.Budgets)
+	}
 	if len(budgets) == 0 {
 		return nil
 	}
@@ -69,14 +73,11 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 
 // CollectibleBudgets returns scan through the budgets registered in params.Budgets
 // and returns only the valid and not expired budgets.
-func (k Keeper) CollectibleBudgets(ctx sdk.Context) (budgets []types.Budget) {
-	params := k.GetParams(ctx)
-	if params.EpochBlocks > 0 && ctx.BlockHeight()%int64(params.EpochBlocks) == 0 {
-		for _, budget := range params.Budgets {
-			err := budget.Validate()
-			if err == nil && budget.Collectible(ctx.BlockTime()) {
-				budgets = append(budgets, budget)
-			}
+func (k Keeper) CollectibleBudgets(ctx sdk.Context, budgets []types.Budget) (collectibleBudgets []types.Budget) {
+	for _, budget := range budgets {
+		err := budget.Validate()
+		if err == nil && budget.Collectible(ctx.BlockTime()) {
+			collectibleBudgets = append(collectibleBudgets, budget)
 		}
 	}
 	return
