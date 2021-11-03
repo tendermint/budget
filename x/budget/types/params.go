@@ -85,13 +85,27 @@ func ValidateBudgets(i interface{}) error {
 		}
 		names[budget.Name] = true
 	}
-	// TODO: Verifying only the date range
 	budgetsBySourceMap := GetBudgetsBySourceMap(budgets)
-	for addr, budgets := range budgetsBySourceMap {
-		if budgets.TotalRate.GT(sdk.OneDec()) {
-			return sdkerrors.Wrapf(
-				ErrInvalidTotalBudgetRate,
-				"total rate for budget source address %s must not exceed 1: %v", addr, budgets.TotalRate)
+	for addr, budgetsBySource := range budgetsBySourceMap {
+		if budgetsBySource.TotalRate.GT(sdk.OneDec()) {
+			// If the TotalRate of Budgets with the same BudgetSourceAddress exceeds 1,
+			// recalculate and verify the TotalRate of Budgets with overlapping time ranges.
+			for _, budget := range budgetsBySource.Budgets {
+				if budgetsBySource.TotalRate.GTE(sdk.OneDec()) {
+					totalRate := sdk.ZeroDec()
+					for _, budgetToCheck := range budgetsBySource.Budgets {
+						if DateRageOverlap(budget.StartTime, budget.EndTime, budgetToCheck.StartTime, budgetToCheck.EndTime) {
+							totalRate = totalRate.Add(budgetToCheck.Rate)
+						}
+					}
+					if totalRate.GTE(sdk.OneDec()) {
+						return sdkerrors.Wrapf(
+							ErrInvalidTotalBudgetRate,
+							"total rate for budget source address %s must not exceed 1: %v", addr, totalRate)
+					}
+				}
+			}
+
 		}
 	}
 	return nil

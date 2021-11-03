@@ -10,3 +10,7 @@ func ParseTime(s string) time.Time {
 	}
 	return t
 }
+
+func DateRageOverlap(startTimeA, endTimeA, startTimeB, endTimeB time.Time) bool {
+	return !startTimeA.After(endTimeB) && !endTimeA.Before(startTimeB)
+}
