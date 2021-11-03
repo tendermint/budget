@@ -40,13 +40,29 @@ echo "Creating and collecting gentx..."
 $BINARY gentx validator 1000000000stake --home $CHAIN_DIR/$CHAIN_ID --chain-id $CHAIN_ID --keyring-backend test
 $BINARY collect-gentxs --home $CHAIN_DIR/$CHAIN_ID
 
+# Check platform
+platform='unknown'
+unamestr=`uname`
+if [ "$unamestr" = 'Linux' ]; then
+   platform='linux'
+fi
+
 echo "Change settings in config.toml file..."
-sed -i '' 's#"tcp://127.0.0.1:26657"#"tcp://0.0.0.0:'"$RPC_PORT"'"#g' $CHAIN_DIR/$CHAIN_ID/config/config.toml
-sed -i '' 's/timeout_commit = "5s"/timeout_commit = "1s"/g' $CHAIN_DIR/$CHAIN_ID/config/config.toml
-sed -i '' 's/timeout_propose = "3s"/timeout_propose = "1s"/g' $CHAIN_DIR/$CHAIN_ID/config/config.toml
-sed -i '' 's/index_all_keys = false/index_all_keys = true/g' $CHAIN_DIR/$CHAIN_ID/config/config.toml
-sed -i '' 's/enable = false/enable = true/g' $CHAIN_DIR/$CHAIN_ID/config/app.toml
-sed -i '' 's/swagger = false/swagger = true/g' $CHAIN_DIR/$CHAIN_ID/config/app.toml
+if [ $platform = 'linux' ]; then
+	sed -i 's#"tcp://127.0.0.1:26657"#"tcp://0.0.0.0:'"$RPC_PORT"'"#g' $CHAIN_DIR/$CHAIN_ID/config/config.toml
+	sed -i 's/timeout_commit = "5s"/timeout_commit = "1s"/g' $CHAIN_DIR/$CHAIN_ID/config/config.toml
+	sed -i 's/timeout_propose = "3s"/timeout_propose = "1s"/g' $CHAIN_DIR/$CHAIN_ID/config/config.toml
+	sed -i 's/index_all_keys = false/index_all_keys = true/g' $CHAIN_DIR/$CHAIN_ID/config/config.toml
+	sed -i 's/enable = false/enable = true/g' $CHAIN_DIR/$CHAIN_ID/config/app.toml
+	sed -i 's/swagger = false/swagger = true/g' $CHAIN_DIR/$CHAIN_ID/config/app.toml
+else
+	sed -i '' 's#"tcp://127.0.0.1:26657"#"tcp://0.0.0.0:'"$RPC_PORT"'"#g' $CHAIN_DIR/$CHAIN_ID/config/config.toml
+	sed -i '' 's/timeout_commit = "5s"/timeout_commit = "1s"/g' $CHAIN_DIR/$CHAIN_ID/config/config.toml
+	sed -i '' 's/timeout_propose = "3s"/timeout_propose = "1s"/g' $CHAIN_DIR/$CHAIN_ID/config/config.toml
+	sed -i '' 's/index_all_keys = false/index_all_keys = true/g' $CHAIN_DIR/$CHAIN_ID/config/config.toml
+	sed -i '' 's/enable = false/enable = true/g' $CHAIN_DIR/$CHAIN_ID/config/app.toml
+	sed -i '' 's/swagger = false/swagger = true/g' $CHAIN_DIR/$CHAIN_ID/config/app.toml
+fi
 
 echo "Starting $CHAIN_ID in $CHAIN_DIR..."
 echo "Log file is located at $CHAIN_DIR/$CHAIN_ID.log"

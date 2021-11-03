@@ -24,7 +24,7 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 	for budgetSource, budgetsBySource := range budgetsBySourceMap {
 		budgetSourceAcc, err := sdk.AccAddressFromBech32(budgetSource)
 		if err != nil {
-			continue
+			return err
 		}
 		budgetSourceBalances := sdk.NewDecCoinsFromCoins(k.bankKeeper.GetAllBalances(ctx, budgetSourceAcc)...)
 		if budgetSourceBalances.IsZero() {
@@ -37,7 +37,7 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 		for i, budget := range budgetsBySource.Budgets {
 			collectionAcc, err := sdk.AccAddressFromBech32(budget.CollectionAddress)
 			if err != nil {
-				continue
+				return err
 			}
 
 			collectionCoins, _ := budgetSourceBalances.MulDecTruncate(budget.Rate).TruncateDecimal()
@@ -51,7 +51,7 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 		}
 
 		if err := k.bankKeeper.InputOutputCoins(ctx, inputs, outputs); err != nil {
-			continue
+			return err
 		}
 		for i, budget := range budgetsBySource.Budgets {
 			k.AddTotalCollectedCoins(ctx, budget.Name, budgetsBySource.CollectionCoins[i])
@@ -95,7 +95,7 @@ func (k Keeper) CollectibleBudgets(ctx sdk.Context) (budgets []types.Budget) {
 	if params.EpochBlocks > 0 && ctx.BlockHeight()%int64(params.EpochBlocks) == 0 {
 		for _, budget := range params.Budgets {
 			err := budget.Validate()
-			if err == nil && !budget.Expired(ctx.BlockTime()) {
+			if err == nil && budget.Collectible(ctx.BlockTime()) {
 				budgets = append(budgets, budget)
 			}
 		}
