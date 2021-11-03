@@ -21,32 +21,32 @@ func (suite *KeeperTestSuite) TestGRPCBudgets() {
 			Rate:                sdk.NewDecWithPrec(5, 2),
 			BudgetSourceAddress: suite.budgetSourceAddrs[0].String(),
 			CollectionAddress:   suite.collectionAddrs[0].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
 			Name:                "budget2",
 			Rate:                sdk.NewDecWithPrec(5, 2),
 			BudgetSourceAddress: suite.budgetSourceAddrs[0].String(),
 			CollectionAddress:   suite.collectionAddrs[1].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
 			Name:                "budget3",
 			Rate:                sdk.NewDecWithPrec(5, 2),
 			BudgetSourceAddress: suite.budgetSourceAddrs[1].String(),
 			CollectionAddress:   suite.collectionAddrs[0].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
 			Name:                "budget4",
 			Rate:                sdk.NewDecWithPrec(5, 2),
 			BudgetSourceAddress: suite.budgetSourceAddrs[1].String(),
 			CollectionAddress:   suite.collectionAddrs[1].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 	}
 
@@ -57,7 +57,7 @@ func (suite *KeeperTestSuite) TestGRPCBudgets() {
 	balance := suite.app.BankKeeper.GetAllBalances(suite.ctx, suite.budgetSourceAddrs[0])
 	expectedCoins, _ := sdk.NewDecCoinsFromCoins(balance...).MulDec(sdk.NewDecWithPrec(5, 2)).TruncateDecimal()
 
-	suite.ctx = suite.ctx.WithBlockTime(mustParseRFC3339("2021-08-31T00:00:00Z"))
+	suite.ctx = suite.ctx.WithBlockTime(types.MustParseRFC3339("2021-08-31T00:00:00Z"))
 	err := suite.keeper.CollectBudgets(suite.ctx)
 	suite.Require().NoError(err)
 

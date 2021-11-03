@@ -15,8 +15,8 @@ func TestParseTime(t *testing.T) {
 	require.NoError(t, err)
 	errorCase := "9999-12-31T00:00:00_ErrorCase"
 	_, err = time.Parse(time.RFC3339, errorCase)
-	require.PanicsWithError(t, err.Error(), func() { types.ParseTime(errorCase) })
-	require.Equal(t, normalRes, types.ParseTime(normalCase))
+	require.PanicsWithError(t, err.Error(), func() { types.MustParseRFC3339(errorCase) })
+	require.Equal(t, normalRes, types.MustParseRFC3339(normalCase))
 }
 
 func TestDateRageOverlap(t *testing.T) {
@@ -31,34 +31,34 @@ func TestDateRageOverlap(t *testing.T) {
 		{
 			"same range",
 			true,
-			types.ParseTime("2021-12-31T00:00:00Z"),
-			types.ParseTime("2021-12-31T00:00:00Z"),
-			types.ParseTime("2021-12-31T00:00:00Z"),
-			types.ParseTime("2021-12-31T00:00:00Z"),
+			types.MustParseRFC3339("2021-12-31T00:00:00Z"),
+			types.MustParseRFC3339("2021-12-31T00:00:00Z"),
+			types.MustParseRFC3339("2021-12-31T00:00:00Z"),
+			types.MustParseRFC3339("2021-12-31T00:00:00Z"),
 		},
 		{
 			"overlap with start",
 			true,
-			types.ParseTime("2021-10-05T00:00:00Z"),
-			types.ParseTime("2021-12-31T00:00:00Z"),
-			types.ParseTime("2021-10-05T00:00:00Z"),
-			types.ParseTime("2021-11-10T00:00:00Z"),
+			types.MustParseRFC3339("2021-10-05T00:00:00Z"),
+			types.MustParseRFC3339("2021-12-31T00:00:00Z"),
+			types.MustParseRFC3339("2021-10-05T00:00:00Z"),
+			types.MustParseRFC3339("2021-11-10T00:00:00Z"),
 		},
 		{
 			"overlap with start 2",
 			true,
-			types.ParseTime("2021-10-05T00:00:00Z"),
-			types.ParseTime("2021-11-10T00:00:00Z"),
-			types.ParseTime("2021-10-05T00:00:00Z"),
-			types.ParseTime("2021-12-31T00:00:00Z"),
+			types.MustParseRFC3339("2021-10-05T00:00:00Z"),
+			types.MustParseRFC3339("2021-11-10T00:00:00Z"),
+			types.MustParseRFC3339("2021-10-05T00:00:00Z"),
+			types.MustParseRFC3339("2021-12-31T00:00:00Z"),
 		},
 		{
 			"overlap 1 sec",
 			true,
-			types.ParseTime("2021-10-05T00:00:00Z"),
-			types.ParseTime("2021-11-10T00:00:01Z"),
-			types.ParseTime("2021-11-10T00:00:00Z"),
-			types.ParseTime("2021-12-31T00:00:00Z"),
+			types.MustParseRFC3339("2021-10-05T00:00:00Z"),
+			types.MustParseRFC3339("2021-11-10T00:00:01Z"),
+			types.MustParseRFC3339("2021-11-10T00:00:00Z"),
+			types.MustParseRFC3339("2021-12-31T00:00:00Z"),
 		},
 	}
 	for _, tc := range testCases {
