@@ -57,22 +57,19 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 			k.AddTotalCollectedCoins(ctx, budget.Name, budgetsBySource.CollectionCoins[i])
 
 			defer func() {
-				for _, collectionCoins := range budgetsBySource.CollectionCoins {
-					for _, coin := range collectionCoins {
-						if coin.Amount.IsInt64() {
-							telemetry.SetGaugeWithLabels(
-								[]string{types.ModuleName},
-								float32(coin.Amount.Int64()),
-								[]metrics.Label{
-									telemetry.NewLabel("collection_address", budget.CollectionAddress),
-									telemetry.NewLabel("denom", coin.Denom),
-								},
-							)
-						}
+				for _, coin := range budgetsBySource.CollectionCoins[i] {
+					if coin.Amount.IsInt64() {
+						telemetry.SetGaugeWithLabels(
+							[]string{types.ModuleName},
+							float32(coin.Amount.Int64()),
+							[]metrics.Label{
+								telemetry.NewLabel("collection_address", budget.CollectionAddress),
+								telemetry.NewLabel("denom", coin.Denom),
+							},
+						)
 					}
 				}
 			}()
-
 			ctx.EventManager().EmitEvents(sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeBudgetCollected,
