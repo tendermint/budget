@@ -53,11 +53,13 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 		if err := k.bankKeeper.InputOutputCoins(ctx, inputs, outputs); err != nil {
 			return err
 		}
-		for i, budget := range budgetsBySource.Budgets {
-			k.AddTotalCollectedCoins(ctx, budget.Name, budgetsBySource.CollectionCoins[i])
 
+		for i, budget := range budgetsBySource.Budgets {
+			// Capture the variables in a loop for the deferred func
+			i := i
+			collectionCoins := budgetsBySource.CollectionCoins
 			defer func() {
-				for _, coin := range budgetsBySource.CollectionCoins[i] {
+				for _, coin := range collectionCoins[i] {
 					if coin.Amount.IsInt64() {
 						telemetry.SetGaugeWithLabels(
 							[]string{types.ModuleName},
@@ -70,6 +72,9 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 					}
 				}
 			}()
+
+			k.AddTotalCollectedCoins(ctx, budget.Name, collectionCoins[i])
+
 			ctx.EventManager().EmitEvents(sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeBudgetCollected,
@@ -77,7 +82,7 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 					sdk.NewAttribute(types.AttributeValueCollectionAddress, budget.CollectionAddress),
 					sdk.NewAttribute(types.AttributeValueBudgetSourceAddress, budget.BudgetSourceAddress),
 					sdk.NewAttribute(types.AttributeValueRate, budget.Rate.String()),
-					sdk.NewAttribute(types.AttributeValueAmount, budgetsBySource.CollectionCoins[i].String()),
+					sdk.NewAttribute(types.AttributeValueAmount, collectionCoins[i].String()),
 				),
 			})
 		}
