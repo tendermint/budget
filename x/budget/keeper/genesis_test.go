@@ -2,6 +2,8 @@ package keeper_test
 
 import (
 	"github.com/tendermint/budget/x/budget/types"
+
+	_ "github.com/stretchr/testify/suite"
 )
 
 func (suite *KeeperTestSuite) TestInitGenesis() {
@@ -9,6 +11,7 @@ func (suite *KeeperTestSuite) TestInitGenesis() {
 	params := suite.keeper.GetParams(suite.ctx)
 	params.Budgets = suite.budgets[:4]
 	suite.keeper.SetParams(suite.ctx, params)
+
 	emptyGenState := suite.keeper.ExportGenesis(suite.ctx)
 	suite.Require().NotPanics(func() {
 		suite.keeper.InitGenesis(suite.ctx, *emptyGenState)
@@ -18,6 +21,7 @@ func (suite *KeeperTestSuite) TestInitGenesis() {
 
 	err := suite.keeper.CollectBudgets(suite.ctx)
 	suite.Require().NoError(err)
+
 	var genState *types.GenesisState
 	suite.Require().NotPanics(func() {
 		genState = suite.keeper.ExportGenesis(suite.ctx)

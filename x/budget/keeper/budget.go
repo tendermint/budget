@@ -1,6 +1,9 @@
 package keeper
 
 import (
+	"github.com/armon/go-metrics"
+
+	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
@@ -50,8 +53,28 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 		if err := k.bankKeeper.InputOutputCoins(ctx, inputs, outputs); err != nil {
 			return err
 		}
+
 		for i, budget := range budgetsBySource.Budgets {
-			k.AddTotalCollectedCoins(ctx, budget.Name, budgetsBySource.CollectionCoins[i])
+			// Capture the variables in a loop for the deferred func
+			i := i
+			collectionCoins := budgetsBySource.CollectionCoins
+			defer func() {
+				for _, coin := range collectionCoins[i] {
+					if coin.Amount.IsInt64() {
+						telemetry.SetGaugeWithLabels(
+							[]string{types.ModuleName},
+							float32(coin.Amount.Int64()),
+							[]metrics.Label{
+								telemetry.NewLabel("collection_address", budget.CollectionAddress),
+								telemetry.NewLabel("denom", coin.Denom),
+							},
+						)
+					}
+				}
+			}()
+
+			k.AddTotalCollectedCoins(ctx, budget.Name, collectionCoins[i])
+
 			ctx.EventManager().EmitEvents(sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeBudgetCollected,
@@ -59,7 +82,7 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 					sdk.NewAttribute(types.AttributeValueCollectionAddress, budget.CollectionAddress),
 					sdk.NewAttribute(types.AttributeValueBudgetSourceAddress, budget.BudgetSourceAddress),
 					sdk.NewAttribute(types.AttributeValueRate, budget.Rate.String()),
-					sdk.NewAttribute(types.AttributeValueAmount, budgetsBySource.CollectionCoins[i].String()),
+					sdk.NewAttribute(types.AttributeValueAmount, collectionCoins[i].String()),
 				),
 			})
 		}
