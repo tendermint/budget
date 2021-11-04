@@ -32,9 +32,9 @@ sdk.AccAddress(address.Module("farming", []byte("GravityDEXFarmingBudget")))
 - `name`: is the name of the budget plan used for display
 - `description`: is the description of the budget plan used for display
 - `rate`: is the distributing amount by ratio of the total budget source
-- `budget_source_address`: is the address where the source of budget comes from
-- `collection_address`: is the address that collects budget from the budget source address 
-- `start_time`: is start time of the budget plan 
+- `source_address`: is the address where the source of budget comes from
+- `destination_address`: is the address that collects budget from the source address
+- `start_time`: is start time of the budget plan
 - `end_time`: is end time of the budget plan
 
 ```json
@@ -49,8 +49,8 @@ sdk.AccAddress(address.Module("farming", []byte("GravityDEXFarmingBudget")))
         {
           "name": "gravity-dex-farming-20213Q-20221Q",
           "rate": "0.300000000000000000",
-          "budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
-          "collection_address": "cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl",
+          "source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+          "destination_address": "cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl",
           "start_time": "2021-10-01T00:00:00Z",
           "end_time": "2022-04-01T00:00:00Z"
         }
@@ -88,8 +88,8 @@ budgetd tx gov vote 1 yes \
 # Query the proposal again to check the status PROPOSAL_STATUS_PASSED
 budgetd q gov proposals --output json | jq
  
-# Query the balances of collection_address for a couple times 
-# the balances should increrase over time as gas fees and part of ATOM inflation flow in
+# Query the balances of destination_address for a couple times
+# the balances should increase over time as gas fees and part of ATOM inflation flow in
 budgetd q bank balances cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl --output json | jq
 ```
 
@@ -113,8 +113,8 @@ budgetd q budget params --output json | jq
     {
       "name": "gravity-dex-farming-20213Q-20221Q",
       "rate": "0.300000000000000000",
-      "budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
-      "collection_address": "cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl",
+      "source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+      "destination_address": "cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl",
       "start_time": "2021-10-01T00:00:00Z",
       "end_time": "2022-04-01T00:00:00Z"
     }
@@ -136,8 +136,8 @@ budgetd q budget budgets --output json | jq
       "budget": {
         "name": "gravity-dex-farming-20213Q-20221Q",
         "rate": "0.300000000000000000",
-        "budget_source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
-        "collection_address": "cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl",
+        "source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
+        "destination_address": "cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl",
         "start_time": "2021-10-01T00:00:00Z",
         "end_time": "2022-04-01T00:00:00Z"
       },
