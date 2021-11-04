@@ -5,9 +5,9 @@ import (
 )
 
 const (
-	FlagName                = "name"
-	FlagBudgetSourceAddress = "budget-source-address"
-	FlagCollectionAddress   = "collection-address"
+	FlagName               = "name"
+	FlagSourceAddress      = "source-address"
+	FlagDestinationAddress = "destination-address"
 )
 
 // flagSetBudgets returns the FlagSet used for budgets.
@@ -15,8 +15,8 @@ func flagSetBudgets() *flag.FlagSet {
 	fs := flag.NewFlagSet("", flag.ContinueOnError)
 
 	fs.String(FlagName, "", "The budget name")
-	fs.String(FlagBudgetSourceAddress, "", "The bech32 address of the budget source account")
-	fs.String(FlagCollectionAddress, "", "The bech32 address of the collection account")
+	fs.String(FlagSourceAddress, "", "The bech32 address of the source account")
+	fs.String(FlagDestinationAddress, "", "The bech32 address of the destination account")
 
 	return fs
 }

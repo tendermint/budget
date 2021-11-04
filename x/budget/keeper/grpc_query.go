@@ -32,14 +32,14 @@ func (k Querier) Budgets(c context.Context, req *types.QueryBudgetsRequest) (*ty
 		return nil, status.Error(codes.InvalidArgument, "invalid request")
 	}
 
-	if req.BudgetSourceAddress != "" {
-		if _, err := sdk.AccAddressFromBech32(req.BudgetSourceAddress); err != nil {
+	if req.SourceAddress != "" {
+		if _, err := sdk.AccAddressFromBech32(req.SourceAddress); err != nil {
 			return nil, err
 		}
 	}
 
-	if req.CollectionAddress != "" {
-		if _, err := sdk.AccAddressFromBech32(req.CollectionAddress); err != nil {
+	if req.DestinationAddress != "" {
+		if _, err := sdk.AccAddressFromBech32(req.DestinationAddress); err != nil {
 			return nil, err
 		}
 	}
@@ -51,8 +51,8 @@ func (k Querier) Budgets(c context.Context, req *types.QueryBudgetsRequest) (*ty
 	var budgets []types.BudgetResponse
 	for _, b := range params.Budgets {
 		if req.Name != "" && b.Name != req.Name ||
-			req.BudgetSourceAddress != "" && b.BudgetSourceAddress != req.BudgetSourceAddress ||
-			req.CollectionAddress != "" && b.CollectionAddress != req.CollectionAddress {
+			req.SourceAddress != "" && b.SourceAddress != req.SourceAddress ||
+			req.DestinationAddress != "" && b.DestinationAddress != req.DestinationAddress {
 			continue
 		}
 

@@ -24,42 +24,42 @@ budgets: []
 }
 
 func TestValidateBudgets(t *testing.T) {
-	cAddr1 := sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr1")))
-	cAddr2 := sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr2")))
-	tAddr1 := sdk.AccAddress(address.Module(types.ModuleName, []byte("budgetSourceAddr1")))
-	tAddr2 := sdk.AccAddress(address.Module(types.ModuleName, []byte("budgetSourceAddr2")))
+	dAddr1 := sdk.AccAddress(address.Module(types.ModuleName, []byte("destinationAddr1")))
+	dAddr2 := sdk.AccAddress(address.Module(types.ModuleName, []byte("destinationAddr2")))
+	sAddr1 := sdk.AccAddress(address.Module(types.ModuleName, []byte("sourceAddr1")))
+	sAddr2 := sdk.AccAddress(address.Module(types.ModuleName, []byte("sourceAddr2")))
 	budgets := []types.Budget{
 		{
-			Name:                "test",
-			Rate:                sdk.NewDec(1),
-			BudgetSourceAddress: tAddr1.String(),
-			CollectionAddress:   cAddr1.String(),
-			StartTime:           time.Time{},
-			EndTime:             time.Time{},
+			Name:               "test",
+			Rate:               sdk.NewDec(1),
+			SourceAddress:      sAddr1.String(),
+			DestinationAddress: dAddr1.String(),
+			StartTime:          time.Time{},
+			EndTime:            time.Time{},
 		},
 		{
-			Name:                "test2",
-			Rate:                sdk.NewDec(1),
-			BudgetSourceAddress: tAddr2.String(),
-			CollectionAddress:   cAddr2.String(),
-			StartTime:           time.Time{},
-			EndTime:             time.Time{},
+			Name:               "test2",
+			Rate:               sdk.NewDec(1),
+			SourceAddress:      sAddr2.String(),
+			DestinationAddress: dAddr2.String(),
+			StartTime:          time.Time{},
+			EndTime:            time.Time{},
 		},
 		{
-			Name:                "test3",
-			Rate:                sdk.MustNewDecFromStr("0.1"),
-			BudgetSourceAddress: tAddr2.String(),
-			CollectionAddress:   cAddr2.String(),
-			StartTime:           time.Time{},
-			EndTime:             time.Time{},
+			Name:               "test3",
+			Rate:               sdk.MustNewDecFromStr("0.1"),
+			SourceAddress:      sAddr2.String(),
+			DestinationAddress: dAddr2.String(),
+			StartTime:          time.Time{},
+			EndTime:            time.Time{},
 		},
 		{
-			Name:                "test3",
-			Rate:                sdk.MustNewDecFromStr("0.1"),
-			BudgetSourceAddress: tAddr2.String(),
-			CollectionAddress:   cAddr2.String(),
-			StartTime:           time.Time{},
-			EndTime:             time.Time{},
+			Name:               "test3",
+			Rate:               sdk.MustNewDecFromStr("0.1"),
+			SourceAddress:      sAddr2.String(),
+			DestinationAddress: dAddr2.String(),
+			StartTime:          time.Time{},
+			EndTime:            time.Time{},
 		},
 	}
 

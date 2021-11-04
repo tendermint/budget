@@ -8,7 +8,7 @@ import (
 )
 
 // CollectBudgets collects all the valid budgets registered in params.Budgets and
-// distributes the total collected coins to collection address.
+// distributes the total collected coins to destination address.
 func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 	budgets := k.CollectibleBudgets(ctx)
 	if len(budgets) == 0 {
@@ -16,15 +16,15 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 	}
 
 	// Get a map GetBudgetsBySourceMap that has a list of budgets and their total rate, which
-	// contain the same BudgetSourceAddress
+	// contain the same SourceAddress
 	budgetsBySourceMap := types.GetBudgetsBySourceMap(budgets)
-	for budgetSource, budgetsBySource := range budgetsBySourceMap {
-		budgetSourceAcc, err := sdk.AccAddressFromBech32(budgetSource)
+	for source, budgetsBySource := range budgetsBySourceMap {
+		sourceAcc, err := sdk.AccAddressFromBech32(source)
 		if err != nil {
 			return err
 		}
-		budgetSourceBalances := sdk.NewDecCoinsFromCoins(k.bankKeeper.GetAllBalances(ctx, budgetSourceAcc)...)
-		if budgetSourceBalances.IsZero() {
+		sourceBalances := sdk.NewDecCoinsFromCoins(k.bankKeeper.GetAllBalances(ctx, sourceAcc)...)
+		if sourceBalances.IsZero() {
 			continue
 		}
 
@@ -32,18 +32,18 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 		var outputs []banktypes.Output
 		budgetsBySource.CollectionCoins = make([]sdk.Coins, len(budgetsBySource.Budgets))
 		for i, budget := range budgetsBySource.Budgets {
-			collectionAcc, err := sdk.AccAddressFromBech32(budget.CollectionAddress)
+			destinationAcc, err := sdk.AccAddressFromBech32(budget.DestinationAddress)
 			if err != nil {
 				return err
 			}
 
-			collectionCoins, _ := budgetSourceBalances.MulDecTruncate(budget.Rate).TruncateDecimal()
+			collectionCoins, _ := sourceBalances.MulDecTruncate(budget.Rate).TruncateDecimal()
 			if collectionCoins.Empty() || !collectionCoins.IsValid() {
 				continue
 			}
 
-			inputs = append(inputs, banktypes.NewInput(budgetSourceAcc, collectionCoins))
-			outputs = append(outputs, banktypes.NewOutput(collectionAcc, collectionCoins))
+			inputs = append(inputs, banktypes.NewInput(sourceAcc, collectionCoins))
+			outputs = append(outputs, banktypes.NewOutput(destinationAcc, collectionCoins))
 			budgetsBySource.CollectionCoins[i] = collectionCoins
 		}
 
@@ -56,8 +56,8 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 				sdk.NewEvent(
 					types.EventTypeBudgetCollected,
 					sdk.NewAttribute(types.AttributeValueName, budget.Name),
-					sdk.NewAttribute(types.AttributeValueCollectionAddress, budget.CollectionAddress),
-					sdk.NewAttribute(types.AttributeValueBudgetSourceAddress, budget.BudgetSourceAddress),
+					sdk.NewAttribute(types.AttributeValueDestinationAddress, budget.DestinationAddress),
+					sdk.NewAttribute(types.AttributeValueSourceAddress, budget.SourceAddress),
 					sdk.NewAttribute(types.AttributeValueRate, budget.Rate.String()),
 					sdk.NewAttribute(types.AttributeValueAmount, budgetsBySource.CollectionCoins[i].String()),
 				),
