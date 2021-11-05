@@ -413,7 +413,7 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 				height += 1
 				suite.ctx = suite.ctx.WithBlockHeight(int64(height))
 				suite.ctx = suite.ctx.WithBlockTime(tc.nextBlockTime)
-				budgets := suite.keeper.CollectibleBudgets(suite.ctx, params.Budgets)
+				budgets := suite.keeper.CollectibleBudgets(params.Budgets, suite.ctx.BlockTime())
 				suite.Require().Len(budgets, tc.collectibleBudgetCount)
 
 				// BeginBlocker

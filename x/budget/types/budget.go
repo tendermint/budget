@@ -63,6 +63,17 @@ func (budget Budget) Collectible(blockTime time.Time) bool {
 	return !budget.StartTime.After(blockTime) && budget.EndTime.After(blockTime)
 }
 
+// CollectibleBudgets returns only the valid and started and not expired budgets based on the given block time.
+func CollectibleBudgets(budgets []Budget, blockTime time.Time) (collectibleBudgets []Budget) {
+	for _, budget := range budgets {
+		err := budget.Validate()
+		if err == nil && budget.Collectible(blockTime) {
+			collectibleBudgets = append(collectibleBudgets, budget)
+		}
+	}
+	return
+}
+
 // ValidateName is the default validation function for Budget.Name.
 // A budget name only allows alphabet letters(`A-Z, a-z`), digit numbers(`0-9`), and `-`.
 // It doesn't allow spaces and the maximum length is 50 characters.
