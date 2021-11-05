@@ -2,7 +2,6 @@ package types_test
 
 import (
 	"testing"
-	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/address"
@@ -34,32 +33,32 @@ func TestValidateBudgets(t *testing.T) {
 			Rate:                sdk.OneDec(),
 			BudgetSourceAddress: tAddr1.String(),
 			CollectionAddress:   cAddr1.String(),
-			StartTime:           time.Time{},
-			EndTime:             time.Time{},
+			StartTime:           types.MustParseRFC3339("2021-08-01T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("2021-08-03T00:00:00Z"),
 		},
 		{
 			Name:                "test2",
 			Rate:                sdk.OneDec(),
 			BudgetSourceAddress: tAddr2.String(),
 			CollectionAddress:   cAddr2.String(),
-			StartTime:           time.Time{},
-			EndTime:             time.Time{},
+			StartTime:           types.MustParseRFC3339("2021-08-03T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("2021-08-05T00:00:00Z"),
 		},
 		{
 			Name:                "test3",
 			Rate:                sdk.MustNewDecFromStr("0.1"),
 			BudgetSourceAddress: tAddr2.String(),
 			CollectionAddress:   cAddr2.String(),
-			StartTime:           time.Time{},
-			EndTime:             time.Time{},
+			StartTime:           types.MustParseRFC3339("2021-08-04T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("2021-08-06T00:00:00Z"),
 		},
 		{
 			Name:                "test3",
 			Rate:                sdk.MustNewDecFromStr("0.1"),
 			BudgetSourceAddress: tAddr2.String(),
 			CollectionAddress:   cAddr2.String(),
-			StartTime:           time.Time{},
-			EndTime:             time.Time{},
+			StartTime:           types.MustParseRFC3339("2021-07-25T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("2021-07-30T00:00:00Z"),
 		},
 		{
 			Name:                "test4",

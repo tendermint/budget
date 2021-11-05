@@ -13,6 +13,8 @@ func MustParseRFC3339(s string) time.Time {
 	return t
 }
 
-func DateRageOverlap(startTimeA, endTimeA, startTimeB, endTimeB time.Time) bool {
-	return !startTimeA.After(endTimeB) && !endTimeA.Before(startTimeB)
+// DateRangesOverlap returns true if two date ranges overlap each other.
+// End time is exclusive and start time is inclusive.
+func DateRangesOverlap(startTimeA, endTimeA, startTimeB, endTimeB time.Time) bool {
+	return startTimeA.Before(endTimeB) && endTimeA.After(startTimeB)
 }

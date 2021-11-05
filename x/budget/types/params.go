@@ -93,7 +93,7 @@ func ValidateBudgets(i interface{}) error {
 			for _, budget := range budgetsBySource.Budgets {
 				totalRate := sdk.ZeroDec()
 				for _, budgetToCheck := range budgetsBySource.Budgets {
-					if DateRageOverlap(budget.StartTime, budget.EndTime, budgetToCheck.StartTime, budgetToCheck.EndTime) {
+					if DateRangesOverlap(budget.StartTime, budget.EndTime, budgetToCheck.StartTime, budgetToCheck.EndTime) {
 						totalRate = totalRate.Add(budgetToCheck.Rate)
 					}
 				}
