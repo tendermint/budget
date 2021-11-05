@@ -13,7 +13,7 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 	params := k.GetParams(ctx)
 	var budgets []types.Budget
 	if params.EpochBlocks > 0 && ctx.BlockHeight()%int64(params.EpochBlocks) == 0 {
-		budgets = k.CollectibleBudgets(ctx, params.Budgets)
+		budgets = types.CollectibleBudgets(params.Budgets, ctx.BlockTime())
 	}
 	if len(budgets) == 0 {
 		return nil
@@ -69,18 +69,6 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 		}
 	}
 	return nil
-}
-
-// CollectibleBudgets returns scan through the budgets registered in params.Budgets
-// and returns only the valid and not expired budgets.
-func (k Keeper) CollectibleBudgets(ctx sdk.Context, budgets []types.Budget) (collectibleBudgets []types.Budget) {
-	for _, budget := range budgets {
-		err := budget.Validate()
-		if err == nil && budget.Collectible(ctx.BlockTime()) {
-			collectibleBudgets = append(collectibleBudgets, budget)
-		}
-	}
-	return
 }
 
 // GetTotalCollectedCoins returns total collected coins for a budget.

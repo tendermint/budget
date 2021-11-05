@@ -11,23 +11,12 @@ import (
 	"github.com/tendermint/budget/x/budget/types"
 )
 
-func TestParams(t *testing.T) {
-	require.IsType(t, paramstypes.KeyTable{}, types.ParamKeyTable())
-
-	defaultParams := types.DefaultParams()
-
-	paramsStr := `epoch_blocks: 1
-budgets: []
-`
-	require.Equal(t, paramsStr, defaultParams.String())
-}
-
-func TestValidateBudgets(t *testing.T) {
-	cAddr1 := sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr1")))
-	cAddr2 := sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr2")))
-	tAddr1 := sdk.AccAddress(address.Module(types.ModuleName, []byte("budgetSourceAddr1")))
-	tAddr2 := sdk.AccAddress(address.Module(types.ModuleName, []byte("budgetSourceAddr2")))
-	budgets := []types.Budget{
+var (
+	cAddr1  = sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr1")))
+	cAddr2  = sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr2")))
+	tAddr1  = sdk.AccAddress(address.Module(types.ModuleName, []byte("budgetSourceAddr1")))
+	tAddr2  = sdk.AccAddress(address.Module(types.ModuleName, []byte("budgetSourceAddr2")))
+	budgets = []types.Budget{
 		{
 			Name:                "test",
 			Rate:                sdk.OneDec(),
@@ -37,28 +26,28 @@ func TestValidateBudgets(t *testing.T) {
 			EndTime:             types.MustParseRFC3339("2021-08-03T00:00:00Z"),
 		},
 		{
-			Name:                "test2",
+			Name:                "test1",
 			Rate:                sdk.OneDec(),
 			BudgetSourceAddress: tAddr2.String(),
 			CollectionAddress:   cAddr2.String(),
-			StartTime:           types.MustParseRFC3339("2021-08-03T00:00:00Z"),
-			EndTime:             types.MustParseRFC3339("2021-08-05T00:00:00Z"),
+			StartTime:           types.MustParseRFC3339("2021-07-01T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("2021-07-10T00:00:00Z"),
+		},
+		{
+			Name:                "test2",
+			Rate:                sdk.MustNewDecFromStr("0.1"),
+			BudgetSourceAddress: tAddr2.String(),
+			CollectionAddress:   cAddr2.String(),
+			StartTime:           types.MustParseRFC3339("2021-07-01T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("2021-07-10T00:00:00Z"),
 		},
 		{
 			Name:                "test3",
 			Rate:                sdk.MustNewDecFromStr("0.1"),
 			BudgetSourceAddress: tAddr2.String(),
 			CollectionAddress:   cAddr2.String(),
-			StartTime:           types.MustParseRFC3339("2021-08-04T00:00:00Z"),
-			EndTime:             types.MustParseRFC3339("2021-08-06T00:00:00Z"),
-		},
-		{
-			Name:                "test3",
-			Rate:                sdk.MustNewDecFromStr("0.1"),
-			BudgetSourceAddress: tAddr2.String(),
-			CollectionAddress:   cAddr2.String(),
-			StartTime:           types.MustParseRFC3339("2021-07-25T00:00:00Z"),
-			EndTime:             types.MustParseRFC3339("2021-07-30T00:00:00Z"),
+			StartTime:           types.MustParseRFC3339("2021-08-01T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("2021-08-10T00:00:00Z"),
 		},
 		{
 			Name:                "test4",
@@ -77,21 +66,51 @@ func TestValidateBudgets(t *testing.T) {
 			EndTime:             types.MustParseRFC3339("2021-08-25T00:00:00Z"),
 		},
 	}
+)
 
-	err := types.ValidateBudgets(budgets[:2])
+func TestParams(t *testing.T) {
+	require.IsType(t, paramstypes.KeyTable{}, types.ParamKeyTable())
+
+	defaultParams := types.DefaultParams()
+
+	paramsStr := `epoch_blocks: 1
+budgets: []
+`
+	require.Equal(t, paramsStr, defaultParams.String())
+}
+
+func TestValidateBudgets(t *testing.T) {
+	err := types.ValidateBudgets([]types.Budget{budgets[0], budgets[1]})
 	require.NoError(t, err)
 
-	err = types.ValidateBudgets(budgets[:3])
+	err = types.ValidateBudgets([]types.Budget{budgets[0], budgets[1], budgets[2]})
 	require.ErrorIs(t, err, types.ErrInvalidTotalBudgetRate)
 
-	err = types.ValidateBudgets(budgets[3:5])
+	err = types.ValidateBudgets([]types.Budget{budgets[1], budgets[4]})
 	require.NoError(t, err)
 
-	err = types.ValidateBudgets(budgets[4:6])
+	err = types.ValidateBudgets([]types.Budget{budgets[4], budgets[5]})
 	require.ErrorIs(t, err, types.ErrInvalidTotalBudgetRate)
 
-	err = types.ValidateBudgets(budgets)
+	err = types.ValidateBudgets([]types.Budget{budgets[3], budgets[3]})
 	require.ErrorIs(t, err, types.ErrDuplicateBudgetName)
+}
+
+func TestCollectibleBudgets(t *testing.T) {
+	collectibleBudgets := types.CollectibleBudgets([]types.Budget{budgets[0], budgets[1]}, types.MustParseRFC3339("2021-07-05T00:00:00Z"))
+	require.Len(t, collectibleBudgets, 1)
+
+	collectibleBudgets = types.CollectibleBudgets([]types.Budget{budgets[0], budgets[1], budgets[2]}, types.MustParseRFC3339("2021-07-05T00:00:00Z"))
+	require.Len(t, collectibleBudgets, 2)
+
+	collectibleBudgets = types.CollectibleBudgets([]types.Budget{budgets[4], budgets[5]}, types.MustParseRFC3339("2021-08-18T00:00:00Z"))
+	require.Len(t, collectibleBudgets, 1)
+
+	collectibleBudgets = types.CollectibleBudgets([]types.Budget{budgets[4], budgets[5]}, types.MustParseRFC3339("2021-08-19T00:00:00Z"))
+	require.Len(t, collectibleBudgets, 2)
+
+	collectibleBudgets = types.CollectibleBudgets([]types.Budget{budgets[4], budgets[5]}, types.MustParseRFC3339("2021-08-20T00:00:00Z"))
+	require.Len(t, collectibleBudgets, 1)
 }
 
 func TestValidateEpochBlocks(t *testing.T) {
