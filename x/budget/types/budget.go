@@ -66,8 +66,7 @@ func (budget Budget) Collectible(blockTime time.Time) bool {
 // CollectibleBudgets returns only the valid and started and not expired budgets based on the given block time.
 func CollectibleBudgets(budgets []Budget, blockTime time.Time) (collectibleBudgets []Budget) {
 	for _, budget := range budgets {
-		err := budget.Validate()
-		if err == nil && budget.Collectible(blockTime) {
+		if budget.Collectible(blockTime) {
 			collectibleBudgets = append(collectibleBudgets, budget)
 		}
 	}
