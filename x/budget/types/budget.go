@@ -45,7 +45,7 @@ func (budget Budget) Validate() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid budget source address %s: %v", budget.BudgetSourceAddress, err)
 	}
 
-	if budget.EndTime.Before(budget.StartTime) {
+	if !budget.EndTime.After(budget.StartTime) {
 		return ErrInvalidStartEndTime
 	}
 

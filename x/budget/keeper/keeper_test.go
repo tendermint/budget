@@ -115,7 +115,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 			BudgetSourceAddress: suite.budgetSourceAddrs[2].String(),
 			CollectionAddress:   suite.collectionAddrs[3].String(),
 			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("0000-01-02T00:00:00Z"),
 		},
 		{
 			Name:                "budget5",
