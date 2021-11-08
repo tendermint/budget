@@ -2,7 +2,6 @@ package keeper_test
 
 import (
 	"testing"
-	"time"
 
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
@@ -91,70 +90,62 @@ func (suite *KeeperTestSuite) SetupTest() {
 			Rate:                sdk.MustNewDecFromStr("0.5"),
 			BudgetSourceAddress: suite.budgetSourceAddrs[0].String(),
 			CollectionAddress:   suite.collectionAddrs[0].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
 			Name:                "budget2",
 			Rate:                sdk.MustNewDecFromStr("0.5"),
 			BudgetSourceAddress: suite.budgetSourceAddrs[0].String(),
 			CollectionAddress:   suite.collectionAddrs[1].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
 			Name:                "budget3",
 			Rate:                sdk.MustNewDecFromStr("1.0"),
 			BudgetSourceAddress: suite.budgetSourceAddrs[1].String(),
 			CollectionAddress:   suite.collectionAddrs[2].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
 			Name:                "budget4",
 			Rate:                sdk.MustNewDecFromStr("1"),
 			BudgetSourceAddress: suite.budgetSourceAddrs[2].String(),
 			CollectionAddress:   suite.collectionAddrs[3].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("0000-01-01T00:00:00Z"),
+			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("0000-01-02T00:00:00Z"),
 		},
 		{
 			Name:                "budget5",
 			Rate:                sdk.MustNewDecFromStr("0.5"),
 			BudgetSourceAddress: suite.budgetSourceAddrs[3].String(),
 			CollectionAddress:   suite.collectionAddrs[0].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
 			Name:                "budget6",
 			Rate:                sdk.MustNewDecFromStr("0.5"),
 			BudgetSourceAddress: suite.budgetSourceAddrs[3].String(),
 			CollectionAddress:   suite.collectionAddrs[1].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
 			Name:                "gravity-dex-farming-20213Q-20313Q",
 			Rate:                sdk.MustNewDecFromStr("0.5"),
 			BudgetSourceAddress: suite.budgetSourceAddrs[5].String(),
 			CollectionAddress:   suite.collectionAddrs[5].String(),
-			StartTime:           mustParseRFC3339("2021-09-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("2031-09-30T00:00:00Z"),
+			StartTime:           types.MustParseRFC3339("2021-09-01T00:00:00Z"),
+			EndTime:             types.MustParseRFC3339("2031-09-30T00:00:00Z"),
 		},
 	}
 }
 
 func coinsEq(exp, got sdk.Coins) (bool, string, string, string) {
 	return exp.IsEqual(got), "expected:\t%v\ngot:\t\t%v", exp.String(), got.String()
-}
-
-func mustParseRFC3339(s string) time.Time {
-	t, err := time.Parse(time.RFC3339, s)
-	if err != nil {
-		panic(err)
-	}
-	return t
 }
 
 func mustParseCoinsNormalized(coinStr string) (coins sdk.Coins) {
