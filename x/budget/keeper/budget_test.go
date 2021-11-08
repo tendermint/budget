@@ -175,10 +175,6 @@ func (suite *KeeperTestSuite) TestCollectBudgets() {
 	}
 }
 
-func (suite *KeeperTestSuite) TestBudgetExpiration() {
-	// TODO: not implemented
-}
-
 func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 	encCfg := app.MakeTestEncodingConfig()
 	params := suite.keeper.GetParams(suite.ctx)
