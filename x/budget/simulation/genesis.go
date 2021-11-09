@@ -36,8 +36,8 @@ func GenBudgets(r *rand.Rand) []types.Budget {
 			Rate:               sdk.NewDecFromIntWithPrec(sdk.NewInt(int64(simtypes.RandIntBetween(r, 1, 4))), 1), // 10~30%
 			SourceAddress:      "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",                                   // Cosmos Hub's FeeCollector module account
 			DestinationAddress: sdk.AccAddress(address.Module(types.ModuleName, []byte("GravityDEXFarmingBudget"))).String(),
-			StartTime:          types.ParseTime("2000-01-01T00:00:00Z"),
-			EndTime:            types.ParseTime("9999-12-31T00:00:00Z"),
+			StartTime:          types.MustParseRFC3339("2000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		}
 		ranBudgets = append(ranBudgets, budget)
 	}

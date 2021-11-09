@@ -1,6 +1,9 @@
 package keeper
 
 import (
+	"github.com/armon/go-metrics"
+
+	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 
@@ -10,7 +13,11 @@ import (
 // CollectBudgets collects all the valid budgets registered in params.Budgets and
 // distributes the total collected coins to destination address.
 func (k Keeper) CollectBudgets(ctx sdk.Context) error {
-	budgets := k.CollectibleBudgets(ctx)
+	params := k.GetParams(ctx)
+	var budgets []types.Budget
+	if params.EpochBlocks > 0 && ctx.BlockHeight()%int64(params.EpochBlocks) == 0 {
+		budgets = types.CollectibleBudgets(params.Budgets, ctx.BlockTime())
+	}
 	if len(budgets) == 0 {
 		return nil
 	}
@@ -50,8 +57,28 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 		if err := k.bankKeeper.InputOutputCoins(ctx, inputs, outputs); err != nil {
 			return err
 		}
+
 		for i, budget := range budgetsBySource.Budgets {
-			k.AddTotalCollectedCoins(ctx, budget.Name, budgetsBySource.CollectionCoins[i])
+			// Capture the variables in a loop for the deferred func
+			i := i
+			collectionCoins := budgetsBySource.CollectionCoins
+			defer func() {
+				for _, coin := range collectionCoins[i] {
+					if coin.Amount.IsInt64() {
+						telemetry.SetGaugeWithLabels(
+							[]string{types.ModuleName},
+							float32(coin.Amount.Int64()),
+							[]metrics.Label{
+								telemetry.NewLabel("destination_address", budget.DestinationAddress),
+								telemetry.NewLabel("denom", coin.Denom),
+							},
+						)
+					}
+				}
+			}()
+
+			k.AddTotalCollectedCoins(ctx, budget.Name, collectionCoins[i])
+
 			ctx.EventManager().EmitEvents(sdk.Events{
 				sdk.NewEvent(
 					types.EventTypeBudgetCollected,
@@ -59,27 +86,12 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 					sdk.NewAttribute(types.AttributeValueDestinationAddress, budget.DestinationAddress),
 					sdk.NewAttribute(types.AttributeValueSourceAddress, budget.SourceAddress),
 					sdk.NewAttribute(types.AttributeValueRate, budget.Rate.String()),
-					sdk.NewAttribute(types.AttributeValueAmount, budgetsBySource.CollectionCoins[i].String()),
+					sdk.NewAttribute(types.AttributeValueAmount, collectionCoins[i].String()),
 				),
 			})
 		}
 	}
 	return nil
-}
-
-// CollectibleBudgets returns scan through the budgets registered in params.Budgets
-// and returns only the valid and not expired budgets.
-func (k Keeper) CollectibleBudgets(ctx sdk.Context) (budgets []types.Budget) {
-	params := k.GetParams(ctx)
-	if params.EpochBlocks > 0 && ctx.BlockHeight()%int64(params.EpochBlocks) == 0 {
-		for _, budget := range params.Budgets {
-			err := budget.Validate()
-			if err == nil && budget.Collectible(ctx.BlockTime()) {
-				budgets = append(budgets, budget)
-			}
-		}
-	}
-	return
 }
 
 // GetTotalCollectedCoins returns total collected coins for a budget.
