@@ -30,7 +30,7 @@ message BudgetRecord {
   // name defines the name of the budget
   string name = 1 [(gogoproto.moretags) = "yaml:\"name\""];
 
-  // total_collected_coins specifis the total collected coins in a budget ever since the budget is created
+  // total_collected_coins specifies the total collected coins in a budget ever since the budget is created
   repeated cosmos.base.v1beta1.Coin total_collected_coins = 2 [
     (gogoproto.moretags)     = "yaml:\"total_collected_coins\"",
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",

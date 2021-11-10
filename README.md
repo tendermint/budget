@@ -3,9 +3,9 @@
 
 # Budget Module
 
-A budget module is a Cosmos SDK module that implements budget functionality. It is an independent module from other SDK modules and core functionality is to enable anyone to create a budget plan through governance param change proposal. Once it is agreed within the community, voted, and passed, it uses the budget source address to distribute amount of coins by the rate defined in the plan to the collection address. Collecting all budgets and distribution take place every epoch blocks that can be modified by a governance proposal.
+The budget module is a Cosmos SDK module that implements budget functionality. It is an independent module from other SDK modules and core functionality is to enable anyone to create a budget plan through governance param change proposal. Once it is agreed within the community, voted, and passed, it uses the source address to distribute amount of coins by the rate defined in the plan to the destination address. Collecting all budgets and distribution take place every epoch blocks that can be modified by a governance proposal.
 
-A primary use case is for Gravity DEX farming plan. The budget module can be used to create a budget plan that defines Cosmos Hub's FeeCollector module account where transaction gas fees and part of ATOM inflation are collected as budget source address and uses a custom module account (created by budget creator) as collection address. Read [spec docs](./x/budget/spec/01_concepts.md) to get to know more about the module.
+A primary use case is for Gravity DEX farming plan. The budget module can be used to create a budget plan that defines Cosmos Hub's FeeCollector module account where transaction gas fees and part of ATOM inflation are collected as source address and uses a custom module account (created by budget creator) as destination address. Read [spec docs](./x/budget/spec/01_concepts.md) to get to know more about the module.
 
 ⚠ **Budget module v1 is in active development** ⚠ 
 - see the [main](https://github.com/tendermint/budget/tree/main) branch for the latest

@@ -8,7 +8,7 @@ The budget module contains the following parameters:
 | Key         | Type     | Example                                                                              |
 | ----------- | -------- | ------------------------------------------------------------------------------------ |
 | EpochBlocks | uint32   | {"epoch_blocks":1}                                                                   |
-| Budgets     | []Budget | {"budgets":[{"name":"liquidity-farming-20213Q-20221Q","rate":"0.300000000000000000","budget_source_address":"cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta","collection_address":"cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl","start_time":"2021-10-01T00:00:00Z","end_time":"2022-04-01T00:00:00Z"}]}                                        |
+| Budgets     | []Budget | {"budgets":[{"name":"liquidity-farming-20213Q-20221Q","rate":"0.300000000000000000","source_address":"cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta","destination_address":"cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl","start_time":"2021-10-01T00:00:00Z","end_time":"2022-04-01T00:00:00Z"}]} |
 
 ## EpochBlocks
 
@@ -35,12 +35,12 @@ An example of how to add a budget plan can be found in this [docs/How-To/cli](..
 
 - Budget name only allows letters(`A-Z, a-z`), digits(`0-9`), and `-` without spaces. Also, it has the maximum length of 50 and it should not be duplicate with the existing budget names.
 
-- Validate `CollectionAddress` address.
+- Validate `DestinationAddress` address.
 
-- Validate `BudgetSourceAddress` address.
+- Validate `SourceAddress` address.
 
 - EndTime should not be earlier than StartTime.
 
-- The total rate of budgets with the same `BudgetSourceAddress` value should not exceed 1 (100%).
+- The total rate of budgets with the same `SourceAddress` value should not exceed 1 (100%).
 
 +++ https://github.com/tendermint/budget/blob/main/x/budget/types/budget.go#L33-L63

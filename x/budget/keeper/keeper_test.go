@@ -36,15 +36,15 @@ var (
 type KeeperTestSuite struct {
 	suite.Suite
 
-	app               *simapp.BudgetApp
-	ctx               sdk.Context
-	keeper            keeper.Keeper
-	querier           keeper.Querier
-	govHandler        govtypes.Handler
-	addrs             []sdk.AccAddress
-	budgetSourceAddrs []sdk.AccAddress
-	collectionAddrs   []sdk.AccAddress
-	budgets           []types.Budget
+	app              *simapp.BudgetApp
+	ctx              sdk.Context
+	keeper           keeper.Keeper
+	querier          keeper.Querier
+	govHandler       govtypes.Handler
+	addrs            []sdk.AccAddress
+	sourceAddrs      []sdk.AccAddress
+	destinationAddrs []sdk.AccAddress
+	budgets          []types.Budget
 }
 
 func testProposal(changes ...proposal.ParamChange) *proposal.ParameterChangeProposal {
@@ -63,83 +63,83 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.keeper = suite.app.BudgetKeeper
 	suite.querier = keeper.Querier{Keeper: suite.keeper}
 	suite.addrs = simapp.AddTestAddrs(suite.app, suite.ctx, 10, sdk.ZeroInt())
-	cAddr1 := sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr1")))
-	cAddr2 := sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr2")))
-	cAddr3 := sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr3")))
-	cAddr4 := sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr4")))
-	cAddr5 := sdk.AccAddress(address.Module(types.ModuleName, []byte("collectionAddr5")))
-	cAddr6 := suite.app.AccountKeeper.GetModuleAccount(suite.ctx, authtypes.FeeCollectorName).GetAddress()
-	tAddr1 := sdk.AccAddress(address.Module(types.ModuleName, []byte("budgetSourceAddr1")))
-	tAddr2 := sdk.AccAddress(address.Module(types.ModuleName, []byte("budgetSourceAddr2")))
-	tAddr3 := sdk.AccAddress(address.Module(types.ModuleName, []byte("budgetSourceAddr3")))
-	tAddr4 := sdk.AccAddress(address.Module(types.ModuleName, []byte("budgetSourceAddr4")))
-	tAddr5 := sdk.AccAddress(address.Module(types.ModuleName, []byte("budgetSourceAddr5")))
-	tAddr6 := sdk.AccAddress(address.Module("farming", []byte("GravityDEXFarmingBudget")))
-	suite.collectionAddrs = []sdk.AccAddress{cAddr1, cAddr2, cAddr3, cAddr4, cAddr5, cAddr6}
-	suite.budgetSourceAddrs = []sdk.AccAddress{tAddr1, tAddr2, tAddr3, tAddr4, tAddr5, tAddr6}
-	for _, addr := range append(suite.addrs, suite.budgetSourceAddrs[:3]...) {
+	dAddr1 := sdk.AccAddress(address.Module(types.ModuleName, []byte("destinationAddr1")))
+	dAddr2 := sdk.AccAddress(address.Module(types.ModuleName, []byte("destinationAddr2")))
+	dAddr3 := sdk.AccAddress(address.Module(types.ModuleName, []byte("destinationAddr3")))
+	dAddr4 := sdk.AccAddress(address.Module(types.ModuleName, []byte("destinationAddr4")))
+	dAddr5 := sdk.AccAddress(address.Module(types.ModuleName, []byte("destinationAddr5")))
+	dAddr6 := suite.app.AccountKeeper.GetModuleAccount(suite.ctx, authtypes.FeeCollectorName).GetAddress()
+	sAddr1 := sdk.AccAddress(address.Module(types.ModuleName, []byte("sourceAddr1")))
+	sAddr2 := sdk.AccAddress(address.Module(types.ModuleName, []byte("sourceAddr2")))
+	sAddr3 := sdk.AccAddress(address.Module(types.ModuleName, []byte("sourceAddr3")))
+	sAddr4 := sdk.AccAddress(address.Module(types.ModuleName, []byte("sourceAddr4")))
+	sAddr5 := sdk.AccAddress(address.Module(types.ModuleName, []byte("sourceAddr5")))
+	sAddr6 := sdk.AccAddress(address.Module("farming", []byte("GravityDEXFarmingBudget")))
+	suite.destinationAddrs = []sdk.AccAddress{dAddr1, dAddr2, dAddr3, dAddr4, dAddr5, dAddr6}
+	suite.sourceAddrs = []sdk.AccAddress{sAddr1, sAddr2, sAddr3, sAddr4, sAddr5, sAddr6}
+	for _, addr := range append(suite.addrs, suite.sourceAddrs[:3]...) {
 		err := simapp.FundAccount(suite.app.BankKeeper, suite.ctx, addr, initialBalances)
 		suite.Require().NoError(err)
 	}
-	err := simapp.FundAccount(suite.app.BankKeeper, suite.ctx, suite.budgetSourceAddrs[3], smallBalances)
+	err := simapp.FundAccount(suite.app.BankKeeper, suite.ctx, suite.sourceAddrs[3], smallBalances)
 	suite.Require().NoError(err)
 
 	suite.budgets = []types.Budget{
 		{
-			Name:                "budget1",
-			Rate:                sdk.MustNewDecFromStr("0.5"),
-			BudgetSourceAddress: suite.budgetSourceAddrs[0].String(),
-			CollectionAddress:   suite.collectionAddrs[0].String(),
-			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             types.MustParseRFC3339("9999-12-31T00:00:00Z"),
+			Name:               "budget1",
+			Rate:               sdk.MustNewDecFromStr("0.5"),
+			SourceAddress:      suite.sourceAddrs[0].String(),
+			DestinationAddress: suite.destinationAddrs[0].String(),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
-			Name:                "budget2",
-			Rate:                sdk.MustNewDecFromStr("0.5"),
-			BudgetSourceAddress: suite.budgetSourceAddrs[0].String(),
-			CollectionAddress:   suite.collectionAddrs[1].String(),
-			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             types.MustParseRFC3339("9999-12-31T00:00:00Z"),
+			Name:               "budget2",
+			Rate:               sdk.MustNewDecFromStr("0.5"),
+			SourceAddress:      suite.sourceAddrs[0].String(),
+			DestinationAddress: suite.destinationAddrs[1].String(),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
-			Name:                "budget3",
-			Rate:                sdk.MustNewDecFromStr("1.0"),
-			BudgetSourceAddress: suite.budgetSourceAddrs[1].String(),
-			CollectionAddress:   suite.collectionAddrs[2].String(),
-			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             types.MustParseRFC3339("9999-12-31T00:00:00Z"),
+			Name:               "budget3",
+			Rate:               sdk.MustNewDecFromStr("1.0"),
+			SourceAddress:      suite.sourceAddrs[1].String(),
+			DestinationAddress: suite.destinationAddrs[2].String(),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
-			Name:                "budget4",
-			Rate:                sdk.MustNewDecFromStr("1"),
-			BudgetSourceAddress: suite.budgetSourceAddrs[2].String(),
-			CollectionAddress:   suite.collectionAddrs[3].String(),
-			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             types.MustParseRFC3339("0000-01-02T00:00:00Z"),
+			Name:               "budget4",
+			Rate:               sdk.MustNewDecFromStr("1"),
+			SourceAddress:      suite.sourceAddrs[2].String(),
+			DestinationAddress: suite.destinationAddrs[3].String(),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("0000-01-02T00:00:00Z"),
 		},
 		{
-			Name:                "budget5",
-			Rate:                sdk.MustNewDecFromStr("0.5"),
-			BudgetSourceAddress: suite.budgetSourceAddrs[3].String(),
-			CollectionAddress:   suite.collectionAddrs[0].String(),
-			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             types.MustParseRFC3339("9999-12-31T00:00:00Z"),
+			Name:               "budget5",
+			Rate:               sdk.MustNewDecFromStr("0.5"),
+			SourceAddress:      suite.sourceAddrs[3].String(),
+			DestinationAddress: suite.destinationAddrs[0].String(),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
-			Name:                "budget6",
-			Rate:                sdk.MustNewDecFromStr("0.5"),
-			BudgetSourceAddress: suite.budgetSourceAddrs[3].String(),
-			CollectionAddress:   suite.collectionAddrs[1].String(),
-			StartTime:           types.MustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             types.MustParseRFC3339("9999-12-31T00:00:00Z"),
+			Name:               "budget6",
+			Rate:               sdk.MustNewDecFromStr("0.5"),
+			SourceAddress:      suite.sourceAddrs[3].String(),
+			DestinationAddress: suite.destinationAddrs[1].String(),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
-			Name:                "gravity-dex-farming-20213Q-20313Q",
-			Rate:                sdk.MustNewDecFromStr("0.5"),
-			BudgetSourceAddress: suite.budgetSourceAddrs[5].String(),
-			CollectionAddress:   suite.collectionAddrs[5].String(),
-			StartTime:           types.MustParseRFC3339("2021-09-01T00:00:00Z"),
-			EndTime:             types.MustParseRFC3339("2031-09-30T00:00:00Z"),
+			Name:               "gravity-dex-farming-20213Q-20313Q",
+			Rate:               sdk.MustNewDecFromStr("0.5"),
+			SourceAddress:      suite.sourceAddrs[5].String(),
+			DestinationAddress: suite.destinationAddrs[5].String(),
+			StartTime:          types.MustParseRFC3339("2021-09-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("2031-09-30T00:00:00Z"),
 		},
 	}
 }

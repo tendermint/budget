@@ -35,9 +35,9 @@ message QueryParamsResponse {
 
 // QueryBudgetsRequest is the request type for the Query/Budgets RPC method.
 message QueryBudgetsRequest {
-  string name                  = 1;
-  string budget_source_address = 2;
-  string collection_address    = 3;
+  string name                = 1;
+  string source_address      = 2;
+  string destination_address = 3;
 }
 
 // QueryBudgetsResponse is the response type for the Query/Budgets RPC method.

@@ -83,8 +83,8 @@ func GetCmdQueryBudgets() *cobra.Command {
 Example:
 $ %s query %s budgets
 $ %s query %s budgets --name ...
-$ %s query %s budgets --budget-source-address %s1zaavvzxez0elundtn32qnk9lkm8kmcszzsv80v
-$ %s query %s budgets --collection-address %s1zaavvzxez0elundtn32qnk9lkm8kmcszzsv80v
+$ %s query %s budgets --source-address %s1zaavvzxez0elundtn32qnk9lkm8kmcszzsv80v
+$ %s query %s budgets --destination-address %s1zaavvzxez0elundtn32qnk9lkm8kmcszzsv80v
 `,
 				version.AppName, types.ModuleName,
 				version.AppName, types.ModuleName,
@@ -99,16 +99,16 @@ $ %s query %s budgets --collection-address %s1zaavvzxez0elundtn32qnk9lkm8kmcszzs
 			}
 
 			name, _ := cmd.Flags().GetString(FlagName)
-			budgetSourceAddr, _ := cmd.Flags().GetString(FlagBudgetSourceAddress)
-			collectionAddr, _ := cmd.Flags().GetString(FlagCollectionAddress)
+			sourceAddr, _ := cmd.Flags().GetString(FlagSourceAddress)
+			destinationAddr, _ := cmd.Flags().GetString(FlagDestinationAddress)
 
 			queryClient := types.NewQueryClient(clientCtx)
 			res, err := queryClient.Budgets(
 				context.Background(),
 				&types.QueryBudgetsRequest{
-					Name:                name,
-					BudgetSourceAddress: budgetSourceAddr,
-					CollectionAddress:   collectionAddr,
+					Name:               name,
+					SourceAddress:      sourceAddr,
+					DestinationAddress: destinationAddr,
 				},
 			)
 			if err != nil {
