@@ -23,6 +23,12 @@ service Query {
   rpc Budgets(QueryBudgetsRequest) returns (QueryBudgetsResponse) {
     option (google.api.http).get = "/cosmos/budget/v1beta1/budgets";
   }
+
+  // Addresses returns an address that can be used as source and destination is derived according to the given type,
+  // module name, and name.
+  rpc Addresses(QueryAddressesRequest) returns (QueryAddressesResponse) {
+    option (google.api.http).get = "/cosmos/budget/v1beta1/addresses/{name}";
+  }
 }
 
 // QueryParamsRequest is the request type for the Query/Params RPC method.
@@ -52,4 +58,29 @@ message BudgetResponse {
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
     (gogoproto.nullable)     = false
   ];
+}
+
+// AddressType enumerates the available types of a address.
+enum AddressType {
+  option (gogoproto.goproto_enum_prefix) = false;
+
+  // ADDRESS_TYPE_32_BYTES defines the 32 bytes length address type of ADR 028.
+  ADDRESS_TYPE_32_BYTES = 0 [(gogoproto.enumvalue_customname) = "AddressType32Bytes"];
+  // ADDRESS_TYPE_20_BYTES defines the default 20 bytes length address type.
+  ADDRESS_TYPE_20_BYTES = 1 [(gogoproto.enumvalue_customname) = "AddressType20Bytes"];
+}
+
+// QueryAddressesRequest is the request type for the Query/Addresses RPC method.
+message QueryAddressesRequest {
+  // The Address Type, default 0 for ADDRESS_TYPE_32_BYTES or 1 for ADDRESS_TYPE_20_BYTES
+  AddressType type = 1;
+  // The module name to be used for address derivation, default is budget.
+  string module_name = 2;
+  // The name to be used for address derivation.
+  string name = 3;
+}
+
+// QueryAddressesResponse is the response type for the Query/Addresses RPC method.
+message QueryAddressesResponse {
+  string address = 1;
 }

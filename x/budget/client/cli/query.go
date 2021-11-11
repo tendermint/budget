@@ -3,6 +3,7 @@ package cli
 import (
 	"context"
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -27,6 +28,7 @@ func GetQueryCmd() *cobra.Command {
 	budgetQueryCmd.AddCommand(
 		GetCmdQueryParams(),
 		GetCmdQueryBudgets(),
+		GetCmdQueryAddress(),
 	)
 
 	return budgetQueryCmd
@@ -120,6 +122,61 @@ $ %s query %s budgets --destination-address %s1zaavvzxez0elundtn32qnk9lkm8kmcszz
 	}
 
 	cmd.Flags().AddFlagSet(flagSetBudgets())
+	flags.AddQueryFlagsToCmd(cmd)
+
+	return cmd
+}
+
+// GetCmdQueryAddress implements the query an address that can be used as source and destination is derived according to the given type, module name, and name command.
+func GetCmdQueryAddress() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "address",
+		Args:  cobra.ExactArgs(1),
+		Short: "Query an address that can be used as source and destination is derived according to the given name with other options",
+		Long: strings.TrimSpace(
+			fmt.Sprintf(`an address that can be used as source and destination is derived according to the given name.
+
+Example:
+$ %s query %s address testSourceAddr
+$ %s query %s address fee_collector --type 1
+$ %s query %s address GravityDEXFarmingBudget --module-name farming
+`,
+				version.AppName, types.ModuleName,
+				version.AppName, types.ModuleName,
+				version.AppName, types.ModuleName,
+			),
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			moduleName, _ := cmd.Flags().GetString(FlagModuleName)
+			addressTypeStr, _ := cmd.Flags().GetString(FlagType)
+			addressType, err := strconv.Atoi(addressTypeStr)
+			if err != nil {
+				addressType = 0
+			}
+
+			queryClient := types.NewQueryClient(clientCtx)
+			res, err := queryClient.Addresses(
+				context.Background(),
+				&types.QueryAddressesRequest{
+					Type:       types.AddressType(addressType),
+					ModuleName: moduleName,
+					Name:       args[0],
+				},
+			)
+			if err != nil {
+				return err
+			}
+
+			return clientCtx.PrintProto(res)
+		},
+	}
+
+	cmd.Flags().AddFlagSet(flagSetAddress())
 	flags.AddQueryFlagsToCmd(cmd)
 
 	return cmd
