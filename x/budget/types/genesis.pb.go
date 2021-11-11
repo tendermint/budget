@@ -72,7 +72,7 @@ var xxx_messageInfo_GenesisState proto.InternalMessageInfo
 type BudgetRecord struct {
 	// name defines the name of the budget
 	Name string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty" yaml:"name"`
-	// total_collected_coins specifis the total collected coins in a budget ever since the budget is created
+	// total_collected_coins specifies the total collected coins in a budget ever since the budget is created
 	TotalCollectedCoins github_com_cosmos_cosmos_sdk_types.Coins `protobuf:"bytes,2,rep,name=total_collected_coins,json=totalCollectedCoins,proto3,castrepeated=github.com/cosmos/cosmos-sdk/types.Coins" json:"total_collected_coins" yaml:"total_collected_coins"`
 }
 

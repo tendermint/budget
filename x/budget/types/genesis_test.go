@@ -32,12 +32,12 @@ func TestValidateGenesis(t *testing.T) {
 				genState.Params = types.DefaultParams()
 				genState.Params.Budgets = []types.Budget{
 					{
-						Name:                "budget1",
-						Rate:                sdk.NewDecWithPrec(5, 2), // 5%
-						BudgetSourceAddress: sdk.AccAddress(crypto.AddressHash([]byte("BudgetSourceAddress"))).String(),
-						CollectionAddress:   sdk.AccAddress(crypto.AddressHash([]byte("CollectionAddress"))).String(),
-						StartTime:           startTime,
-						EndTime:             endTime,
+						Name:               "budget1",
+						Rate:               sdk.NewDecWithPrec(5, 2), // 5%
+						SourceAddress:      sdk.AccAddress(crypto.AddressHash([]byte("SourceAddress"))).String(),
+						DestinationAddress: sdk.AccAddress(crypto.AddressHash([]byte("DestinationAddress"))).String(),
+						StartTime:          startTime,
+						EndTime:            endTime,
 					},
 				}
 			},
@@ -49,16 +49,16 @@ func TestValidateGenesis(t *testing.T) {
 				genState.Params = types.DefaultParams()
 				genState.Params.Budgets = []types.Budget{
 					{
-						Name:                "budget1",
-						Rate:                sdk.NewDecWithPrec(5, 2), // 5%
-						BudgetSourceAddress: "cosmos1invalidaddress",
-						CollectionAddress:   sdk.AccAddress(crypto.AddressHash([]byte("CollectionAddress"))).String(),
-						StartTime:           startTime,
-						EndTime:             endTime,
+						Name:               "budget1",
+						Rate:               sdk.NewDecWithPrec(5, 2), // 5%
+						SourceAddress:      "cosmos1invalidaddress",
+						DestinationAddress: sdk.AccAddress(crypto.AddressHash([]byte("DestinationAddress"))).String(),
+						StartTime:          startTime,
+						EndTime:            endTime,
 					},
 				}
 			},
-			"invalid budget source address cosmos1invalidaddress: decoding bech32 failed: failed converting data to bytes: invalid character not part of charset: 105: invalid address",
+			"invalid source address cosmos1invalidaddress: decoding bech32 failed: failed converting data to bytes: invalid character not part of charset: 105: invalid address",
 		},
 		{
 			"duplicate budget name",
@@ -66,20 +66,20 @@ func TestValidateGenesis(t *testing.T) {
 				genState.Params = types.DefaultParams()
 				genState.Params.Budgets = []types.Budget{
 					{
-						Name:                "budget1",
-						Rate:                sdk.NewDecWithPrec(5, 2), // 5%
-						BudgetSourceAddress: sdk.AccAddress(crypto.AddressHash([]byte("BudgetSourceAddress"))).String(),
-						CollectionAddress:   sdk.AccAddress(crypto.AddressHash([]byte("CollectionAddress"))).String(),
-						StartTime:           startTime,
-						EndTime:             endTime,
+						Name:               "budget1",
+						Rate:               sdk.NewDecWithPrec(5, 2), // 5%
+						SourceAddress:      sdk.AccAddress(crypto.AddressHash([]byte("SourceAddress"))).String(),
+						DestinationAddress: sdk.AccAddress(crypto.AddressHash([]byte("DestinationAddress"))).String(),
+						StartTime:          startTime,
+						EndTime:            endTime,
 					},
 					{
-						Name:                "budget1",
-						Rate:                sdk.NewDecWithPrec(5, 2), // 5%
-						BudgetSourceAddress: sdk.AccAddress(crypto.AddressHash([]byte("BudgetSourceAddress"))).String(),
-						CollectionAddress:   sdk.AccAddress(crypto.AddressHash([]byte("CollectionAddress"))).String(),
-						StartTime:           startTime,
-						EndTime:             endTime,
+						Name:               "budget1",
+						Rate:               sdk.NewDecWithPrec(5, 2), // 5%
+						SourceAddress:      sdk.AccAddress(crypto.AddressHash([]byte("SourceAddress"))).String(),
+						DestinationAddress: sdk.AccAddress(crypto.AddressHash([]byte("DestinationAddress"))).String(),
+						StartTime:          startTime,
+						EndTime:            endTime,
 					},
 				}
 			},

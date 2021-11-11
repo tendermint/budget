@@ -30,15 +30,15 @@ paths:
                           title: >-
                             rate specifies the distributing amount by ratio of
                             total budget source
-                        budget_source_address:
+                        source_address:
                           type: string
                           title: >-
-                            budget_source_address defines the bech32-encoded
-                            address that source of the budget
-                        collection_address:
+                            source_address defines the bech32-encoded address
+                            that source of the budget
+                        destination_address:
                           type: string
                           title: >-
-                            collection_address defines the bech32-encoded
+                            destination_address defines the bech32-encoded
                             address of the budget pool to distribute
                         start_time:
                           type: string
@@ -264,11 +264,11 @@ paths:
           in: query
           required: false
           type: string
-        - name: budget_source_address
+        - name: source_address
           in: query
           required: false
           type: string
-        - name: collection_address
+        - name: destination_address
           in: query
           required: false
           type: string
@@ -308,15 +308,15 @@ paths:
                           title: >-
                             rate specifies the distributing amount by ratio of
                             total budget source
-                        budget_source_address:
+                        source_address:
                           type: string
                           title: >-
-                            budget_source_address defines the bech32-encoded
-                            address that source of the budget
-                        collection_address:
+                            source_address defines the bech32-encoded address
+                            that source of the budget
+                        destination_address:
                           type: string
                           title: >-
-                            collection_address defines the bech32-encoded
+                            destination_address defines the bech32-encoded
                             address of the budget pool to distribute
                         start_time:
                           type: string
@@ -549,15 +549,15 @@ definitions:
       rate:
         type: string
         title: rate specifies the distributing amount by ratio of total budget source
-      budget_source_address:
+      source_address:
         type: string
         title: >-
-          budget_source_address defines the bech32-encoded address that source
-          of the budget
-      collection_address:
+          source_address defines the bech32-encoded address that source of the
+          budget
+      destination_address:
         type: string
         title: >-
-          collection_address defines the bech32-encoded address of the budget
+          destination_address defines the bech32-encoded address of the budget
           pool to distribute
       start_time:
         type: string
@@ -582,15 +582,15 @@ definitions:
             title: >-
               rate specifies the distributing amount by ratio of total budget
               source
-          budget_source_address:
+          source_address:
             type: string
             title: >-
-              budget_source_address defines the bech32-encoded address that
-              source of the budget
-          collection_address:
+              source_address defines the bech32-encoded address that source of
+              the budget
+          destination_address:
             type: string
             title: >-
-              collection_address defines the bech32-encoded address of the
+              destination_address defines the bech32-encoded address of the
               budget pool to distribute
           start_time:
             type: string
@@ -637,15 +637,15 @@ definitions:
               title: >-
                 rate specifies the distributing amount by ratio of total budget
                 source
-            budget_source_address:
+            source_address:
               type: string
               title: >-
-                budget_source_address defines the bech32-encoded address that
-                source of the budget
-            collection_address:
+                source_address defines the bech32-encoded address that source of
+                the budget
+            destination_address:
               type: string
               title: >-
-                collection_address defines the bech32-encoded address of the
+                destination_address defines the bech32-encoded address of the
                 budget pool to distribute
             start_time:
               type: string
@@ -679,16 +679,16 @@ definitions:
                   title: >-
                     rate specifies the distributing amount by ratio of total
                     budget source
-                budget_source_address:
+                source_address:
                   type: string
                   title: >-
-                    budget_source_address defines the bech32-encoded address
-                    that source of the budget
-                collection_address:
+                    source_address defines the bech32-encoded address that
+                    source of the budget
+                destination_address:
                   type: string
                   title: >-
-                    collection_address defines the bech32-encoded address of the
-                    budget pool to distribute
+                    destination_address defines the bech32-encoded address of
+                    the budget pool to distribute
                 start_time:
                   type: string
                   format: date-time
@@ -745,16 +745,16 @@ definitions:
                   title: >-
                     rate specifies the distributing amount by ratio of total
                     budget source
-                budget_source_address:
+                source_address:
                   type: string
                   title: >-
-                    budget_source_address defines the bech32-encoded address
-                    that source of the budget
-                collection_address:
+                    source_address defines the bech32-encoded address that
+                    source of the budget
+                destination_address:
                   type: string
                   title: >-
-                    collection_address defines the bech32-encoded address of the
-                    budget pool to distribute
+                    destination_address defines the bech32-encoded address of
+                    the budget pool to distribute
                 start_time:
                   type: string
                   format: date-time

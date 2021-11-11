@@ -7,12 +7,12 @@ Budget object is not stored in KVStore.
 ```go
 // Budget contains budget information
 type Budget struct {
-	Name                string    // name of the budget 
-	Rate                sdk.Dec   // distributing amount by ratio of total budget source
-	BudgetSourceAddress string    // bech32-encoded address that source of the budget
-	CollectionAddress   string    // bech32-encoded address that collects budget from the budget source address
-	StartTime           time.Time // start time of the budget plan
-	EndTime             time.Time // end time of the budget plan
+	Name               string    // name of the budget
+	Rate               sdk.Dec   // distributing amount by ratio of total budget source
+	SourceAddress      string    // bech32-encoded address that source of the budget
+	DestinationAddress string    // bech32-encoded address that collects budget from the source address
+	StartTime          time.Time // start time of the budget plan
+	EndTime            time.Time // end time of the budget plan
 }
 ```
 

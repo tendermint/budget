@@ -37,15 +37,15 @@ func (budget Budget) Validate() error {
 		return err
 	}
 
-	if _, err := sdk.AccAddressFromBech32(budget.CollectionAddress); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid collection address %s: %v", budget.CollectionAddress, err)
+	if _, err := sdk.AccAddressFromBech32(budget.DestinationAddress); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid destination address %s: %v", budget.DestinationAddress, err)
 	}
 
-	if _, err := sdk.AccAddressFromBech32(budget.BudgetSourceAddress); err != nil {
-		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid budget source address %s: %v", budget.BudgetSourceAddress, err)
+	if _, err := sdk.AccAddressFromBech32(budget.SourceAddress); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid source address %s: %v", budget.SourceAddress, err)
 	}
 
-	if budget.EndTime.Before(budget.StartTime) {
+	if !budget.EndTime.After(budget.StartTime) {
 		return ErrInvalidStartEndTime
 	}
 
@@ -61,6 +61,16 @@ func (budget Budget) Validate() error {
 // Collectible validates the budget has reached its start time and that the end time has not elapsed.
 func (budget Budget) Collectible(blockTime time.Time) bool {
 	return !budget.StartTime.After(blockTime) && budget.EndTime.After(blockTime)
+}
+
+// CollectibleBudgets returns only the valid and started and not expired budgets based on the given block time.
+func CollectibleBudgets(budgets []Budget, blockTime time.Time) (collectibleBudgets []Budget) {
+	for _, budget := range budgets {
+		if budget.Collectible(blockTime) {
+			collectibleBudgets = append(collectibleBudgets, budget)
+		}
+	}
+	return
 }
 
 // ValidateName is the default validation function for Budget.Name.
@@ -83,17 +93,17 @@ type BudgetsBySource struct {
 type BudgetsBySourceMap map[string]BudgetsBySource
 
 // GetBudgetsBySourceMap returns BudgetsBySourceMap that has a list of budgets and their total rate
-// which contain the same BudgetSourceAddress. It can be used to track of what budgets are available with BudgetSourceAddress
+// which contain the same SourceAddress. It can be used to track of what budgets are available with SourceAddress
 // and validate their total rate.
 func GetBudgetsBySourceMap(budgets []Budget) BudgetsBySourceMap {
 	budgetsMap := make(BudgetsBySourceMap)
 	for _, budget := range budgets {
-		if budgetsBySource, ok := budgetsMap[budget.BudgetSourceAddress]; ok {
+		if budgetsBySource, ok := budgetsMap[budget.SourceAddress]; ok {
 			budgetsBySource.TotalRate = budgetsBySource.TotalRate.Add(budget.Rate)
 			budgetsBySource.Budgets = append(budgetsBySource.Budgets, budget)
-			budgetsMap[budget.BudgetSourceAddress] = budgetsBySource
+			budgetsMap[budget.SourceAddress] = budgetsBySource
 		} else {
-			budgetsMap[budget.BudgetSourceAddress] = BudgetsBySource{
+			budgetsMap[budget.SourceAddress] = BudgetsBySource{
 				Budgets:   []Budget{budget},
 				TotalRate: budget.Rate,
 			}

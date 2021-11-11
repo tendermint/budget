@@ -4,9 +4,9 @@ package types
 const (
 	EventTypeBudgetCollected = "budget_collected"
 
-	AttributeValueName                = "name"
-	AttributeValueCollectionAddress   = "collection_address"
-	AttributeValueBudgetSourceAddress = "budget_source_address"
-	AttributeValueRate                = "rate"
-	AttributeValueAmount              = "amount"
+	AttributeValueName               = "name"
+	AttributeValueDestinationAddress = "destination_address"
+	AttributeValueSourceAddress      = "source_address"
+	AttributeValueRate               = "rate"
+	AttributeValueAmount             = "amount"
 )

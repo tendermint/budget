@@ -17,36 +17,36 @@ func (suite *KeeperTestSuite) TestGRPCParams() {
 func (suite *KeeperTestSuite) TestGRPCBudgets() {
 	budgets := []types.Budget{
 		{
-			Name:                "budget1",
-			Rate:                sdk.NewDecWithPrec(5, 2),
-			BudgetSourceAddress: suite.budgetSourceAddrs[0].String(),
-			CollectionAddress:   suite.collectionAddrs[0].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+			Name:               "budget1",
+			Rate:               sdk.NewDecWithPrec(5, 2),
+			SourceAddress:      suite.sourceAddrs[0].String(),
+			DestinationAddress: suite.destinationAddrs[0].String(),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
-			Name:                "budget2",
-			Rate:                sdk.NewDecWithPrec(5, 2),
-			BudgetSourceAddress: suite.budgetSourceAddrs[0].String(),
-			CollectionAddress:   suite.collectionAddrs[1].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+			Name:               "budget2",
+			Rate:               sdk.NewDecWithPrec(5, 2),
+			SourceAddress:      suite.sourceAddrs[0].String(),
+			DestinationAddress: suite.destinationAddrs[1].String(),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
-			Name:                "budget3",
-			Rate:                sdk.NewDecWithPrec(5, 2),
-			BudgetSourceAddress: suite.budgetSourceAddrs[1].String(),
-			CollectionAddress:   suite.collectionAddrs[0].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+			Name:               "budget3",
+			Rate:               sdk.NewDecWithPrec(5, 2),
+			SourceAddress:      suite.sourceAddrs[1].String(),
+			DestinationAddress: suite.destinationAddrs[0].String(),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
-			Name:                "budget4",
-			Rate:                sdk.NewDecWithPrec(5, 2),
-			BudgetSourceAddress: suite.budgetSourceAddrs[1].String(),
-			CollectionAddress:   suite.collectionAddrs[1].String(),
-			StartTime:           mustParseRFC3339("0000-01-01T00:00:00Z"),
-			EndTime:             mustParseRFC3339("9999-12-31T00:00:00Z"),
+			Name:               "budget4",
+			Rate:               sdk.NewDecWithPrec(5, 2),
+			SourceAddress:      suite.sourceAddrs[1].String(),
+			DestinationAddress: suite.destinationAddrs[1].String(),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 	}
 
@@ -54,10 +54,10 @@ func (suite *KeeperTestSuite) TestGRPCBudgets() {
 	params.Budgets = budgets
 	suite.keeper.SetParams(suite.ctx, params)
 
-	balance := suite.app.BankKeeper.GetAllBalances(suite.ctx, suite.budgetSourceAddrs[0])
+	balance := suite.app.BankKeeper.GetAllBalances(suite.ctx, suite.sourceAddrs[0])
 	expectedCoins, _ := sdk.NewDecCoinsFromCoins(balance...).MulDec(sdk.NewDecWithPrec(5, 2)).TruncateDecimal()
 
-	suite.ctx = suite.ctx.WithBlockTime(mustParseRFC3339("2021-08-31T00:00:00Z"))
+	suite.ctx = suite.ctx.WithBlockTime(types.MustParseRFC3339("2021-08-31T00:00:00Z"))
 	err := suite.keeper.CollectBudgets(suite.ctx)
 	suite.Require().NoError(err)
 
@@ -99,50 +99,50 @@ func (suite *KeeperTestSuite) TestGRPCBudgets() {
 			},
 		},
 		{
-			"invalid budget source addr",
-			&types.QueryBudgetsRequest{BudgetSourceAddress: "invalid"},
+			"invalid source addr",
+			&types.QueryBudgetsRequest{SourceAddress: "invalid"},
 			true,
 			nil,
 		},
 		{
-			"query by budget source addr",
-			&types.QueryBudgetsRequest{BudgetSourceAddress: suite.budgetSourceAddrs[0].String()},
+			"query by source addr",
+			&types.QueryBudgetsRequest{SourceAddress: suite.sourceAddrs[0].String()},
 			false,
 			func(resp *types.QueryBudgetsResponse) {
 				suite.Require().Len(resp.Budgets, 2)
 				for _, b := range resp.Budgets {
-					suite.Require().Equal(suite.budgetSourceAddrs[0].String(), b.Budget.BudgetSourceAddress)
+					suite.Require().Equal(suite.sourceAddrs[0].String(), b.Budget.SourceAddress)
 				}
 			},
 		},
 		{
-			"invalid collection addr",
-			&types.QueryBudgetsRequest{CollectionAddress: "invalid"},
+			"invalid destination addr",
+			&types.QueryBudgetsRequest{DestinationAddress: "invalid"},
 			true,
 			nil,
 		},
 		{
-			"query by collection addr",
-			&types.QueryBudgetsRequest{CollectionAddress: suite.collectionAddrs[0].String()},
+			"query by destination addr",
+			&types.QueryBudgetsRequest{DestinationAddress: suite.destinationAddrs[0].String()},
 			false,
 			func(resp *types.QueryBudgetsResponse) {
 				suite.Require().Len(resp.Budgets, 2)
 				for _, b := range resp.Budgets {
-					suite.Require().Equal(suite.collectionAddrs[0].String(), b.Budget.CollectionAddress)
+					suite.Require().Equal(suite.destinationAddrs[0].String(), b.Budget.DestinationAddress)
 				}
 			},
 		},
 		{
 			"query with multiple filters",
 			&types.QueryBudgetsRequest{
-				BudgetSourceAddress: suite.budgetSourceAddrs[0].String(),
-				CollectionAddress:   suite.collectionAddrs[1].String(),
+				SourceAddress:      suite.sourceAddrs[0].String(),
+				DestinationAddress: suite.destinationAddrs[1].String(),
 			},
 			false,
 			func(resp *types.QueryBudgetsResponse) {
 				suite.Require().Len(resp.Budgets, 1)
-				suite.Require().Equal(suite.budgetSourceAddrs[0].String(), resp.Budgets[0].Budget.BudgetSourceAddress)
-				suite.Require().Equal(suite.collectionAddrs[1].String(), resp.Budgets[0].Budget.CollectionAddress)
+				suite.Require().Equal(suite.sourceAddrs[0].String(), resp.Budgets[0].Budget.SourceAddress)
+				suite.Require().Equal(suite.destinationAddrs[1].String(), resp.Budgets[0].Budget.DestinationAddress)
 			},
 		},
 		{

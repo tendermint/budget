@@ -37,11 +37,11 @@ message Budget {
     (gogoproto.nullable)   = false
   ];
 
-  // budget_source_address defines the bech32-encoded address that source of the budget
-  string budget_source_address = 3 [(gogoproto.moretags) = "yaml:\"budget_source_address\""];
+  // source_address defines the bech32-encoded address that source of the budget
+  string source_address = 3 [(gogoproto.moretags) = "yaml:\"source_address\""];
 
-  // collection_address defines the bech32-encoded address of the budget pool to distribute
-  string collection_address = 4 [(gogoproto.moretags) = "yaml:\"collection_address\""];
+  // destination_address defines the bech32-encoded address of the budget pool to distribute
+  string destination_address = 4 [(gogoproto.moretags) = "yaml:\"destination_address\""];
 
   // start_time specifies the start time of the budget
   google.protobuf.Timestamp start_time = 5
@@ -56,7 +56,7 @@ message Budget {
 message TotalCollectedCoins {
   option (gogoproto.goproto_getters) = false;
 
-  // total_collected_coins specifis the total collected coins in a budget ever since the budget is created
+  // total_collected_coins specifies the total collected coins in a budget ever since the budget is created
   repeated cosmos.base.v1beta1.Coin total_collected_coins = 1 [
     (gogoproto.moretags)     = "yaml:\"total_collected_coins\"",
     (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins",
