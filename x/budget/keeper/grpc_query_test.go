@@ -169,10 +169,10 @@ func (suite *KeeperTestSuite) TestGRPCBudgets() {
 
 func (suite *KeeperTestSuite) TestGRPCAddresses() {
 	for _, tc := range []struct {
-		name      string
-		req       *types.QueryAddressesRequest
+		name         string
+		req          *types.QueryAddressesRequest
 		expectedAddr string
-		expectErr bool
+		expectErr    bool
 	}{
 		{
 			"nil request",
