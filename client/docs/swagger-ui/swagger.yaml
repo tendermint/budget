@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Cosmos SDK Budget Module - REST and gRPC Gateway docs
   description: 'A REST interface for state queries, transactions'
-  version: 0.1.0
+  version: 1.0.0
 paths:
   /cosmos/budget/v1beta1/budgets:
     get:

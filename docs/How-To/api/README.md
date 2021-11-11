@@ -5,7 +5,7 @@ Description: A high-level overview of gRPC-gateway REST Routes in budget module.
 
 ## Swagger Documentation
 
-- [Swagger Docs v0.1.0](https://app.swaggerhub.com/apis-docs/gravity-devs/budget/0.1.0)
+- [Swagger Docs v1.0.0](https://app.swaggerhub.com/apis-docs/gravity-devs/budget/1.0.0)
 
 ## gRPC-gateway REST Routes
 
