@@ -11,6 +11,24 @@ Description: A high-level overview of gRPC-gateway REST Routes in budget module.
 
 In order to test out the following REST routes, you need to set up a local node to query from. You can refer to this [localnet tutorial](../../Tutorials/localnet) on how to build `budgetd` binary and bootstrap a local network in your local machine.
 
+Query the address of `fee_collector` with address type 1(`AddressType20Bytes`)
+http://localhost:1317/cosmos/budget/v1beta1/addresses/fee_collector?type=1 <!-- markdown-link-check-disable-line -->
+
+```json
+{
+  "address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta"
+}
+```
+
+Query the address of `GravityDEXFarmingBudget` on farming module with default address type 0(`AddressType32Bytes`)
+http://localhost:1317/cosmos/budget/v1beta1/addresses/GravityDEXFarmingBudget?module_name=farming <!-- markdown-link-check-disable-line -->
+
+```json
+{
+  "address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky"
+}
+```
+
 Query the values set as budget parameters
 http://localhost:1317/cosmos/budget/v1beta1/params <!-- markdown-link-check-disable-line -->
 
@@ -23,7 +41,7 @@ http://localhost:1317/cosmos/budget/v1beta1/params <!-- markdown-link-check-disa
         "name": "gravity-dex-farming-20213Q-20221Q",
         "rate": "0.300000000000000000",
         "source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
-        "destination_address": "cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl",
+        "destination_address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky",
         "start_time": "2021-10-01T00:00:00Z",
         "end_time": "2022-04-01T00:00:00Z"
       }
@@ -43,7 +61,7 @@ http://localhost:1317/cosmos/budget/v1beta1/budgets <!-- markdown-link-check-dis
         "name": "gravity-dex-farming-20213Q-20221Q",
         "rate": "0.300000000000000000",
         "source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
-        "destination_address": "cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl",
+        "destination_address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky",
         "start_time": "2021-10-01T00:00:00Z",
         "end_time": "2022-04-01T00:00:00Z"
       },
