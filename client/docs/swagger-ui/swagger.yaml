@@ -2,7 +2,7 @@ swagger: '2.0'
 info:
   title: Cosmos SDK Budget Module - REST and gRPC Gateway docs
   description: 'A REST interface for state queries, transactions'
-  version: 0.1.0
+  version: 1.0.0
 paths:
   '/cosmos/budget/v1beta1/addresses/{name}':
     get:
@@ -23,6 +23,14 @@ paths:
             description: >-
               QueryAddressesResponse is the response type for the
               Query/Addresses RPC method.
+        '400':
+          description: Bad Request
+          schema: {}
+          examples:
+            application/json:
+              code: 3
+              message: 'invalid names with address type: invalid request'
+              details: []
         default:
           description: An unexpected error response
           schema:
@@ -223,8 +231,8 @@ paths:
             The Address Type, default 0 for ADDRESS_TYPE_32_BYTES or 1 for
             ADDRESS_TYPE_20_BYTES.
 
-             - ADDRESS_TYPE_32_BYTES: ADDRESS_TYPE_32_BYTES defines the 32 bytes length address type of ADR 028.
-             - ADDRESS_TYPE_20_BYTES: ADDRESS_TYPE_20_BYTES defines the default 20 bytes length address type.
+             - ADDRESS_TYPE_32_BYTES: the 32 bytes length address type of ADR 028.
+             - ADDRESS_TYPE_20_BYTES: the default 20 bytes length address type.
           in: query
           required: false
           type: string
@@ -244,6 +252,7 @@ paths:
   /cosmos/budget/v1beta1/budgets:
     get:
       summary: Budgets returns all budgets.
+      description: Returns all budgets.
       operationId: Budgets
       responses:
         '200':
@@ -511,9 +520,14 @@ paths:
           type: string
       tags:
         - Query
+      externalDocs:
+        description: Find out more about the budget
+        url: >-
+          https://github.com/tendermint/budget/blob/main/x/budget/spec/02_state.md
   /cosmos/budget/v1beta1/params:
     get:
       summary: Params returns parameters of the budget module.
+      description: Returns all parameters of the budget module.
       operationId: BudgetParams
       responses:
         '200':
@@ -764,6 +778,10 @@ paths:
                         }
       tags:
         - Query
+      externalDocs:
+        description: Find out more about the params
+        url: >-
+          https://github.com/tendermint/budget/blob/main/x/budget/spec/06_params.md
 definitions:
   cosmos.base.v1beta1.Coin:
     type: object
@@ -786,8 +804,8 @@ definitions:
     description: |-
       AddressType enumerates the available types of a address.
 
-       - ADDRESS_TYPE_32_BYTES: ADDRESS_TYPE_32_BYTES defines the 32 bytes length address type of ADR 028.
-       - ADDRESS_TYPE_20_BYTES: ADDRESS_TYPE_20_BYTES defines the default 20 bytes length address type.
+       - ADDRESS_TYPE_32_BYTES: the 32 bytes length address type of ADR 028.
+       - ADDRESS_TYPE_20_BYTES: the default 20 bytes length address type.
   cosmos.budget.v1beta1.Budget:
     type: object
     properties:
