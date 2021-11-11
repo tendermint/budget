@@ -166,3 +166,47 @@ func (suite *KeeperTestSuite) TestGRPCBudgets() {
 		})
 	}
 }
+
+func (suite *KeeperTestSuite) TestGRPCAddresses() {
+	for _, tc := range []struct {
+		name      string
+		req       *types.QueryAddressesRequest
+		expectedAddr string
+		expectErr bool
+	}{
+		{
+			"nil request",
+			nil,
+			"",
+			true,
+		},
+		{
+			"empty request",
+			&types.QueryAddressesRequest{},
+			"",
+			true,
+		},
+		{
+			"default module name and address type",
+			&types.QueryAddressesRequest{Name: "testSourceAddr"},
+			"cosmos1hg0v9u92ztzecpmml26206wwtghggx0flpwn5d4qc3r6dvuanxeqs4mnk5",
+			false,
+		},
+		{
+			"invalid address type",
+			&types.QueryAddressesRequest{Name: "testSourceAddr", Type: 2},
+			"",
+			true,
+		},
+	} {
+		suite.Run(tc.name, func() {
+			resp, err := suite.querier.Addresses(sdk.WrapSDKContext(suite.ctx), tc.req)
+			if tc.expectErr {
+				suite.Require().Error(err)
+			} else {
+				suite.Require().NoError(err)
+				suite.Require().Equal(resp.Address, tc.expectedAddr)
+			}
+		})
+	}
+}

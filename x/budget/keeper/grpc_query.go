@@ -69,15 +69,22 @@ func (k Querier) Budgets(c context.Context, req *types.QueryBudgetsRequest) (*ty
 
 // Addresses queries an address that can be used as source and destination is derived according to the given name, module name and address type.
 func (k Querier) Addresses(_ context.Context, req *types.QueryAddressesRequest) (*types.QueryAddressesResponse, error) {
+	if req == nil {
+		return nil, status.Error(codes.InvalidArgument, "invalid request")
+	}
+
 	if req.Name == "" && req.ModuleName == "" {
 		return nil, fmt.Errorf("at least one input of name or module name is required")
 	}
+
 	if req.ModuleName == "" && req.Type == types.AddressType32Bytes {
 		req.ModuleName = types.ModuleName
 	}
+
 	addr := types.DeriveAddress(req.Type, req.ModuleName, req.Name)
 	if addr.Empty() {
 		return nil, fmt.Errorf("invalid names with address type")
 	}
+
 	return &types.QueryAddressesResponse{Address: addr.String()}, nil
 }
