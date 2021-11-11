@@ -45,6 +45,7 @@ Ref: https://keepachangelog.com/en/1.0.0/
 * [\#83](https://github.com/tendermint/budget/pull/83) fix: validation totalRate to check date overlapped budgets
 * [\#85](https://github.com/tendermint/budget/pull/85) fix: rename some fields of Budget
 * [\#81](https://github.com/tendermint/budget/pull/81) build: bump cosmos-sdk version to 0.44.3
+* [\#90](https://github.com/tendermint/budget/pull/90) feat: add address endpoint and release swagger v1.0.0
 
 ## [v0.1.1](https://github.com/tendermint/budget/releases/tag/v0.1.1) - 2021-10-15
 

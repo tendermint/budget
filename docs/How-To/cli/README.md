@@ -20,7 +20,7 @@ In order to test out the following command-line interfaces, you need to set up a
 
 There is no command-line interface for the Budget module. However, in order to query budget parameters and plans we are going to submit a governance proposal to create a budget plan in this documentation.
 
-### Create a Budget Plan
+### Propose a Budget Plan
 
 Let's create `proposal.json` file. Depending on what budget plan you plan to create, change the following values of the fields for your need. In this case, we plan to create a budget plan that distributes partial amount of coins from the Cosmos Hub's gas fees and ATOM inflation accrued in [FeeCollector](https://github.com/cosmos/cosmos-sdk/blob/master/x/auth/types/keys.go#L15) module account for Gravity DEX farming plan to GravityDEXFarmingBudget account (see the code below)
 
@@ -50,7 +50,7 @@ sdk.AccAddress(address.Module("farming", []byte("GravityDEXFarmingBudget")))
           "name": "gravity-dex-farming-20213Q-20221Q",
           "rate": "0.300000000000000000",
           "source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
-          "destination_address": "cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl",
+          "destination_address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky",
           "start_time": "2021-10-01T00:00:00Z",
           "end_time": "2022-04-01T00:00:00Z"
         }
@@ -90,12 +90,30 @@ budgetd q gov proposals --output json | jq
  
 # Query the balances of destination_address for a couple times
 # the balances should increase over time as gas fees and part of ATOM inflation flow in
-budgetd q bank balances cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl --output json | jq
+budgetd q bank balances cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky --output json | jq
 ```
 
 ## Query
 
 https://github.com/tendermint/budget/blob/main/proto/tendermint/budget/v1beta1/query.proto
+
+### Address
+
+```bash
+# Query an address that derived can be used as source and destination
+# Derived according to the given name, module name, and type
+
+# Default flag:
+# $ [--type 0] - ADDRESS_TYPE_32_BYTES of ADR 028
+# $ [--module-name budget] - When B, the default module name is budget
+
+budgetd query budget address testSourceAddr
+# address: cosmos1hg0v9u92ztzecpmml26206wwtghggx0flpwn5d4qc3r6dvuanxeqs4mnk5
+budgetd query budget address fee_collector --type 1
+# address: cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta
+budgetd query budget address GravityDEXFarmingBudget --module-name farming
+# address: cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky
+```
 
 ### Params 
 
@@ -114,7 +132,7 @@ budgetd q budget params --output json | jq
       "name": "gravity-dex-farming-20213Q-20221Q",
       "rate": "0.300000000000000000",
       "source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
-      "destination_address": "cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl",
+      "destination_address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky",
       "start_time": "2021-10-01T00:00:00Z",
       "end_time": "2022-04-01T00:00:00Z"
     }
@@ -137,7 +155,7 @@ budgetd q budget budgets --output json | jq
         "name": "gravity-dex-farming-20213Q-20221Q",
         "rate": "0.300000000000000000",
         "source_address": "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",
-        "destination_address": "cosmos10pg34xts7pztyu9n63vsydujjayge7gergyzavl4dhpq36hgmkts880rwl",
+        "destination_address": "cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky",
         "start_time": "2021-10-01T00:00:00Z",
         "end_time": "2022-04-01T00:00:00Z"
       },
