@@ -23,6 +23,7 @@ func DateRangesOverlap(startTimeA, endTimeA, startTimeB, endTimeB time.Time) boo
 	return startTimeA.Before(endTimeB) && endTimeA.After(startTimeB)
 }
 
+// DeriveAddress returns derived address by according to the address type, module name, and address name.
 func DeriveAddress(addressType AddressType, moduleName, name string) sdk.AccAddress {
 	switch addressType {
 	case AddressType32Bytes:
