@@ -130,11 +130,11 @@ $ %s query %s budgets --destination-address %s1zaavvzxez0elundtn32qnk9lkm8kmcszz
 // GetCmdQueryAddress implements the query an address that can be used as source and destination is derived according to the given type, module name, and name command.
 func GetCmdQueryAddress() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "address",
+		Use:   "address [name]",
 		Args:  cobra.ExactArgs(1),
-		Short: "Query an address that derived can be used as source and destination",
+		Short: "Query an address that can be used as source or destination address",
 		Long: strings.TrimSpace(
-			fmt.Sprintf(`Query an address that can be used as source and destination is derived according to the given name, module name, and type.
+			fmt.Sprintf(`Query an address that can be used as source or destination address. It is derived with address derivation name, module name, and address type.
 
 Example:
 $ %s query %s address testSourceAddr
@@ -143,7 +143,7 @@ $ %s query %s address GravityDEXFarmingBudget --module-name farming
 
 Default flag:
 $ [--type 0] - ADDRESS_TYPE_32_BYTES of ADR 028
-$ [--module-name %s] - When B, the default module name is %s
+$ [--module-name %s] - When type 0, the default module name is %s
 `,
 				version.AppName, types.ModuleName,
 				version.AppName, types.ModuleName,
