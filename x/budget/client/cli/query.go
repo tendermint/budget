@@ -143,7 +143,7 @@ $ %s query %s address GravityDEXFarmingBudget --module-name farming
 
 Default flag:
 $ [--type 0] - ADDRESS_TYPE_32_BYTES of ADR 028
-$ [--module-name %s] - When type 0, the default module name is %s
+$ [--module-name %s] - When type is 0, the default module name is %s
 `,
 				version.AppName, types.ModuleName,
 				version.AppName, types.ModuleName,
