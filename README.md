@@ -7,9 +7,9 @@ The budget module is a Cosmos SDK module that implements budget functionality. I
 
 A primary use case is for Gravity DEX farming plan. The budget module can be used to create a budget plan that defines Cosmos Hub's FeeCollector module account where transaction gas fees and part of ATOM inflation are collected as source address and uses a custom module account (created by budget creator) as destination address. Read [spec docs](./x/budget/spec/01_concepts.md) to get to know more about the module.
 
-⚠ **Budget module v1 is in active development** ⚠ 
-- see the [main](https://github.com/tendermint/budget/tree/main) branch for the latest
-- see [releases](https://github.com/tendermint/budget/releases) for the latest release
+## Versions
+
+See the [main](https://github.com/tendermint/budget/tree/main) branch for the latest, and see [releases](https://github.com/tendermint/budget/releases) for the latest release
 
 ## Dependencies
 
@@ -35,10 +35,9 @@ To get started to the project, visit the [TECHNICAL-SETUP.md](./TECHNICAL-SETUP.
 
 ## Documentation
 
-The farming module documentation is available in [docs](./docs) folder and technical specification is available in [specs](https://github.com/tendermint/budget/blob/main/x/budget/spec/README.md) folder. 
+The following documents are available to help you quickly get onboard with the budget module:
 
-These are some of the documents that help you to quickly get you on board with the budget module.
-
+- [Technical specification](./x/budget/spec)
 - [How to bootstrap a local network with budget module](./docs/Tutorials/localnet)
 - [How to use Command Line Interfaces](./docs/How-To/cli)
 - [How to use gRPC-gateway REST Routes](./docs/How-To)
