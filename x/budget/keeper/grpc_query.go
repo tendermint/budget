@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"context"
-	"fmt"
 
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -74,7 +73,7 @@ func (k Querier) Addresses(_ context.Context, req *types.QueryAddressesRequest) 
 	}
 
 	if req.Name == "" && req.ModuleName == "" {
-		return nil, fmt.Errorf("at least one input of name or module name is required")
+		return nil, status.Error(codes.InvalidArgument,"at least one input of name or module name is required")
 	}
 
 	if req.ModuleName == "" && req.Type == types.AddressType32Bytes {
@@ -83,7 +82,7 @@ func (k Querier) Addresses(_ context.Context, req *types.QueryAddressesRequest) 
 
 	addr := types.DeriveAddress(req.Type, req.ModuleName, req.Name)
 	if addr.Empty() {
-		return nil, fmt.Errorf("invalid names with address type")
+		return nil, status.Error(codes.InvalidArgument, "invalid names with address type")
 	}
 
 	return &types.QueryAddressesResponse{Address: addr.String()}, nil

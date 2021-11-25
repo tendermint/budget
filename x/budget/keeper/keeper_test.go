@@ -10,7 +10,6 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/cosmos/cosmos-sdk/types/address"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
 	simapp "github.com/tendermint/budget/app"
@@ -63,18 +62,18 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.keeper = suite.app.BudgetKeeper
 	suite.querier = keeper.Querier{Keeper: suite.keeper}
 	suite.addrs = simapp.AddTestAddrs(suite.app, suite.ctx, 10, sdk.ZeroInt())
-	dAddr1 := sdk.AccAddress(address.Module(types.ModuleName, []byte("destinationAddr1")))
-	dAddr2 := sdk.AccAddress(address.Module(types.ModuleName, []byte("destinationAddr2")))
-	dAddr3 := sdk.AccAddress(address.Module(types.ModuleName, []byte("destinationAddr3")))
-	dAddr4 := sdk.AccAddress(address.Module(types.ModuleName, []byte("destinationAddr4")))
-	dAddr5 := sdk.AccAddress(address.Module(types.ModuleName, []byte("destinationAddr5")))
-	dAddr6 := suite.app.AccountKeeper.GetModuleAccount(suite.ctx, authtypes.FeeCollectorName).GetAddress()
-	sAddr1 := sdk.AccAddress(address.Module(types.ModuleName, []byte("sourceAddr1")))
-	sAddr2 := sdk.AccAddress(address.Module(types.ModuleName, []byte("sourceAddr2")))
-	sAddr3 := sdk.AccAddress(address.Module(types.ModuleName, []byte("sourceAddr3")))
-	sAddr4 := sdk.AccAddress(address.Module(types.ModuleName, []byte("sourceAddr4")))
-	sAddr5 := sdk.AccAddress(address.Module(types.ModuleName, []byte("sourceAddr5")))
-	sAddr6 := sdk.AccAddress(address.Module("farming", []byte("GravityDEXFarmingBudget")))
+	dAddr1 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "destinationAddr1")
+	dAddr2 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "destinationAddr2")
+	dAddr3 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "destinationAddr3")
+	dAddr4 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "destinationAddr4")
+	dAddr5 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "destinationAddr5")
+	dAddr6 := types.DeriveAddress(types.AddressType32Bytes, "farming", "GravityDEXFarmingBudget")
+	sAddr1 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr1")
+	sAddr2 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr2")
+	sAddr3 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr3")
+	sAddr4 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr4")
+	sAddr5 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr5")
+	sAddr6 := suite.app.AccountKeeper.GetModuleAccount(suite.ctx, authtypes.FeeCollectorName).GetAddress()
 	suite.destinationAddrs = []sdk.AccAddress{dAddr1, dAddr2, dAddr3, dAddr4, dAddr5, dAddr6}
 	suite.sourceAddrs = []sdk.AccAddress{sAddr1, sAddr2, sAddr3, sAddr4, sAddr5, sAddr6}
 	for _, addr := range append(suite.addrs, suite.sourceAddrs[:3]...) {
