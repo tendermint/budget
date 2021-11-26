@@ -13,34 +13,48 @@ The budget module contains the following parameters:
 ## EpochBlocks
 
 The universal epoch length in number of blocks.
-Every process for budget collecting is executed with this `epoch_blocks` frequency.
 
-The default value is 1 and all budget collections are disabled if the value is 0. Budget collection logic is executed with the following condition. 
+Every process for budget collecting is executed with the `epoch_blocks` frequency.
+
+- The default value is 1. 
+- All budget collections are disabled if the value is 0. 
+
+Budget collection logic is executed with the following condition. 
 
 ```
 params.EpochBlocks > 0 && Current Block Height % params.EpochBlocks == 0
 ```
 
-You can reference [the line of the code](https://github.com/tendermint/budget/blob/main/x/budget/keeper/budget.go#L78).
+Reference the following code:
++++ https://github.com/tendermint/budget/blob/main/x/budget/keeper/budget.go#L78
 
 ## Budgets
 
-The Budget structure can be found in [02_state.md](02_state.md).
+The budget structure is described in [State](02_state.md).
 
 Parameter of a budget can be added, modified, and deleted through [parameter change governance proposal](https://docs.cosmos.network/master/modules/gov/01_concepts.html#proposal-submission).
 
-An example of how to add a budget plan can be found in this [docs/How-To/cli](../../../docs/How-To/cli) guide. 
+For an example of how to add a budget plan, see [Propose a Budget Plan](../../../docs/How-To/cli#propose-a-budget-plan) in the budgetd CLI guide. 
 
 ### Validity Checks
 
-- Budget name only allows letters(`A-Z, a-z`), digits(`0-9`), and `-` without spaces. Also, it has the maximum length of 50 and it should not be duplicate with the existing budget names.
+- Budget name: 
+
+  - Supports valid characters are letters (`A-Z, a-z`), digits(`0-9`), and `-`. 
+
+  - Must not include spaces. 
+
+  - Has a maximum length of 50. 
+  
+  - Must be unique among existing budget names.
 
 - Validate `DestinationAddress` address.
 
 - Validate `SourceAddress` address.
 
-- EndTime should not be earlier than StartTime.
+- EndTime must not be earlier than StartTime.
 
-- The total rate of budgets with the same `SourceAddress` value should not exceed 1 (100%).
+- The total rate of budgets with the same `SourceAddress` value must not exceed 1 (100%).
 
+Reference the following code:
 +++ https://github.com/tendermint/budget/blob/main/x/budget/types/budget.go#L33-L63
