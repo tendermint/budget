@@ -2,9 +2,11 @@
 
 # Events
 
+The budget module emits the following events.
+
 ## BeginBlocker
 
-### Budget Collection Result for each Budget on this block
+### Budget Collection Result for Each Budget on This Block
 
 | Type             | Attribute Key       | Attribute Value      |
 | ---------------- | ------------------- | -------------------- |
