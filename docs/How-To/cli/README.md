@@ -18,7 +18,7 @@ In order to test out the following command-line interfaces, you need to set up a
 
 ## Transaction
 
-There is no command-line interface for the Budget module. However, in order to query budget parameters and plans we are going to submit a governance proposal to create a budget plan in this documentation.
+There is no command-line interface for the budget module. However, in order to query budget parameters and plans we are going to submit a governance proposal to create a budget plan in this documentation.
 
 ### Propose a Budget Plan
 
