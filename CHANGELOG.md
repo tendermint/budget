@@ -35,17 +35,17 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 # Changelog
 
-## [Unreleased] v1.0.0 - 2021-11-26
+## v1.0.0 - 2021-11-26
 
 * [\#64](https://github.com/tendermint/budget/pull/64) docs: improve documentation for audit release
 * [\#74](https://github.com/tendermint/budget/pull/74) fix: update docs and workflow for default main branch
 * [\#66](https://github.com/tendermint/budget/pull/66) fix: Add govHandler on testcode for budget proposal and Fix Expired rule
 * [\#79](https://github.com/tendermint/budget/pull/79) fix: panic instead of ignoring errors
-* [\#78](https://github.com/tendermint/budget/pull/78) feat: adding metrics to provide insights about the module
 * [\#83](https://github.com/tendermint/budget/pull/83) fix: validation totalRate to check date overlapped budgets
 * [\#85](https://github.com/tendermint/budget/pull/85) fix: rename some fields of Budget
 * [\#81](https://github.com/tendermint/budget/pull/81) build: bump cosmos-sdk version to 0.44.3
 * [\#90](https://github.com/tendermint/budget/pull/90) feat: add address endpoint and release swagger v1.0.0
+* [\#91](https://github.com/tendermint/budget/pull/91) test: add test codes using gov handler
 
 ## [v0.1.1](https://github.com/tendermint/budget/releases/tag/v0.1.1) - 2021-10-15
 
