@@ -73,7 +73,7 @@ func (k Querier) Addresses(_ context.Context, req *types.QueryAddressesRequest) 
 	}
 
 	if req.Name == "" && req.ModuleName == "" {
-		return nil, status.Error(codes.InvalidArgument,"at least one input of name or module name is required")
+		return nil, status.Error(codes.InvalidArgument, "at least one input of name or module name is required")
 	}
 
 	if req.ModuleName == "" && req.Type == types.AddressType32Bytes {
