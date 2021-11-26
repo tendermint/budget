@@ -3,7 +3,6 @@ module github.com/tendermint/budget
 go 1.16
 
 require (
-	github.com/armon/go-metrics v0.3.9
 	github.com/cosmos/cosmos-sdk v0.44.3
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.2
