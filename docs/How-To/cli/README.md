@@ -1,41 +1,45 @@
 ---
 Title: Budgetd
-Description: A high-level overview of how the command-line (CLI) interfaces work for the budget module.
+Description: Description of governance proposal for a budget module command line interface (CLI).
 ---
 
 # Budgetd
 
-This document provides a high-level overview of how the command-line (CLI) interfaces work for the budget module.
+The budgetd binary does not include a CLI. This document describes a governance proposal for a budget module command line interface (CLI).
 
-## Command-Line Interfaces
+## Command Line Interface
 
-In order to test out the following command-line interfaces, you need to set up a local node to either send transaction or query from. You can refer to this [localnet tutorial](../../Tutorials/localnet) on how to build `budgetd` binary and bootstrap a local network in your local machine.
+To use the budget commands, set up a local node to send transaction or query from. See the [Localnet tutorial](../../Tutorials/localnet) on how to build the `budgetd` binary and bootstrap a local network in your local machine.
 
-- [Transaction N/A](#Transaction)
+- [Transaction](#Transaction)
 - [Query](#Query)
     * [Params](#Params)
     * [Budgets](#Budgets)
 
 ## Transaction
 
-There is no command-line interface for the budget module. However, in order to query budget parameters and plans we are going to submit a governance proposal to create a budget plan in this documentation.
+The budget module does not include a CLI. The ability to query budget parameters and plans requires a CLI. A governance proposal to create a budget plan is described here.
 
 ### Propose a Budget Plan
 
-Let's create `proposal.json` file. Depending on what budget plan you plan to create, change the following values of the fields for your need. In this case, we plan to create a budget plan that distributes partial amount of coins from the Cosmos Hub's gas fees and ATOM inflation accrued in [FeeCollector](https://github.com/cosmos/cosmos-sdk/blob/master/x/auth/types/keys.go#L15) module account for Gravity DEX farming plan to GravityDEXFarmingBudget account (see the code below)
+Create a `proposal.json` file for a budget plan. 
+
+The field values are dependent on which budget plan you plan to create. 
+
+This example creates a budget plan that distributes partial amount of coins from the Cosmos Hub's gas fees and ATOM inflation accrued in the [FeeCollector](https://github.com/cosmos/cosmos-sdk/blob/master/x/auth/types/keys.go#L15) module account for Gravity DEX farming plan to GravityDEXFarmingBudget account:
 
 ```go
 // cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky
 sdk.AccAddress(address.Module("farming", []byte("GravityDEXFarmingBudget")))
 ```
 
-- `name`: is the name of the budget plan used for display
-- `description`: is the description of the budget plan used for display
-- `rate`: is the distributing amount by ratio of the total budget source
-- `source_address`: is the address where the source of budget comes from
-- `destination_address`: is the address that collects budget from the source address
-- `start_time`: is start time of the budget plan
-- `end_time`: is end time of the budget plan
+- `name`: display name of the budget plan
+- `description`: display description of the budget plan
+- `rate`: distributing amount by ratio of the total budget source
+- `source_address`: address where the source of budget comes from
+- `destination_address`: address that collects budget from the source address
+- `start_time`: start time of the budget plan
+- `end_time`: end time of the budget plan
 
 ```json
 {
