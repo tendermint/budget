@@ -1,7 +1,11 @@
 ---
-Title: REST APIs
-Description: A high-level overview of gRPC-gateway REST Routes in budget module.
+Title: REST APIs for Budget Module
+Description: A high-level overview of gRPC-gateway REST routes for the budget module.
 ---
+
+# REST APIs for Budget Module
+
+A high-level overview of gRPC-gateway REST routes for the budget module.
 
 ## Swagger Documentation
 
@@ -9,7 +13,7 @@ Description: A high-level overview of gRPC-gateway REST Routes in budget module.
 
 ## gRPC-gateway REST Routes
 
-In order to test out the following REST routes, you need to set up a local node to query from. You can refer to this [localnet tutorial](../../Tutorials/localnet) on how to build `budgetd` binary and bootstrap a local network in your local machine.
+To test out the budget module API REST routes, you must first set up a local node to query from. See the [Localnet tutorial](../../Tutorials/localnet) for steps to build the `budgetd` binary and bootstrap a local network on your local machine.
 
 - [Params](#Params)
 - [Budgets](#Budgets)
@@ -17,7 +21,7 @@ In order to test out the following REST routes, you need to set up a local node 
 
 ### Params
 
-Query the values set as budget parameters
+Query the values set as budget parameters:
 
 http://localhost:1317/cosmos/budget/v1beta1/params <!-- markdown-link-check-disable-line -->
 
@@ -41,7 +45,7 @@ http://localhost:1317/cosmos/budget/v1beta1/params <!-- markdown-link-check-disa
 
 ### Budgets
 
-Query all the budget plans exist in the network
+Query all the budget plans exist in the network:
 
 http://localhost:1317/cosmos/budget/v1beta1/budgets <!-- markdown-link-check-disable-line -->
 
@@ -71,7 +75,7 @@ http://localhost:1317/cosmos/budget/v1beta1/budgets <!-- markdown-link-check-dis
 
 ### Addresses
 
-Query the address of `fee_collector` with address type 1(`AddressType20Bytes`)
+Query the address of `fee_collector` with address type 1(`AddressType20Bytes`):
 
 http://localhost:1317/cosmos/budget/v1beta1/addresses/fee_collector?type=1 <!-- markdown-link-check-disable-line -->
 
@@ -81,7 +85,7 @@ http://localhost:1317/cosmos/budget/v1beta1/addresses/fee_collector?type=1 <!-- 
 }
 ```
 
-Query the address of `GravityDEXFarmingBudget` on farming module with default address type 0(`AddressType32Bytes`)
+Query the address of `GravityDEXFarmingBudget` on farming module with default address type 0(`AddressType32Bytes`):
 
 http://localhost:1317/cosmos/budget/v1beta1/addresses/GravityDEXFarmingBudget?module_name=farming <!-- markdown-link-check-disable-line -->
 
