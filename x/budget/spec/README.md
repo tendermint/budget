@@ -4,7 +4,7 @@
 
 ## Abstract
 
-This document specifies the budget module of the Cosmos SDK that serves budget feature
+This document specifies the budget module of the Cosmos SDK. This independent Cosmos SDK module implements budget functionality to create a budget plan through parameter change governance proposal. 
 
 ## Contents
 
