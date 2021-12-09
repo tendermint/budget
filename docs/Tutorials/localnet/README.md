@@ -1,9 +1,13 @@
 ---
 Title: Localnet
-Description: A tutorial of how to build `budgetd` and bootstrap local network.
+Description: How to build the `budgetd` binary and bootstrap a local network.
 ---
 
-### Get Budget Module source code
+# Localnet 
+
+This tutorial provides steps to build the `budgetd` binary and bootstrap a local network.
+
+# Get Budget Module Source Code
 
 ```bash
 git clone https://github.com/tendermint/budget.git
@@ -11,9 +15,9 @@ cd budget
 make install
 ```
 
-### Boostrap
+### Bootstrap a Chain 
 
-The following script is prepared to bootstrap a single chain with a single validator in your local machine. Copy the script and run them in your terminal.
+The following script bootstraps a single chain in your local machine with a single validator. Copy the script and run it in your terminal.
 
 ```bash
 # Configure variables
