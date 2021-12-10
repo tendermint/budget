@@ -5,20 +5,28 @@ Description: Description of governance proposal for a budget module command line
 
 # Budgetd
 
-The budgetd binary does not include a CLI. This document describes a governance proposal for a budget module command line interface (CLI).
+The budgetd binary includes query commands, but does not support transaction commands. Users can query the values set as budget parameters, query budget plans, and query an address that can be used as source or destination address. 
+
+This document describes a governance proposal for a budget module command line interface (CLI).
 
 ## Command Line Interface
 
 To use the budget commands, set up a local node to send transaction or query from. See the [Localnet tutorial](../../Tutorials/localnet) on how to build the `budgetd` binary and bootstrap a local network in your local machine.
 
-- [Transaction](#Transaction)
-- [Query](#Query)
-    * [Params](#Params)
-    * [Budgets](#Budgets)
+- [Budgetd](#budgetd)
+  - [Command Line Interface](#command-line-interface)
+  - [Transaction](#transaction)
+    - [Propose a Budget Plan](#propose-a-budget-plan)
+  - [Query](#query)
+    - [Address](#address)
+    - [Params](#params)
+    - [Budgets](#budgets)
 
 ## Transaction
 
-The budget module does not include a CLI. The ability to query budget parameters and plans requires a CLI. A governance proposal to create a budget plan is described here.
+The budget module does not support transaction commands. 
+
+The budget module supports only query commands. The ability to query budget parameters and plans requires a CLI. 
 
 ### Propose a Budget Plan
 
@@ -124,7 +132,7 @@ budgetd query budget address GravityDEXFarmingBudget --module-name farming
 ```bash
 # Query the values set as budget parameters
 # Note that default params are empty. You need to submit governance proposal to create budget plan
-# Reference the Transaction section in thid documentation
+# Reference the Transaction section in this documentation
 budgetd q budget params --output json | jq
 ```
 
