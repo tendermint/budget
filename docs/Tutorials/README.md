@@ -1,18 +1,6 @@
-# Tutorials Documentation
+# Tutorials 
 
-How to use the budget module Tutorials documentation.
+Tutorials come in various forms:
 
-- [Tutorials Documentation](#tutorials-documentation)
-  - [Introduction](#introduction)
-  - [Layout](#layout)
-
-## Introduction
-
-This section contains Tutorials documentation for budget module. 
-
-## Layout
-
-Tutorials Documentation will come in various forms:
-
-* [Demo](./demo) - contains any type of demo or presentation for budget module
-* [Localnet](./localnet) - contains guideline of how to build `budgetd` and bootstrap local network
+* [Demo](./demo) - Any type of demo or presentation for budget module
+* [Localnet](./localnet) - Guidelines to build `budgetd` and bootstrap local network

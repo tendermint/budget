@@ -1,8 +1,9 @@
 <!-- order: 2 -->
 # State
+
 ## Budget
 
-Budget object is not stored in KVStore. 
+The budget object is not stored in key-value store (KVStore). 
 
 ```go
 // Budget contains budget information
