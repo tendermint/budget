@@ -1,41 +1,53 @@
 ---
 Title: Budgetd
-Description: A high-level overview of how the command-line (CLI) interfaces work for the budget module.
+Description: Description of governance proposal for a budget module command line interface (CLI).
 ---
 
 # Budgetd
 
-This document provides a high-level overview of how the command-line (CLI) interfaces work for the budget module.
+The budgetd binary includes query commands, but does not support transaction commands. Users can query the values set as budget parameters, query budget plans, and query an address that can be used as source or destination address. 
 
-## Command-Line Interfaces
+This document describes a governance proposal for a budget module command line interface (CLI).
 
-In order to test out the following command-line interfaces, you need to set up a local node to either send transaction or query from. You can refer to this [localnet tutorial](../../Tutorials/localnet) on how to build `budgetd` binary and bootstrap a local network in your local machine.
+## Command Line Interface
 
-- [Transaction N/A](#Transaction)
-- [Query](#Query)
-    * [Params](#Params)
-    * [Budgets](#Budgets)
+To use the budget commands, set up a local node to send transaction or query from. See the [Localnet tutorial](../../Tutorials/localnet) on how to build the `budgetd` binary and bootstrap a local network in your local machine.
+
+- [Budgetd](#budgetd)
+  - [Command Line Interface](#command-line-interface)
+  - [Transaction](#transaction)
+    - [Propose a Budget Plan](#propose-a-budget-plan)
+  - [Query](#query)
+    - [Address](#address)
+    - [Params](#params)
+    - [Budgets](#budgets)
 
 ## Transaction
 
-There is no command-line interface for the budget module. However, in order to query budget parameters and plans we are going to submit a governance proposal to create a budget plan in this documentation.
+The budget module does not support transaction commands. 
+
+The budget module supports only query commands. The ability to query budget parameters and plans requires a CLI. 
 
 ### Propose a Budget Plan
 
-Let's create `proposal.json` file. Depending on what budget plan you plan to create, change the following values of the fields for your need. In this case, we plan to create a budget plan that distributes partial amount of coins from the Cosmos Hub's gas fees and ATOM inflation accrued in [FeeCollector](https://github.com/cosmos/cosmos-sdk/blob/master/x/auth/types/keys.go#L15) module account for Gravity DEX farming plan to GravityDEXFarmingBudget account (see the code below)
+Create a `proposal.json` file for a budget plan. 
+
+The field values are dependent on which budget plan you plan to create. 
+
+This example creates a budget plan that distributes partial amount of coins from the Cosmos Hub's gas fees and ATOM inflation accrued in the [FeeCollector](https://github.com/cosmos/cosmos-sdk/blob/master/x/auth/types/keys.go#L15) module account for Gravity DEX farming plan to GravityDEXFarmingBudget account:
 
 ```go
 // cosmos1228ryjucdpdv3t87rxle0ew76a56ulvnfst0hq0sscd3nafgjpqqkcxcky
 sdk.AccAddress(address.Module("farming", []byte("GravityDEXFarmingBudget")))
 ```
 
-- `name`: is the name of the budget plan used for display
-- `description`: is the description of the budget plan used for display
-- `rate`: is the distributing amount by ratio of the total budget source
-- `source_address`: is the address where the source of budget comes from
-- `destination_address`: is the address that collects budget from the source address
-- `start_time`: is start time of the budget plan
-- `end_time`: is end time of the budget plan
+- `name`: display name of the budget plan
+- `description`: display description of the budget plan
+- `rate`: distributing amount by ratio of the total budget source
+- `source_address`: address where the source of budget comes from
+- `destination_address`: address that collects budget from the source address
+- `start_time`: start time of the budget plan
+- `end_time`: end time of the budget plan
 
 ```json
 {
@@ -120,7 +132,7 @@ budgetd query budget address GravityDEXFarmingBudget --module-name farming
 ```bash
 # Query the values set as budget parameters
 # Note that default params are empty. You need to submit governance proposal to create budget plan
-# Reference the Transaction section in thid documentation
+# Reference the Transaction section in this documentation
 budgetd q budget params --output json | jq
 ```
 
