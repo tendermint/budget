@@ -45,8 +45,12 @@ func (budget Budget) Validate() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid source address %s: %v", budget.SourceAddress, err)
 	}
 
+	if budget.DestinationAddress == budget.SourceAddress {
+		return sdkerrors.Wrapf(ErrSameSourceDestinationAddr, "budget source address and destination address cannot be the same %s", budget.SourceAddress)
+	}
+
 	if !budget.EndTime.After(budget.StartTime) {
-		return ErrInvalidStartEndTime
+		return sdkerrors.Wrapf(ErrInvalidStartEndTime, "end time %s must be greater than start time %s", budget.EndTime, budget.StartTime)
 	}
 
 	if !budget.Rate.IsPositive() {
@@ -60,7 +64,7 @@ func (budget Budget) Validate() error {
 
 // Collectible validates the budget has reached its start time and that the end time has not elapsed.
 func (budget Budget) Collectible(blockTime time.Time) bool {
-	return !budget.StartTime.After(blockTime) && budget.EndTime.After(blockTime)
+	return DateRangeIncludes(budget.StartTime, budget.EndTime, blockTime)
 }
 
 // CollectibleBudgets returns only the valid and started and not expired budgets based on the given block time.

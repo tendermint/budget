@@ -59,6 +59,7 @@ func (p Params) Validate() error {
 		validator func(interface{}) error
 	}{
 		{p.Budgets, ValidateBudgets},
+		{p.EpochBlocks, ValidateEpochBlocks},
 	} {
 		if err := v.validator(v.value); err != nil {
 			return err
@@ -91,9 +92,9 @@ func ValidateBudgets(i interface{}) error {
 			// If the TotalRate of Budgets with the same source address exceeds 1,
 			// recalculate and verify the TotalRate of Budgets with overlapping time ranges.
 			for _, budget := range budgetsBySource.Budgets {
-				totalRate := sdk.ZeroDec()
+				totalRate := budget.Rate
 				for _, budgetToCheck := range budgetsBySource.Budgets {
-					if DateRangesOverlap(budget.StartTime, budget.EndTime, budgetToCheck.StartTime, budgetToCheck.EndTime) {
+					if budget.Name != budgetToCheck.Name && budgetToCheck.Collectible(budget.StartTime) {
 						totalRate = totalRate.Add(budgetToCheck.Rate)
 					}
 				}

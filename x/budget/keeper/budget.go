@@ -3,7 +3,6 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-
 	"github.com/tendermint/budget/x/budget/types"
 )
 
@@ -40,9 +39,8 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 			if err != nil {
 				return err
 			}
-
 			collectionCoins, _ := sourceBalances.MulDecTruncate(budget.Rate).TruncateDecimal()
-			if collectionCoins.Empty() || !collectionCoins.IsValid() {
+			if collectionCoins.Empty() || collectionCoins.IsZero() || !collectionCoins.IsValid() {
 				continue
 			}
 
@@ -51,11 +49,14 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 			budgetsBySource.CollectionCoins[i] = collectionCoins
 		}
 
-		if err := k.bankKeeper.InputOutputCoins(ctx, inputs, outputs); err != nil {
+		if err = k.bankKeeper.InputOutputCoins(ctx, inputs, outputs); err != nil {
 			return err
 		}
 
 		for i, budget := range budgetsBySource.Budgets {
+			if budgetsBySource.CollectionCoins[i].Empty() || budgetsBySource.CollectionCoins[i].IsZero() || !budgetsBySource.CollectionCoins[i].IsValid() {
+				continue
+			}
 			k.AddTotalCollectedCoins(ctx, budget.Name, budgetsBySource.CollectionCoins[i])
 			ctx.EventManager().EmitEvents(sdk.Events{
 				sdk.NewEvent(

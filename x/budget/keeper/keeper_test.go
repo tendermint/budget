@@ -3,7 +3,6 @@ package keeper_test
 import (
 	"testing"
 
-	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	"github.com/cosmos/cosmos-sdk/x/params/types/proposal"
@@ -29,7 +28,8 @@ var (
 		sdk.NewInt64Coin(denom1, 1_000_000_000),
 		sdk.NewInt64Coin(denom2, 1_000_000_000),
 		sdk.NewInt64Coin(denom3, 1_000_000_000))
-	smallBalances = mustParseCoinsNormalized("1denom1,2denom2,3denom3,1000000000stake")
+	smallBalances  = mustParseCoinsNormalized("1denom1,2denom2,3denom3,1000000000stake")
+	smallBalances2 = mustParseCoinsNormalized("1denom1,2denom2")
 )
 
 type KeeperTestSuite struct {
@@ -67,20 +67,22 @@ func (suite *KeeperTestSuite) SetupTest() {
 	dAddr3 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "destinationAddr3")
 	dAddr4 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "destinationAddr4")
 	dAddr5 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "destinationAddr5")
-	dAddr6 := types.DeriveAddress(types.AddressType32Bytes, "farming", "GravityDEXFarmingBudget")
+	dAddr6 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "destinationAddr6")
 	sAddr1 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr1")
 	sAddr2 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr2")
 	sAddr3 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr3")
 	sAddr4 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr4")
 	sAddr5 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr5")
-	sAddr6 := suite.app.AccountKeeper.GetModuleAccount(suite.ctx, authtypes.FeeCollectorName).GetAddress()
+	sAddr6 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr6")
 	suite.destinationAddrs = []sdk.AccAddress{dAddr1, dAddr2, dAddr3, dAddr4, dAddr5, dAddr6}
-	suite.sourceAddrs = []sdk.AccAddress{sAddr1, sAddr2, sAddr3, sAddr4, sAddr5, sAddr6}
+	suite.sourceAddrs = []sdk.AccAddress{sAddr1, sAddr2, sAddr3, sAddr4, sAddr5, sAddr6, sAddr6}
 	for _, addr := range append(suite.addrs, suite.sourceAddrs[:3]...) {
 		err := simapp.FundAccount(suite.app.BankKeeper, suite.ctx, addr, initialBalances)
 		suite.Require().NoError(err)
 	}
 	err := simapp.FundAccount(suite.app.BankKeeper, suite.ctx, suite.sourceAddrs[3], smallBalances)
+	suite.Require().NoError(err)
+	err = simapp.FundAccount(suite.app.BankKeeper, suite.ctx, suite.sourceAddrs[4], smallBalances2)
 	suite.Require().NoError(err)
 
 	suite.budgets = []types.Budget{
@@ -133,12 +135,20 @@ func (suite *KeeperTestSuite) SetupTest() {
 			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 		{
-			Name:               "gravity-dex-farming-20213Q-20313Q",
-			Rate:               sdk.MustNewDecFromStr("0.5"),
+			Name:               "small2-source-budget",
+			Rate:               sdk.MustNewDecFromStr("0.1"),
+			SourceAddress:      suite.sourceAddrs[4].String(),
+			DestinationAddress: suite.destinationAddrs[4].String(),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
+		},
+		{
+			Name:               "empty-source-budget",
+			Rate:               sdk.MustNewDecFromStr("0.1"),
 			SourceAddress:      suite.sourceAddrs[5].String(),
 			DestinationAddress: suite.destinationAddrs[5].String(),
-			StartTime:          types.MustParseRFC3339("2021-09-01T00:00:00Z"),
-			EndTime:            types.MustParseRFC3339("2031-09-30T00:00:00Z"),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
 		},
 	}
 }

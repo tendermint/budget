@@ -23,6 +23,12 @@ func DateRangesOverlap(startTimeA, endTimeA, startTimeB, endTimeB time.Time) boo
 	return startTimeA.Before(endTimeB) && endTimeA.After(startTimeB)
 }
 
+// DateRangeIncludes returns true if the target date included on the start, end time range.
+// End time is exclusive and start time is inclusive.
+func DateRangeIncludes(startTime, endTime, targetTime time.Time) bool {
+	return endTime.After(targetTime) && !startTime.After(targetTime)
+}
+
 // DeriveAddress derives an address with the given address length type, module name, and
 // address derivation name. It is used to derive source or destination address.
 func DeriveAddress(addressType AddressType, moduleName, name string) sdk.AccAddress {
