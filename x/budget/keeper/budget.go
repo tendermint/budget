@@ -26,7 +26,7 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 		if err != nil {
 			return err
 		}
-		sourceBalances := sdk.NewDecCoinsFromCoins(k.bankKeeper.GetAllBalances(ctx, sourceAcc)...)
+		sourceBalances := sdk.NewDecCoinsFromCoins(k.bankKeeper.SpendableCoins(ctx, sourceAcc)...)
 		if sourceBalances.IsZero() {
 			continue
 		}
