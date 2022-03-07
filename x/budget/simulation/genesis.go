@@ -27,22 +27,43 @@ func GenEpochBlocks(r *rand.Rand) uint32 {
 }
 
 // GenBudgets returns randomized budgets.
-func GenBudgets(r *rand.Rand) []types.Budget {
+func GenBudgets(r *rand.Rand, ctx sdk.Context, ak types.AccountKeeper, bk types.BankKeeper, accs []simtypes.Account) []types.Budget {
 	ranBudgets := make([]types.Budget, 0)
 
-	for i := 0; i < simtypes.RandIntBetween(r, 1, 3); i++ {
+	for i := 0; i < simtypes.RandIntBetween(r, 1, 20); i++ {
+		var sourceAddr, destAddr sdk.AccAddress
+		if i%2 == 1 {
+			sourceAddr = types.DeriveAddress(types.AddressType20Bytes, "", "fee_collector")
+		} else {
+			simAccount, _ := simtypes.RandomAcc(r, accs)
+			sourceAddr = simAccount.Address
+		}
+		simAccount, _ := simtypes.RandomAcc(r, accs)
+		destAddr = simAccount.Address
+
 		budget := types.Budget{
 			Name:               "simulation-test-" + simtypes.RandStringOfLength(r, 5),
-			Rate:               sdk.NewDecFromIntWithPrec(sdk.NewInt(int64(simtypes.RandIntBetween(r, 1, 4))), 1), // 10~30%
-			SourceAddress:      "cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta",                                   // Cosmos Hub's FeeCollector module account
-			DestinationAddress: sdk.AccAddress(address.Module(types.ModuleName, []byte("GravityDEXFarmingBudget"))).String(),
-			StartTime:          types.MustParseRFC3339("2000-01-01T00:00:00Z"),
-			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
+			Rate:               sdk.NewDecFromIntWithPrec(sdk.NewInt(int64(simtypes.RandIntBetween(r, 1, 5))), 2), // 1~5%
+			SourceAddress:      sourceAddr.String(),                                                               // Cosmos Hub's FeeCollector module account
+			DestinationAddress: destAddr.String(),
+			StartTime:          ctx.BlockTime(),
+			EndTime:            ctx.BlockTime().AddDate(0, 0, simtypes.RandIntBetween(r, 1, 28)),
 		}
 		ranBudgets = append(ranBudgets, budget)
 	}
 
 	return ranBudgets
+}
+
+func InitBudgets(r *rand.Rand) []types.Budget {
+	return []types.Budget{{
+		Name:               "simulation-test-" + simtypes.RandStringOfLength(r, 5),
+		Rate:               sdk.NewDecFromIntWithPrec(sdk.NewInt(int64(simtypes.RandIntBetween(r, 1, 4))), 1), // 10~30%
+		SourceAddress:      types.DeriveAddress(types.AddressType20Bytes, "", "fee_collector").String(),       // Cosmos Hub's FeeCollector module account
+		DestinationAddress: sdk.AccAddress(address.Module(types.ModuleName, []byte("GravityDEXFarmingBudget"))).String(),
+		StartTime:          types.MustParseRFC3339("2000-01-01T00:00:00Z"),
+		EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
+	}}
 }
 
 // RandomizedGenState generates a random GenesisState for budget.
@@ -56,7 +77,7 @@ func RandomizedGenState(simState *module.SimulationState) {
 
 	simState.AppParams.GetOrGenerate(
 		simState.Cdc, Budgets, &budgets, simState.Rand,
-		func(r *rand.Rand) { budgets = GenBudgets(r) },
+		func(r *rand.Rand) { budgets = InitBudgets(r) },
 	)
 
 	budgetGenesis := types.GenesisState{

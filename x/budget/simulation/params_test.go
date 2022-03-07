@@ -20,7 +20,7 @@ func TestParamChanges(t *testing.T) {
 		subspace    string
 	}{
 		{"budget/EpochBlocks", "EpochBlocks", "6", "budget"},
-		{"budget/Budgets", "Budgets", `[{"name":"simulation-test-MLxiD","rate":"0.300000000000000000","source_address":"cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta","destination_address":"cosmos1ke7rn6vl3vmeasmcrxdm3pfrt37fsg5jfrex80pp3hvhwgu4h4usxgvk3e","start_time":"2000-01-01T00:00:00Z","end_time":"9999-12-31T00:00:00Z"},{"name":"simulation-test-nhwJy","rate":"0.200000000000000000","source_address":"cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta","destination_address":"cosmos1ke7rn6vl3vmeasmcrxdm3pfrt37fsg5jfrex80pp3hvhwgu4h4usxgvk3e","start_time":"2000-01-01T00:00:00Z","end_time":"9999-12-31T00:00:00Z"}]`, "budget"},
+		{"budget/Budgets", "Budgets", `[{"name":"simulation-test-FpXzp","rate":"0.300000000000000000","source_address":"cosmos17xpfvakm2amg962yls6f84z3kell8c5lserqta","destination_address":"cosmos1ke7rn6vl3vmeasmcrxdm3pfrt37fsg5jfrex80pp3hvhwgu4h4usxgvk3e","start_time":"2000-01-01T00:00:00Z","end_time":"9999-12-31T00:00:00Z"}]`, "budget"},
 	}
 
 	paramChanges := simulation.ParamChanges(r)
