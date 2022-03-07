@@ -38,8 +38,13 @@ func GenBudgets(r *rand.Rand, ctx sdk.Context, ak types.AccountKeeper, bk types.
 			simAccount, _ := simtypes.RandomAcc(r, accs)
 			sourceAddr = simAccount.Address
 		}
-		simAccount, _ := simtypes.RandomAcc(r, accs)
-		destAddr = simAccount.Address
+		for {
+			simAccount, _ := simtypes.RandomAcc(r, accs)
+			if !simAccount.Address.Equals(sourceAddr) {
+				destAddr = simAccount.Address
+				break
+			}
+		}
 
 		budget := types.Budget{
 			Name:               "simulation-test-" + simtypes.RandStringOfLength(r, 5),
