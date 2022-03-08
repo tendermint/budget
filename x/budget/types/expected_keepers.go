@@ -9,7 +9,6 @@ import (
 // BankKeeper defines the expected bank send keeper
 type BankKeeper interface {
 	InputOutputCoins(ctx sdk.Context, inputs []banktypes.Input, outputs []banktypes.Output) error
-	GetAllBalances(ctx sdk.Context, addr sdk.AccAddress) sdk.Coins
 	SpendableCoins(ctx sdk.Context, addr sdk.AccAddress) sdk.Coins
 }
 

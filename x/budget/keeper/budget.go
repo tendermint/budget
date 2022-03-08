@@ -62,9 +62,6 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 				sdk.NewEvent(
 					types.EventTypeBudgetCollected,
 					sdk.NewAttribute(types.AttributeValueName, budget.Name),
-					sdk.NewAttribute(types.AttributeValueDestinationAddress, budget.DestinationAddress),
-					sdk.NewAttribute(types.AttributeValueSourceAddress, budget.SourceAddress),
-					sdk.NewAttribute(types.AttributeValueRate, budget.Rate.String()),
 					sdk.NewAttribute(types.AttributeValueAmount, budgetsBySource.CollectionCoins[i].String()),
 				),
 			})
