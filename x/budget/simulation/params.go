@@ -24,7 +24,7 @@ func ParamChanges(r *rand.Rand) []simtypes.ParamChange {
 		),
 		simulation.NewSimParamChange(types.ModuleName, string(types.KeyBudgets),
 			func(r *rand.Rand) string {
-				bz, err := json.Marshal(GenBudgets(r))
+				bz, err := json.Marshal(InitBudgets(r))
 				if err != nil {
 					panic(err)
 				}

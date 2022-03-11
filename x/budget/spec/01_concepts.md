@@ -57,17 +57,21 @@ The Cosmos SDK current reward workflow:
 
 Implementation with `x/budget` module:
 
-  - A budget module is 100% independent of all other Cosmos SDK modules
+  - A budget module is independent of all other Cosmos SDK modules
 
-  - BeginBlock processing order is:
+  - In chains that where there will be budget plans with `SourceAddress` set to `FeeCollectorName`, it should be set as follows:
 
-      - mint module → budget module → distribution module
+    - BeginBlock processing order should be mint module → budget module → distribution module
+
+    - if inflation and gas fees occur every block, `params.EpochBlocks` should be set to 1
+
+    - It should be noted that if the rate sum of these budget plans is 1.0 (100%), inflation and gas fees can not go to validators
 
   - Distribute ATOM inflation and transaction gas fees to different budget purposes:
 
     - ATOM inflation and gas fees are accumulated in `FeeCollectorName` module account
 
-    - Distribute budget amounts from `FeeCollectorName` module account to each budget pool module account
+    - Distribute budget amounts from `FeeCollectorName` module account to each `DestinationAddress` for budget plans with `SourceAddress` set to `FeeCollectorName`
 
     - Remaining amounts stay in `FeeCollectorName` so that distribution module can use them for community fund and staking rewards distribution (no change to current `FeeCollectorName` implementation)
 

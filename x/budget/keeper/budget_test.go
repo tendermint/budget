@@ -20,7 +20,7 @@ func (suite *KeeperTestSuite) TestCollectBudgets() {
 		epochBlocks    uint32
 		accAsserts     []sdk.AccAddress
 		balanceAsserts []sdk.Coins
-		expectErr      bool
+		expectErr      error
 	}{
 		{
 			"basic budgets case",
@@ -44,7 +44,7 @@ func (suite *KeeperTestSuite) TestCollectBudgets() {
 				{},
 				mustParseCoinsNormalized("1000000000denom1,1000000000denom2,1000000000denom3,1000000000stake"),
 			},
-			false,
+			nil,
 		},
 		{
 			"only expired budget case",
@@ -58,7 +58,7 @@ func (suite *KeeperTestSuite) TestCollectBudgets() {
 				{},
 				mustParseCoinsNormalized("1000000000denom1,1000000000denom2,1000000000denom3,1000000000stake"),
 			},
-			false,
+			nil,
 		},
 		{
 			"source has small balances case",
@@ -74,7 +74,35 @@ func (suite *KeeperTestSuite) TestCollectBudgets() {
 				mustParseCoinsNormalized("1denom2,1denom3,500000000stake"),
 				mustParseCoinsNormalized("1denom1,1denom3"),
 			},
-			false,
+			nil,
+		},
+		{
+			"source has small balances case 2",
+			[]types.Budget{suite.budgets[6]},
+			types.DefaultEpochBlocks,
+			[]sdk.AccAddress{
+				suite.destinationAddrs[4],
+				suite.sourceAddrs[4],
+			},
+			[]sdk.Coins{
+				mustParseCoinsNormalized(""),
+				mustParseCoinsNormalized("1denom1,2denom2"),
+			},
+			nil,
+		},
+		{
+			"empty source case",
+			[]types.Budget{suite.budgets[7]},
+			types.DefaultEpochBlocks,
+			[]sdk.AccAddress{
+				suite.destinationAddrs[5],
+				suite.sourceAddrs[5],
+			},
+			[]sdk.Coins{
+				{},
+				{},
+			},
+			nil,
 		},
 		{
 			"none budgets case",
@@ -100,7 +128,7 @@ func (suite *KeeperTestSuite) TestCollectBudgets() {
 				mustParseCoinsNormalized("1000000000denom1,1000000000denom2,1000000000denom3,1000000000stake"),
 				mustParseCoinsNormalized("1denom1,2denom2,3denom3,1000000000stake"),
 			},
-			false,
+			nil,
 		},
 		{
 			"disabled budget epoch",
@@ -126,7 +154,7 @@ func (suite *KeeperTestSuite) TestCollectBudgets() {
 				mustParseCoinsNormalized("1000000000denom1,1000000000denom2,1000000000denom3,1000000000stake"),
 				mustParseCoinsNormalized("1denom1,2denom2,3denom3,1000000000stake"),
 			},
-			false,
+			nil,
 		},
 		{
 			"disabled budget epoch with budgets",
@@ -152,7 +180,7 @@ func (suite *KeeperTestSuite) TestCollectBudgets() {
 				mustParseCoinsNormalized("1000000000denom1,1000000000denom2,1000000000denom3,1000000000stake"),
 				mustParseCoinsNormalized("1denom1,2denom2,3denom3,1000000000stake"),
 			},
-			false,
+			nil,
 		},
 	} {
 		suite.Run(tc.name, func() {
@@ -163,7 +191,7 @@ func (suite *KeeperTestSuite) TestCollectBudgets() {
 			suite.keeper.SetParams(suite.ctx, params)
 
 			err := suite.keeper.CollectBudgets(suite.ctx)
-			if tc.expectErr {
+			if tc.expectErr != nil {
 				suite.Error(err)
 			} else {
 				suite.NoError(err)
@@ -211,7 +239,7 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 					"source_address": "cosmos10wy60v3zuks7rkwnqxs3e878zqfhus6m98l77q6rppz40kxwgllsruc0az",
 					"destination_address": "cosmos1qceyjmnrl6hapntjq3z25vn38nh68u7yxvufs2thptxvqm7huxeqj7zyrq",
 					"start_time": "2021-09-01T00:00:00Z",
-					"end_time": "2031-09-30T00:00:00Z"
+					"end_time": "2021-12-31T00:00:00Z"
 					}
 				]`,
 			}),
@@ -240,7 +268,7 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 					"source_address": "cosmos10wy60v3zuks7rkwnqxs3e878zqfhus6m98l77q6rppz40kxwgllsruc0az",
 					"destination_address": "cosmos1qceyjmnrl6hapntjq3z25vn38nh68u7yxvufs2thptxvqm7huxeqj7zyrq",
 					"start_time": "2021-09-01T00:00:00Z",
-					"end_time": "2031-09-30T00:00:00Z"
+					"end_time": "2021-12-31T00:00:00Z"
 					},
 					{
 					"name": "gravity-dex-farming-2",
@@ -266,7 +294,7 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 			},
 		},
 		{
-			"add budget 3 with invalid total rate case 1",
+			"add budget 3 overlapped with 2, invalid total rate, 1.5",
 			testProposal(proposal.ParamChange{
 				Subspace: types.ModuleName,
 				Key:      string(types.KeyBudgets),
@@ -277,7 +305,7 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 					"source_address": "cosmos10wy60v3zuks7rkwnqxs3e878zqfhus6m98l77q6rppz40kxwgllsruc0az",
 					"destination_address": "cosmos1qceyjmnrl6hapntjq3z25vn38nh68u7yxvufs2thptxvqm7huxeqj7zyrq",
 					"start_time": "2021-09-01T00:00:00Z",
-					"end_time": "2031-09-30T00:00:00Z"
+					"end_time": "2021-12-31T00:00:00Z"
 					},
 					{
 					"name": "gravity-dex-farming-2",
@@ -292,7 +320,7 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 					"rate": "0.500000000000000000",
 					"source_address": "cosmos10wy60v3zuks7rkwnqxs3e878zqfhus6m98l77q6rppz40kxwgllsruc0az",
 					"destination_address": "cosmos1e0n8jmeg4u8q3es2tmhz5zlte8a4q8687ndns8pj4q8grdl74a0sw3045s",
-					"start_time": "2021-09-30T00:00:00Z",
+					"start_time": "2021-09-29T00:00:00Z",
 					"end_time": "2021-10-10T00:00:00Z"
 					}
 				]`,
@@ -301,7 +329,7 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 			1, // left last budgets of 2nd tc
 			types.MustParseRFC3339("2021-09-29T00:00:00Z"),
 			types.MustParseRFC3339("2021-09-30T00:00:00Z"),
-			types.ErrInvalidTotalBudgetRate,
+			types.ErrInvalidTotalBudgetRate, // 1.5 ( 0.5 + 0.5 + 0.5 )
 			[]sdk.AccAddress{budgetSource, suite.destinationAddrs[0], suite.destinationAddrs[1], suite.destinationAddrs[2]},
 			[]sdk.Coins{
 				mustParseCoinsNormalized("500000000denom1,500000000denom2,500000000denom3,500000000stake"),
@@ -311,7 +339,7 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 			},
 		},
 		{
-			"add budget 3 with invalid total rate case 2",
+			"add budget 3 with invalid total rate, 1.01",
 			testProposal(proposal.ParamChange{
 				Subspace: types.ModuleName,
 				Key:      string(types.KeyBudgets),
@@ -322,7 +350,7 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 					"source_address": "cosmos10wy60v3zuks7rkwnqxs3e878zqfhus6m98l77q6rppz40kxwgllsruc0az",
 					"destination_address": "cosmos1qceyjmnrl6hapntjq3z25vn38nh68u7yxvufs2thptxvqm7huxeqj7zyrq",
 					"start_time": "2021-09-01T00:00:00Z",
-					"end_time": "2031-09-30T00:00:00Z"
+					"end_time": "2021-12-31T00:00:00Z"
 					},
 					{
 					"name": "gravity-dex-farming-2",
@@ -334,7 +362,7 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 					},
 					{
 					"name": "gravity-dex-farming-3",
-					"rate": "0.500000000000000000",
+					"rate": "0.510000000000000000",
 					"source_address": "cosmos10wy60v3zuks7rkwnqxs3e878zqfhus6m98l77q6rppz40kxwgllsruc0az",
 					"destination_address": "cosmos1e0n8jmeg4u8q3es2tmhz5zlte8a4q8687ndns8pj4q8grdl74a0sw3045s",
 					"start_time": "2021-09-30T00:00:00Z",
@@ -346,7 +374,7 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 			1, // left last budgets of 2nd tc
 			types.MustParseRFC3339("2021-10-01T00:00:00Z"),
 			types.MustParseRFC3339("2021-10-01T00:00:00Z"),
-			types.ErrInvalidTotalBudgetRate,
+			types.ErrInvalidTotalBudgetRate, // 1.01 ( 0.5 + 0.0 + 0.51 )
 			[]sdk.AccAddress{budgetSource, suite.destinationAddrs[0], suite.destinationAddrs[1], suite.destinationAddrs[2]},
 			[]sdk.Coins{
 				mustParseCoinsNormalized("750000000denom1,750000000denom2,750000000denom3,750000000stake"),
@@ -367,7 +395,15 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 					"source_address": "cosmos10wy60v3zuks7rkwnqxs3e878zqfhus6m98l77q6rppz40kxwgllsruc0az",
 					"destination_address": "cosmos1qceyjmnrl6hapntjq3z25vn38nh68u7yxvufs2thptxvqm7huxeqj7zyrq",
 					"start_time": "2021-09-01T00:00:00Z",
-					"end_time": "2031-09-30T00:00:00Z"
+					"end_time": "2021-12-31T00:00:00Z"
+					},
+					{
+					"name": "gravity-dex-farming-2",
+					"rate": "0.500000000000000000",
+					"source_address": "cosmos10wy60v3zuks7rkwnqxs3e878zqfhus6m98l77q6rppz40kxwgllsruc0az",
+					"destination_address": "cosmos1czyx0dj2yd26gv3stpxzv23ddy8pld4j6p90a683mdcg8vzy72jqa8tm6p",
+					"start_time": "2021-09-01T00:00:00Z",
+					"end_time": "2021-09-30T00:00:00Z"
 					},
 					{
 					"name": "gravity-dex-farming-3",
@@ -379,7 +415,7 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 					}
 				]`,
 			}),
-			2,
+			3,
 			2,
 			types.MustParseRFC3339("2021-10-01T00:00:00Z"),
 			types.MustParseRFC3339("2021-10-01T00:00:00Z"),
@@ -393,7 +429,7 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 			},
 		},
 		{
-			"add budget 4 without date range overlap",
+			"add budget 4 without date range overlap, remove 2, 3",
 			testProposal(proposal.ParamChange{
 				Subspace: types.ModuleName,
 				Key:      string(types.KeyBudgets),
@@ -404,22 +440,22 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 					"source_address": "cosmos10wy60v3zuks7rkwnqxs3e878zqfhus6m98l77q6rppz40kxwgllsruc0az",
 					"destination_address": "cosmos1qceyjmnrl6hapntjq3z25vn38nh68u7yxvufs2thptxvqm7huxeqj7zyrq",
 					"start_time": "2021-09-01T00:00:00Z",
-					"end_time": "2031-09-30T00:00:00Z"
+					"end_time": "2021-12-31T00:00:00Z"
 					},
 					{
 					"name": "gravity-dex-farming-4",
 					"rate": "1.000000000000000000",
 					"source_address": "cosmos10wy60v3zuks7rkwnqxs3e878zqfhus6m98l77q6rppz40kxwgllsruc0az",
 					"destination_address": "cosmos1e0n8jmeg4u8q3es2tmhz5zlte8a4q8687ndns8pj4q8grdl74a0sw3045s",
-					"start_time": "2031-09-30T00:00:01Z",
-					"end_time": "2031-12-10T00:00:00Z"
+					"start_time": "2021-12-31T00:00:00Z",
+					"end_time": "2022-12-31T00:00:00Z"
 					}
 				]`,
 			}),
 			2,
 			1,
-			types.MustParseRFC3339("2021-09-29T00:00:00Z"),
-			types.MustParseRFC3339("2021-09-30T00:00:00Z"),
+			types.MustParseRFC3339("2021-10-02T00:00:00Z"),
+			types.MustParseRFC3339("2021-10-14T00:00:00Z"),
 			nil,
 			[]sdk.AccAddress{budgetSource, suite.destinationAddrs[0], suite.destinationAddrs[1], suite.destinationAddrs[2]},
 			[]sdk.Coins{
@@ -475,10 +511,10 @@ func (suite *KeeperTestSuite) TestBudgetChangeSituation() {
 			suite.ctx = suite.ctx.WithBlockHeight(int64(height))
 			suite.ctx = suite.ctx.WithBlockTime(tc.nextBlockTime)
 
-			params := suite.keeper.GetParams(suite.ctx)
+			params = suite.keeper.GetParams(suite.ctx)
 			suite.Require().Len(params.Budgets, tc.budgetCount)
 			for _, budget := range params.Budgets {
-				err := budget.Validate()
+				err = budget.Validate()
 				suite.Require().NoError(err)
 			}
 
