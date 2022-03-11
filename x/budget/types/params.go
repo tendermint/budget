@@ -70,10 +70,10 @@ func (p Params) Validate() error {
 
 // ValidateBudgets validates budget name and total rate.
 // The total rate of budgets with the same source address must not exceed 1.
-func ValidateBudgets(i interface{}) error {
-	budgets, ok := i.([]Budget)
+func ValidateBudgets(input interface{}) error {
+	budgets, ok := input.([]Budget)
 	if !ok {
-		return fmt.Errorf("invalid parameter type: %T", i)
+		return fmt.Errorf("invalid parameter type: %T", input)
 	}
 	names := make(map[string]bool)
 	for _, budget := range budgets {
@@ -91,10 +91,10 @@ func ValidateBudgets(i interface{}) error {
 		if budgetsBySource.TotalRate.GT(sdk.OneDec()) {
 			// If the TotalRate of Budgets with the same source address exceeds 1,
 			// recalculate and verify the TotalRate of Budgets with overlapping time ranges.
-			for _, budget := range budgetsBySource.Budgets {
+			for i, budget := range budgetsBySource.Budgets {
 				totalRate := budget.Rate
-				for _, budgetToCheck := range budgetsBySource.Budgets {
-					if budget.Name != budgetToCheck.Name && budgetToCheck.Collectible(budget.StartTime) {
+				for j, budgetToCheck := range budgetsBySource.Budgets {
+					if i != j && budgetToCheck.Collectible(budget.StartTime) {
 						totalRate = totalRate.Add(budgetToCheck.Rate)
 					}
 				}
