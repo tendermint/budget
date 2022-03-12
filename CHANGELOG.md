@@ -35,6 +35,13 @@ Ref: https://keepachangelog.com/en/1.0.0/
 
 # Changelog
 
+## v1.1.0 - 2022-03-12
+
+* [\#110](https://github.com/tendermint/budget/pull/110) fix: improve budget validation logic and tests, spec doc
+* [\#111](https://github.com/tendermint/budget/pull/111) build: bump cosmos-sdk to v0.44.5
+* [\#113](https://github.com/tendermint/budget/pull/113) fix: init budgets to avoid nil slice on genesis
+
+
 ## v1.0.0 - 2021-11-26
 
 * [\#64](https://github.com/tendermint/budget/pull/64) docs: improve documentation for audit release

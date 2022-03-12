@@ -32,7 +32,7 @@ func SimulateUpdateBudgetPlans(k keeper.Keeper) simtypes.ContentSimulatorFn {
 	return func(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) simtypes.Content {
 		params := k.GetParams(ctx)
 
-		params.Budgets = GenBudgets(r, ctx, nil, nil, accs)
+		params.Budgets = GenBudgets(r, ctx, accs)
 		params.EpochBlocks = GenEpochBlocks(r)
 
 		// manually set params for simulation

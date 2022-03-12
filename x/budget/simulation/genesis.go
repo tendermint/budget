@@ -27,7 +27,7 @@ func GenEpochBlocks(r *rand.Rand) uint32 {
 }
 
 // GenBudgets returns randomized budgets.
-func GenBudgets(r *rand.Rand, ctx sdk.Context, ak types.AccountKeeper, bk types.BankKeeper, accs []simtypes.Account) []types.Budget {
+func GenBudgets(r *rand.Rand, ctx sdk.Context, accs []simtypes.Account) []types.Budget {
 	ranBudgets := make([]types.Budget, 0)
 
 	for i := 0; i < simtypes.RandIntBetween(r, 1, 20); i++ {
