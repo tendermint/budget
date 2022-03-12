@@ -13,6 +13,10 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
 	if err := types.ValidateGenesis(genState); err != nil {
 		panic(err)
 	}
+	// init to prevent nil slice, []types.Budget(nil)
+	if genState.Params.Budgets == nil || len(genState.Params.Budgets) == 0 {
+		genState.Params.Budgets = []types.Budget{}
+	}
 
 	k.SetParams(ctx, genState.Params)
 	moduleAcc := k.accountKeeper.GetModuleAccount(ctx, types.ModuleName)
@@ -28,8 +32,12 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genState types.GenesisState) {
 // ExportGenesis returns the budget module's genesis state.
 func (k Keeper) ExportGenesis(ctx sdk.Context) *types.GenesisState {
 	params := k.GetParams(ctx)
-	var budgetRecords []types.BudgetRecord
+	// init to prevent nil slice, []types.Budget(nil)
+	if params.Budgets == nil || len(params.Budgets) == 0 {
+		params.Budgets = []types.Budget{}
+	}
 
+	budgetRecords := make([]types.BudgetRecord, 0)
 	k.IterateAllTotalCollectedCoins(ctx, func(record types.BudgetRecord) (stop bool) {
 		budgetRecords = append(budgetRecords, record)
 		return false
