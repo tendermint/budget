@@ -3,6 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
+
 	"github.com/tendermint/budget/x/budget/types"
 )
 
@@ -20,8 +21,9 @@ func (k Keeper) CollectBudgets(ctx sdk.Context) error {
 
 	// Get a map GetBudgetsBySourceMap that has a list of budgets and their total rate, which
 	// contain the same SourceAddress
-	budgetsBySourceMap := types.GetBudgetsBySourceMap(budgets)
-	for source, budgetsBySource := range budgetsBySourceMap {
+	budgetsBySourceMap, budgetSources := types.GetBudgetsBySourceMap(budgets)
+	for _, source := range budgetSources {
+		budgetsBySource := budgetsBySourceMap[source]
 		sourceAcc, err := sdk.AccAddressFromBech32(source)
 		if err != nil {
 			return err
