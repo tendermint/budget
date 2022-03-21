@@ -86,14 +86,14 @@ func ValidateBudgets(input interface{}) error {
 		}
 		names[budget.Name] = true
 	}
-	budgetsBySourceMap := GetBudgetsBySourceMap(budgets)
-	for addr, budgetsBySource := range budgetsBySourceMap {
-		if budgetsBySource.TotalRate.GT(sdk.OneDec()) {
+	budgetsBySourceMap, budgetSources := GetBudgetsBySourceMap(budgets)
+	for _, source := range budgetSources {
+		if budgetsBySourceMap[source].TotalRate.GT(sdk.OneDec()) {
 			// If the TotalRate of Budgets with the same source address exceeds 1,
 			// recalculate and verify the TotalRate of Budgets with overlapping time ranges.
-			for i, budget := range budgetsBySource.Budgets {
+			for i, budget := range budgetsBySourceMap[source].Budgets {
 				totalRate := budget.Rate
-				for j, budgetToCheck := range budgetsBySource.Budgets {
+				for j, budgetToCheck := range budgetsBySourceMap[source].Budgets {
 					if i != j && budgetToCheck.Collectible(budget.StartTime) {
 						totalRate = totalRate.Add(budgetToCheck.Rate)
 					}
@@ -101,7 +101,7 @@ func ValidateBudgets(input interface{}) error {
 				if totalRate.GT(sdk.OneDec()) {
 					return sdkerrors.Wrapf(
 						ErrInvalidTotalBudgetRate,
-						"total rate for source address %s must not exceed 1: %v", addr, totalRate)
+						"total rate for source address %s must not exceed 1: %v", source, totalRate)
 				}
 			}
 

@@ -99,8 +99,9 @@ type BudgetsBySourceMap map[string]BudgetsBySource
 // GetBudgetsBySourceMap returns BudgetsBySourceMap that has a list of budgets and their total rate
 // which contain the same SourceAddress. It can be used to track of what budgets are available with SourceAddress
 // and validate their total rate.
-func GetBudgetsBySourceMap(budgets []Budget) BudgetsBySourceMap {
+func GetBudgetsBySourceMap(budgets []Budget) (BudgetsBySourceMap, []string) {
 	budgetsMap := make(BudgetsBySourceMap)
+	budgetSources := []string{}
 	for _, budget := range budgets {
 		if budgetsBySource, ok := budgetsMap[budget.SourceAddress]; ok {
 			budgetsBySource.TotalRate = budgetsBySource.TotalRate.Add(budget.Rate)
@@ -111,7 +112,8 @@ func GetBudgetsBySourceMap(budgets []Budget) BudgetsBySourceMap {
 				Budgets:   []Budget{budget},
 				TotalRate: budget.Rate,
 			}
+			budgetSources = append(budgetSources, budget.SourceAddress)
 		}
 	}
-	return budgetsMap
+	return budgetsMap, budgetSources
 }
