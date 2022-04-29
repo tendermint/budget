@@ -68,13 +68,14 @@ func (suite *KeeperTestSuite) SetupTest() {
 	dAddr4 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "destinationAddr4")
 	dAddr5 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "destinationAddr5")
 	dAddr6 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "destinationAddr6")
+	dAddr7 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "destinationAddr7")
 	sAddr1 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr1")
 	sAddr2 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr2")
 	sAddr3 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr3")
 	sAddr4 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr4")
 	sAddr5 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr5")
 	sAddr6 := types.DeriveAddress(types.AddressType32Bytes, types.ModuleName, "sourceAddr6")
-	suite.destinationAddrs = []sdk.AccAddress{dAddr1, dAddr2, dAddr3, dAddr4, dAddr5, dAddr6}
+	suite.destinationAddrs = []sdk.AccAddress{dAddr1, dAddr2, dAddr3, dAddr4, dAddr5, dAddr6, dAddr7}
 	suite.sourceAddrs = []sdk.AccAddress{sAddr1, sAddr2, sAddr3, sAddr4, sAddr5, sAddr6, sAddr6}
 	for _, addr := range append(suite.addrs, suite.sourceAddrs[:3]...) {
 		err := simapp.FundAccount(suite.app.BankKeeper, suite.ctx, addr, initialBalances)
@@ -146,6 +147,46 @@ func (suite *KeeperTestSuite) SetupTest() {
 			Name:               "empty-source-budget",
 			Rate:               sdk.MustNewDecFromStr("0.1"),
 			SourceAddress:      suite.sourceAddrs[5].String(),
+			DestinationAddress: suite.destinationAddrs[5].String(),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
+		},
+		{
+			Name:               "budget-ecosystem-incentive",
+			Rate:               sdk.MustNewDecFromStr("0.662500000000000000"),
+			SourceAddress:      suite.sourceAddrs[1].String(),
+			DestinationAddress: suite.destinationAddrs[6].String(),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
+		},
+		{
+			Name:               "budget-dev-team",
+			Rate:               sdk.MustNewDecFromStr("0.250000000000000000"),
+			SourceAddress:      suite.sourceAddrs[1].String(),
+			DestinationAddress: suite.destinationAddrs[2].String(),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
+		},
+		{
+			Name:               "budget-ecosystem-incentive-lp",
+			Rate:               sdk.MustNewDecFromStr("0.600000000000000000"),
+			SourceAddress:      suite.destinationAddrs[6].String(),
+			DestinationAddress: suite.destinationAddrs[3].String(),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
+		},
+		{
+			Name:               "budget-ecosystem-incentive-mm",
+			Rate:               sdk.MustNewDecFromStr("0.200000000000000000"),
+			SourceAddress:      suite.destinationAddrs[6].String(),
+			DestinationAddress: suite.destinationAddrs[4].String(),
+			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
+			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),
+		},
+		{
+			Name:               "budget-ecosystem-incentive-boost",
+			Rate:               sdk.MustNewDecFromStr("0.200000000000000000"),
+			SourceAddress:      suite.destinationAddrs[6].String(),
 			DestinationAddress: suite.destinationAddrs[5].String(),
 			StartTime:          types.MustParseRFC3339("0000-01-01T00:00:00Z"),
 			EndTime:            types.MustParseRFC3339("9999-12-31T00:00:00Z"),

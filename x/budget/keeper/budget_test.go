@@ -182,6 +182,56 @@ func (suite *KeeperTestSuite) TestCollectBudgets() {
 			},
 			nil,
 		},
+		{
+			"relay-budget",
+			suite.budgets[8:13],
+			1,
+			[]sdk.AccAddress{
+				suite.destinationAddrs[1],
+				suite.destinationAddrs[2],
+				suite.destinationAddrs[3],
+				suite.destinationAddrs[4],
+				suite.destinationAddrs[5],
+				suite.sourceAddrs[1],
+			},
+			[]sdk.Coins{
+				{},
+				mustParseCoinsNormalized("250000000denom1,250000000denom2,250000000denom3,250000000stake"),
+				mustParseCoinsNormalized("397500000denom1,397500000denom2,397500000denom3,397500000stake"),
+				mustParseCoinsNormalized("132500000denom1,132500000denom2,132500000denom3,132500000stake"),
+				mustParseCoinsNormalized("132500000denom1,132500000denom2,132500000denom3,132500000stake"),
+				mustParseCoinsNormalized("87500000denom1,87500000denom2,87500000denom3,87500000stake"),
+			},
+			nil,
+		},
+		{
+			"relay-budget-fail",
+			[]types.Budget{
+				suite.budgets[8],
+				suite.budgets[9],
+				suite.budgets[10],
+				suite.budgets[11],
+				suite.budgets[12],
+			},
+			1,
+			[]sdk.AccAddress{
+				suite.destinationAddrs[6],
+				suite.destinationAddrs[2],
+				suite.destinationAddrs[3],
+				suite.destinationAddrs[4],
+				suite.destinationAddrs[5],
+				suite.sourceAddrs[1],
+			},
+			[]sdk.Coins{
+				{},
+				mustParseCoinsNormalized("250000000denom1,250000000denom2,250000000denom3,250000000stake"),
+				mustParseCoinsNormalized("397500000denom1,397500000denom2,397500000denom3,397500000stake"),
+				mustParseCoinsNormalized("132500000denom1,132500000denom2,132500000denom3,132500000stake"),
+				mustParseCoinsNormalized("132500000denom1,132500000denom2,132500000denom3,132500000stake"),
+				mustParseCoinsNormalized("87500000denom1,87500000denom2,87500000denom3,87500000stake"),
+			},
+			nil,
+		},
 	} {
 		suite.Run(tc.name, func() {
 			suite.SetupTest()

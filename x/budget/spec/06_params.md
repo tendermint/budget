@@ -32,7 +32,7 @@ Reference the following code:
 
 The budget structure is described in [State](02_state.md).
 
-Parameter of a budget can be added, modified, and deleted through [parameter change governance proposal](https://docs.cosmos.network/master/modules/gov/01_concepts.html#proposal-submission).
+Parameter of a budget can be added, modified, and deleted through parameter change governance proposal.
 
 For an example of how to add a budget plan, see [Propose a Budget Plan](../../../docs/How-To/cli#propose-a-budget-plan) in the budgetd CLI guide. 
 
